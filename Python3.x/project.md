@@ -1,4 +1,4 @@
-## 三级菜单项目
+* ## 三级菜单项目
 #### 代码如下：
 ```py
 # Author：wangzongyu
@@ -127,7 +127,8 @@ while not exit_flag:
 
 ````
 
-## 购物卡项目
+
+* ## 购物卡项目
 #### 代码如下：
 ```py
 
@@ -181,7 +182,7 @@ while True:
 
 ```
 
-## 账号登陆超出次数加入黑名单项目
+* ## 账号登陆超出次数加入黑名单项目
 #### 代码如下：
 ```py
 # Author：wangzongyu
@@ -210,5 +211,13 @@ while count < 3:
             f = open('black_username','a')
             f.write("\n%s"%username)
             f.close()
+
+```
+###### black_username文件内容：
+```py
+
+wangzy
+hello
+wangzongyu
 
 ```
