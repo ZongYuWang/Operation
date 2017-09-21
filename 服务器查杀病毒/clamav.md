@@ -5,7 +5,7 @@
 **官网地址**
 http://www.clamav.net/downloads#collapsePreviousReleases官网
 
-```
+```py
 [root@localhost ~]# mkdir clamav
 [root@localhost ~]# cd /root/clamav/
 
@@ -22,7 +22,7 @@ http://www.clamav.net/downloads#collapsePreviousReleases官网
 
 ```
 
-```
+```py
 # 新建日志存放目录
 [root@localhost clamav-0.99.2]# mkdir /usr/local/clamav/logs
 
@@ -31,7 +31,7 @@ http://www.clamav.net/downloads#collapsePreviousReleases官网
 
 ```
 
-```
+```py
 # 修改配置文件
 [root@localhost clamav-0.99.2]# cp /usr/local/clamav/etc/clamd.conf.sample /usr/local/clamav/etc/clamd.conf
 
@@ -49,7 +49,7 @@ DatabaseDirectory /usr/local/clamav/updata
 
 ```
 
-```
+```py
 # 修改配置文件：
 [root@localhost clamav-0.99.2]# cp /usr/local/clamav/etc/freshclam.conf.sample /usr/local/clamav/etc/freshclam.conf
 
@@ -69,7 +69,7 @@ PidFile /usr/local/clamav/updata/freshclam.pid
 
 ```
 
-```
+```py
 # 创建clamav组
 [root@localhost ~]# groupadd clamav
 
@@ -78,7 +78,7 @@ PidFile /usr/local/clamav/updata/freshclam.pid
 
 ```
 
-```
+```py
 创建日志文件：
 [root@localhost ~]# touch /usr/local/clamav/logs/freshclam.log
 [root@localhost ~]# chown clamav:clamav /usr/local/clamav/logs/freshclam.log
@@ -89,13 +89,13 @@ PidFile /usr/local/clamav/updata/freshclam.pid
 ```
 
 升级病毒库：
-```
+```py
 # 前提能保证服务器能上网
 
 [root@localhost ~]# /usr/local/clamav/bin/freshclam
 ```
 *打印输出*
-```
+```py
 [root@localhost ~]# /usr/local/clamav/bin/freshclam 
 ClamAV update process started at Wed Aug 16 20:19:23 2017
 Downloading main.cvd [100%]
@@ -113,14 +113,14 @@ Database updated (6309401 signatures) from database.clamav.net (IP: 72.21.91.8)
 ```
 
 查杀病毒：
-```
+```py
 # 查杀在哪个目录下就在哪个目录下执行，如查杀/tmp目录
 [root@localhost tmp]# /usr/local/clamav/bin/clamscan --remove
 
 ```
 
 *打印输出*
-```
+```py
 [root@localhost tmp]# /usr/local/clamav/bin/clamscan --remove
 LibClamAV Warning: ******************************************************
 LibClamAV Warning: ***      Virus database timestamp in the future!   ***
@@ -148,12 +148,12 @@ Time: 13.378 sec (0 m 13 s)
 生产环境应用：
 一般使用计划任务，让服务器每天晚上定时跟新和定时杀毒。保存杀毒日志，我的crontab文件如下：
 
-```
+```py
 1  3  * * *          /usr/local/clamav/bin/freshclam
 20 3  * * *          /usr/local/clamav/bin/clamscan  -r /home  --remove -l /var/log/clamscan.log
 ```
 
-```
+```py
 # 扫描root下的病毒
 [root@localhost ~]# /usr/local/clamav/bin/clamscan -r --bell -i /root
 
@@ -177,7 +177,7 @@ Time: 97.259 sec (1 m 37 s)
 
 ```
 
-```
+```py
 # root目录下的排除之后
 
 ----------- SCAN SUMMARY -----------
