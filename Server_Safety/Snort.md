@@ -13,7 +13,7 @@
 - Zliblg-dev：压缩函数库
 - ADODB：一个接口
 - GD：绘制图像的GD库
-* BASE：分析入侵数据库的前端
-* Snort
+- BASE：分析入侵数据库的前端
+- Snort
 
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort1.png)
