@@ -806,6 +806,8 @@ Initializing Input Plugins!
 Initializing Output Plugins!
 Parsing config file "/etc/snort/barnyard2.conf"
 Log directory = /var/log/barnyard2
+database: inconsistent cid information for sid=1
+          Recovering by rolling forward the cid=4191
 database: compiled support for (mysql)
 database: configured to use mysql
 database: schema version = 107
@@ -814,7 +816,7 @@ database:           user = snort
 database:  database name = snort
 database:    sensor name = localhost:eth0
 database:      sensor id = 1
-database:     sensor cid = 1
+database:     sensor cid = 4192
 database:  data encoding = hex
 database:   detail level = full
 database:     ignore_bpf = no
@@ -830,13 +832,17 @@ database: using the "log" facility
            Snort by Martin Roesch & The Snort Team: http://www.snort.org/team.html
            (C) Copyright 1998-2007 Sourcefire Inc., et al.
 
-WARNING: Ignoring corrupt/truncated waldofile '/var/log/snort/barnyard2.waldo'
-Opened spool file '/var/log/snort/snort.log.1499111950'
-Closing spool file '/var/log/snort/snort.log.1499111950'. Read 0 records
-Opened spool file '/var/log/snort/snort.log.1499116848'
-snort.log.1499116848' (Permission denied)
-Closing spool file '/var/log/snort/snort.log.1499116848'. Read 0 records
-===============================================================================
+Using waldo file '/var/log/snort/barnyard2.waldo':
+    spool directory = /var/log/snort/
+    spool filebase  = snort.log
+    time_stamp      = 1499117242
+    record_idx      = 8382
+Waiting for new spool file
+
+【说明】出现“Waiting for new spool file”表示barnyard2配置成功
+【说明】ctrl+c终止测试
+
+^C===============================================================================
 Record Totals:
    Records:            0
     Events:            0 (0.000%)
@@ -875,9 +881,6 @@ InvChkSum: 0          (0.000%)
    S5 G 2: 0          (0.000%)
     Total: 0         
 ===============================================================================
-
-【说明】出现“Waiting for new spool file”表示barnyard2配置成功
-【说明】ctrl+c终止测试
 
 ```
 
