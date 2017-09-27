@@ -163,9 +163,15 @@ Enter password: snort
 浏览器打开：
 http://172.30.105.115/base/setup/index.php
 
-图片！！！！！
-
 ```
+![](https://github.com/ZongYuWang/Operation/blob/master/image/snort.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort2.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort3.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort4.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort5.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort6.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort7.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort8.png)
 
 **7、安装libdnet：（必须使用这个版本）**
 ```py
