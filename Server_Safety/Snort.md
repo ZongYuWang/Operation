@@ -78,6 +78,11 @@ NAME="System eth0"
 
 ```
 
+###### 1.3 创建用户和用户组：
+[root@localhost ~]# groupadd -g 40000 snort
+[root@localhost ~]# useradd snort -u 40000 -d /var/log/snort -s /sbin/nologin -c SNORT_IDS -g snort
+
+
 **2、安装配置LAMP环境：**
 ###### 2.1安装配置LAMP：
 ```py
@@ -210,8 +215,12 @@ http://172.30.105.115/base/setup/index.php
 ```py
 
 [root@localhost ~]# mkdir /etc/snort
+[root@localhost ~]# chown -R snort:snort /etc/snort
 [root@localhost ~]# mkdir /var/log/snort
+[root@localhost ~]# chown snort.snort -R /var/log/snort/*
 [root@localhost ~]# mkdir /usr/local/lib/snort_dynamicrules
+[root@localhost ~]# chown -R snort:snort /usr/local/lib/snort_dynamicrules
+[root@localhost ~]# chown -R 755 /usr/local/lib/snort_dynamicrules
 [root@localhost ~]# mkdir /etc/snort/rules
 [root@localhost ~]# touch /etc/snort/rules/white_list.rules /etc/snort/rules/black_list.rules
 
@@ -236,7 +245,7 @@ var BLACK_LIST_PATH /etc/snort/rules
 #第193行
 config logdir:/var/log/snort
 #第528行
-output unified2: filename merged.log, limit 128, nostamp, mpls_event_types, vlan_event_types
+output unified2:filename snort.log,limit 128
 
 ```
 **11、配置默认规则：**
@@ -248,9 +257,23 @@ output unified2: filename merged.log, limit 128, nostamp, mpls_event_types, vlan
 
 ```
 
-**12、测试Snort：**
+**12、配置IDS启动脚本：**
 ```py
-[root@localhost ~]# snort -T -i eth0 -c /etc/snort/snort.conf 
+
+[root@localhost ~]# cd /snort/snort-2.9.7.0/rpm/
+[root@localhost ~]# cp snortd /etc/init.d/snortd
+[root@localhost ~]# cp /snort/snort-2.9.7.0/rpm/snort.sysconfig /etc/sysconfig/snort
+[root@localhost ~]# chkconfig --add /etc/init.d/snortd 
+[root@localhost ~]# chkconfig snortd on
+[root@localhost ~]# cd /usr/sbin/
+[root@localhost ~]# ln -s /usr/local/bin/snort snort
+
+```
+
+**13、测试Snort：**
+```py
+[root@localhost ~]# snort -T -i eht0 -u snort -g snort -c /etc/snort/snort.conf
+ 
 【参数解释】：
 　-T   指定启动模式：测试
   -i   指定网络接口
@@ -599,11 +622,11 @@ WARNING: Can't find any whitelist/blacklist entries. Reputation Preprocessor dis
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 Initializing rule chains...
-5375 Snort rules read
-    5375 detection rules
+5376 Snort rules read
+    5376 detection rules
     0 decoder rules
     0 preprocessor rules
-5375 Option Chains linked into 207 Chain Headers
+5376 Option Chains linked into 207 Chain Headers
 0 Dynamic rules
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -611,8 +634,8 @@ Initializing rule chains...
 |             tcp     udp    icmp      ip
 |     src    1764       9       0       0
 |     dst    2806     665       0       0
-|     any     130       1       3       0
-|      nc       3       0       0       0
+|     any     130       1       4       0
+|      nc       3       0       1       0
 |     s+d       2       2       0       0
 +----------------------------------------------------------------------------
 
@@ -637,32 +660,32 @@ Initializing rule chains...
 -------------------------------------------------------------------------------
 Rule application order: activation->dynamic->pass->drop->sdrop->reject->alert->log
 Verifying Preprocessor Configurations!
-WARNING: flowbits key 'ms.packager' is set but not ever checked.
-WARNING: flowbits key 'ssl_handshake' is set but not ever checked.
-WARNING: flowbits key 'hornet.2' is set but not ever checked.
-WARNING: flowbits key 'file.rmf' is set but not ever checked.
-WARNING: flowbits key 'file.torrent' is set but not ever checked.
-WARNING: flowbits key 'kit.blackhole' is set but not ever checked.
-WARNING: flowbits key 'file.htc' is set but not ever checked.
 WARNING: flowbits key 'tlsv1.2_handshake' is set but not ever checked.
-WARNING: flowbits key 'file.xfdl' is set but not ever checked.
-WARNING: flowbits key 'file.file.jpeg' is set but not ever checked.
-WARNING: flowbits key 'file.hhk' is set but not ever checked.
-WARNING: flowbits key 'tlsv1.1_handshake' is set but not ever checked.
-WARNING: flowbits key 'file.ram' is checked but not ever set.
-WARNING: flowbits key 'file.zip.winrar.spoof' is set but not ever checked.
-WARNING: flowbits key 'file.xbm' is set but not ever checked.
-WARNING: flowbits key 'spyrat_bd' is set but not ever checked.
+WARNING: flowbits key 'file.rmf' is set but not ever checked.
 WARNING: flowbits key 'cve.2008-4265' is set but not ever checked.
+WARNING: flowbits key 'file.fpx' is set but not ever checked.
+WARNING: flowbits key 'tlsv1.0_handshake' is set but not ever checked.
+WARNING: flowbits key 'file.msi' is set but not ever checked.
+WARNING: flowbits key 'ssl_handshake' is set but not ever checked.
+WARNING: flowbits key 'file.htc' is set but not ever checked.
+WARNING: flowbits key 'file.torrent' is set but not ever checked.
+WARNING: flowbits key 'file.ram' is checked but not ever set.
+WARNING: flowbits key 'ms.packager' is set but not ever checked.
+WARNING: flowbits key 'file.lanman' is set but not ever checked.
+WARNING: flowbits key 'file.hhk' is set but not ever checked.
+WARNING: flowbits key 'kit.blackhole' is set but not ever checked.
+WARNING: flowbits key 'file.dmg' is checked but not ever set.
+WARNING: flowbits key 'spyrat_bd' is set but not ever checked.
+WARNING: flowbits key 'tlsv1.1_handshake' is set but not ever checked.
+WARNING: flowbits key 'hornet.2' is set but not ever checked.
+WARNING: flowbits key 'acunetix-scan' is set but not ever checked.
+WARNING: flowbits key 'file.zip.winrar.spoof' is set but not ever checked.
 WARNING: flowbits key 'imap.cram_md5' is set but not ever checked.
 WARNING: flowbits key 'file.wri' is set but not ever checked.
+WARNING: flowbits key 'file.file.jpeg' is set but not ever checked.
+WARNING: flowbits key 'file.xbm' is set but not ever checked.
 WARNING: flowbits key 'file.vwr' is set but not ever checked.
-WARNING: flowbits key 'file.dmg' is checked but not ever set.
-WARNING: flowbits key 'file.msi' is set but not ever checked.
-WARNING: flowbits key 'acunetix-scan' is set but not ever checked.
-WARNING: flowbits key 'tlsv1.0_handshake' is set but not ever checked.
-WARNING: flowbits key 'file.fpx' is set but not ever checked.
-WARNING: flowbits key 'file.lanman' is set but not ever checked.
+WARNING: flowbits key 'file.xfdl' is set but not ever checked.
 138 out of 1024 flowbits in use.
 
 [ Port Based Pattern Matching Memory ]
@@ -691,7 +714,9 @@ WARNING: flowbits key 'file.lanman' is set but not ever checked.
 +----------------------------------------------------------------
 [ Number of patterns truncated to 20 bytes: 323 ]
 pcap DAQ configured to passive.
-Acquiring network traffic from "eth0".
+Acquiring network traffic from "eht0".
+Set gid to 40000
+Set uid to 40000
 
         --== Initialization Complete ==--
 
@@ -723,10 +748,11 @@ Acquiring network traffic from "eth0".
 Snort successfully validated the configuration!
 Snort exiting
 
+
 【说明】如果出现“success”的字样说明配置好了
 
 ```
-**13、安装barnyard2：**
+**14、安装barnyard2：**
 ```py
 
 [root@localhost snort]# cd /snort/barnyard2-1.9
@@ -734,11 +760,13 @@ Snort exiting
 [root@localhost barnyard2-1.9]# make && make install 
 
 ```
-###### 13.1 配置barnyard2
+###### 14.1 配置barnyard2
 ```py
 
 [root@localhost ~]# mkdir /var/log/barnyard2
+[root@localhost ~]# chown snort.snort /var/log/barnyard2
 [root@localhost ~]# touch /var/log/snort/barnyard2.waldo
+[root@localhost ~]# chown snort.snort /var/log/snort/barnyard2.waldo
 [root@localhost ~]# cp /snort/barnyard2-1.9/etc/barnyard2.conf /etc/snort/
 
 [root@localhost ~]# vim /etc/snort/barnyard2.conf 
@@ -762,7 +790,7 @@ output database: log, mysql, user=snort password=snort dbname=snort host=localho
 
 ```
 
-###### 13.2 测试barnyard2
+###### 14.2 测试barnyard2
 ```py
 [root@localhost ~]# barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo
 【参数解释】：
@@ -803,11 +831,12 @@ database: using the "log" facility
            (C) Copyright 1998-2007 Sourcefire Inc., et al.
 
 WARNING: Ignoring corrupt/truncated waldofile '/var/log/snort/barnyard2.waldo'
-Waiting for new spool file
-
-【说明】出现“Waiting for new spool file”表示barnyard2配置成功
-【说明】ctrl+c终止测试
-^C===============================================================================
+Opened spool file '/var/log/snort/snort.log.1499111950'
+Closing spool file '/var/log/snort/snort.log.1499111950'. Read 0 records
+Opened spool file '/var/log/snort/snort.log.1499116848'
+snort.log.1499116848' (Permission denied)
+Closing spool file '/var/log/snort/snort.log.1499116848'. Read 0 records
+===============================================================================
 Record Totals:
    Records:            0
     Events:            0 (0.000%)
@@ -845,17 +874,26 @@ InvChkSum: 0          (0.000%)
    S5 G 1: 0          (0.000%)
    S5 G 2: 0          (0.000%)
     Total: 0         
-==============================================================================
+===============================================================================
+
+【说明】出现“Waiting for new spool file”表示barnyard2配置成功
+【说明】ctrl+c终止测试
 
 ```
 
-**14、测试IDS是否正常工作：**
+**15、添加一条规则：**
 ```py
 
 [root@localhost ~]# vim /etc/snort/rules/local.rules
 
 文件最后添加一条检查ping包的规则：
 alert icmp any any -> any any (msg: "IcmP Packet detected";sid:1000001;)
+其他规则：
+drop icmp any any -> any any (itype:0;msg:"Chan Ping";sid:1000002;)
+alert icmp any any -> $HOME_NET 81 (msg:"Scanning Port 81";sid:1000001;rev:1;)
+alert tcp any any -> $HOME_NET 22 (msg:"Scanning Port 22";sid:1000002;rev:1;)
+alert icmp any any -> any any (msg:"UDP Tesing Rule";sid:1000006;rev:1;)
+alert tcp any any -> $HOME_NET 80(msg:"HTTP Test!!!"; classtype:not-suspicious; sid:1000005;  rev:1;)
 
 【说明】
 规则注解：
@@ -872,89 +910,30 @@ ID：　　　　　　　　    报警序号
 特征：　　　　　　      报警名称 对应Msg字段
 
 ```
-
-**15、配置IDS启动脚本：**
+**16、测试Snort和Barnyard：**
 ```py
 
-[root@localhost ~]# cd /snort/
-[root@localhost snort]# vim idsctl
-
-#!/bin/bash
-
-###########################################################
-# runing shell script For IDS 
-# description: IDS by CentOS 6.6,snort-2.9.7.0,barnyard2-1.9
-# Edit by qiubibi
-# QQ Group:187553731
-# Versions : 1.0
-###########################################################
-
-intface=eth0
-
-case "$1" in
-  stat)
-    sn=`ps -ef | grep snort | grep -v grep |awk '{print $2}'`
-    if [ "${sn}" = "" ]
-        then
-    echo snortt is not runing
-        else
-    echo snort is running
-    fi
-  ;;
-  start)
-    echo "Starting snort"
-        barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -D 1>/dev/null
-        snort -c /etc/snort/snort.conf -i $intface -D 1>/dev/null
-  ;;
-  stop)
-    echo "Stopping snort"
-        killall -9 snort barnyard2
-  ;;
-  restart)
-    echo "Stopping snort"
-        killall -9 snort barnyard2
-
-#核心代码部分-----------
-    echo "Starting snort"
-        barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -D 1>/dev/null
-        snort -c /etc/snort/snort.conf -i $intface -D 1>/dev/null        
-  ;;
-#--------------------------------------------------
-    help)
-    cat <<HELP
-    stop -- stops snort service
-   start -- starts snort service
-    stat -- displays status of snort service
- restart -- stops and restarts snort
-HELP
-    ;;
-  *)
-    echo "Usage: $0 {start|stop|restart|stat|help}"
-    exit 1
-    ;;
-esac
-
-exit 0
-
-[root@localhost snort]# cp idsctl /sbin/
-[root@localhost snort]# chmod 755 /sbin/idsctl
-
-启动IDS：
-[root@localhost ~]# idsctl start
-Starting snort
-
-或者手动启动也可以：（两条命令先后运行）
-[root@localhost ~]# barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -D
-[root@localhost ~]# snort -c /etc/snort/snort.conf -i eth0 -D
+[root@localhost ~]# snort -q -u snort -g snort -c /etc/snort/snort.conf -i eth0 -D
 Spawning daemon child...
-My daemon child 43788 lives...
+My daemon child 45188 lives...
 Daemon parent exiting (0)
 
-【说明】-D选项用来让命令转入后台运行，其他选项意义上文已有解释
+[root@localhost ~]# barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -g snort -u snort
+
+查看是否已经存入数据库：
+[root@localhost ~]# mysql -u snort -p -D snort -e "select count(*) from event"
+Enter password: 
++----------+
+| count(*) |
++----------+
+|     3546 |
++----------+
 
 ```
 
-**16、测试IDS：**
+
+
+**17、测试IDS：**
 ```py
 
 向IDS的IP发送ping包，base的页面会出现ICMP告警
