@@ -946,3 +946,5 @@ C:\Users\Administrator>ping 172.30.105.115
 来自 172.30.105.115 的回复: 字节=32 时间=1ms TTL=64
 来自 172.30.105.115 的回复: 字节=32 时间=1ms TTL=64
 ```
+###### 会变成下面这样
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort9.png)
