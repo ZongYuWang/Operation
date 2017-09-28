@@ -1,6 +1,6 @@
 ## Snort ##
 
-###### Snort作为一种开源IDS(Intrusion Detection Systems)系统,不但可以主动发现网络内遭受攻击，还可以作为防火墙的补充，虽然不能阻止网络入侵行为，但是能够帮助系统对网络攻击进行报警和分析。
+- Snort作为一种开源IDS(Intrusion Detection Systems)系统,不但可以主动发现网络内遭受攻击，还可以作为防火墙的补充，虽然不能阻止网络入侵行为，但是能够帮助系统对网络攻击进行报警和分析。
 
 
 **主要安装包及功能：**
@@ -30,7 +30,7 @@
 
 
 **1、准备工作：**
-###### 使用CentOS-6.5-x86_64-minimal.iso，（用CentOS7后面配置base会报错），需要设置系统的IP和DNS让其可以联网
+- 使用CentOS-6.5-x86_64-minimal.iso，（用CentOS7后面配置base会报错），需要设置系统的IP和DNS让其可以联网
 
 ```py
 查看主机名：
