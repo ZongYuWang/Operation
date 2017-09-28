@@ -943,7 +943,7 @@ InvChkSum: 0          (0.000%)
 ```
 
 
-**15、测试Snort和Barnyard：**
+**15、测试Snort和Barnyard2：**
 ```py
 
 [root@localhost ~]# snort -q -u snort -g snort -c /etc/snort/snort.conf -i eth0 -D
