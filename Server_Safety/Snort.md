@@ -249,10 +249,10 @@ output unified2:filename snort.log,limit 128
 
 **11、测试Snort：**
 ```py
-[root@localhost ~]# snort -T -i eht0 -u snort -g snort -c /etc/snort/snort.conf
+[root@localhost ~]# snort -i eth0 -u snort -g snort -c /etc/snort/snort.conf -l /var/log/snort/
  
 【参数解释】：
-　-T   指定启动模式：测试
+　-T   指定启动模式：测试(加上这个不会生成数据)
   -i   指定网络接口
   -c   指定配置文件
 
@@ -737,7 +737,9 @@ Snort exiting
 [root@localhost ~]# vim /etc/snort/rules/local.rules
 
 文件最后添加一条检查ping包的规则：
-alert icmp any any -> any any (msg: "IcmP Packet detected";sid:1000001;)
+alert tcp any any -> $HOME_NET 22 (msg:"Scanning Port 22";sid:1000002;rev:1;)
+alert icmp any any -> 172.30.105.115 any (msg: "IcmP Packet detected";sid:1000001;)
+
 其他规则：
 drop icmp any any -> any any (itype:0;msg:"Chan Ping";sid:1000002;)
 alert icmp any any -> $HOME_NET 81 (msg:"Scanning Port 81";sid:1000001;rev:1;)
@@ -836,14 +838,19 @@ config interface:eth0
 #config waldo_file: /tmp/waldo 默认的
 config waldo_file:/var/log/snort/barnyard2.waldo
 
+#第170行：
+input unified2
+
 文件最后一行：
-output database: log, mysql, user=snort password=snort dbname=snort host=localhost
+output database:log,mysql,user=snort password=snort dbname=snort host=localhost
 
 ```
 
 ###### 14.2 测试barnyard2
 ```py
-[root@localhost ~]# barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo
+[root@localhost ~]# barnyard2 -c /etc/snort/barnyard2.conf -f /var/log/snort/snort.log -w /var/log/snort/barnyard2.waldo -u snort -g snort -d /var/log/snort/ -v
+
+
 【参数解释】：
 　　-c      指定配置文件
 　　-d      指定log目录
@@ -954,6 +961,15 @@ Enter password:
 +----------+
 |     3546 |
 +----------+
+
+mysql> select * from sensor;
++-----+----------------+-----------+--------+--------+----------+----------+
+| sid | hostname       | interface | filter | detail | encoding | last_cid |
++-----+----------------+-----------+--------+--------+----------+----------+
+|   1 | localhost:eth0 | eth0      | NULL   |      1 |        0 |        0 |
++-----+----------------+-----------+--------+--------+----------+----------+
+1 row in set (0.00 sec)
+
 
 ```
 
