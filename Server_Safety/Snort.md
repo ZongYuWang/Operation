@@ -58,7 +58,7 @@ NAME="System eth0"
 ```
 ###### 1.1安装依赖包
 ```py
-[root@localhost ~]# yum install -y gcc flex bison zlib libpcap tcpdump gcc-c++ pcre* zlib* libdnet libdnet-devel
+[root@localhost ~]# yum install -y gcc flex bison zlib libpcap tcpdump gcc-c++ pcre* zlib* 
 
 ```
 
@@ -79,12 +79,14 @@ NAME="System eth0"
 ```
 
 ###### 1.3 创建用户和用户组：
+```py
 [root@localhost ~]# groupadd -g 40000 snort
 [root@localhost ~]# useradd snort -u 40000 -d /var/log/snort -s /sbin/nologin -c SNORT_IDS -g snort
+```
 
 
 **2、安装配置LAMP环境：**
-###### 2.1安装配置LAMP：
+###### 2.1安装LAMP：
 ```py
 [root@localhost ~]# yum install -y httpd mysql-server php php-mysql php-mbstring php-mcrypt mysql-devel php-gd
 
@@ -133,33 +135,7 @@ error_reporting = E_ALL & ~E_NOTICE
 [root@localhost snort]# mv /var/www/html/base-1.4.5 /var/www/html/base
 
 ```
-
-**5、配置MySQL：**
-```py
-
-[root@localhost snort]# tar xvf barnyard2-1.9.tar.gz 
-
-启动MySQL：
-[root@localhost ~]# service mysqld start
-
-为root用户设置密码：
-[root@localhost ~]# mysql
-mysql> SET PASSWORD FOR 'root'@'localhost'=PASSWORD('wangzongyu');
-
-以root登陆mysql，并创建snort库：
-[root@localhost ~]# mysql -u root -p
-mysql> create database snort;
-
-创建名为snort、密码为snort的数据库用户并赋予名为snort数据库权限：
-mysql> grant create,select,update,insert,delete on snort.* to snort@localhost identified by 'snort';
-
-创建数据库表：
-[root@localhost ~]# mysql -usnort -p -Dsnort < /snort/barnyard2-1.9/schemas/create_mysql 
-Enter password: snort
-
-```
-
-**6、配置base：**
+###### 4.1 配置base
 ```py
 [root@localhost ~]# service mysqld start                                         
 [root@localhost ~]# service httpd start
@@ -178,7 +154,8 @@ http://172.30.105.115/base/setup/index.php
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort7.png)
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort8.png)
 
-**7、安装libdnet：（必须使用这个版本）**
+
+**5、安装libdnet：（必须使用这个版本）**
 ```py
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar xvf libdnet-1.12.tgz
@@ -187,7 +164,7 @@ http://172.30.105.115/base/setup/index.php
 
 ```
 
-**8、安装libpcap：**
+**6、安装libpcap：**
 ```py
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar zxvf libpcap-1.0.0.tar.gz
@@ -195,7 +172,7 @@ http://172.30.105.115/base/setup/index.php
 [root@localhost libpcap-1.0.0]# ./configure && make && make install
 ```
 
-**9、安装DAQ：**
+**7、安装DAQ：**
 ```py
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar zxvf daq-2.0.4.tar.gz 
@@ -204,14 +181,14 @@ http://172.30.105.115/base/setup/index.php
 
 ```
 
-**10、安装Snort：**
+**8、安装Snort：**
 ```py
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar zxvf snort-2.9.7.0.tar.gz 
 [root@localhost snort]# cd snort-2.9.7.0
 [root@localhost snort-2.9.7.0]# ./configure && make && make install
 ```
-###### 10.1 配置Snort：
+###### 8.1 配置Snort：
 ```py
 
 [root@localhost ~]# mkdir /etc/snort
@@ -248,7 +225,7 @@ config logdir:/var/log/snort
 output unified2:filename snort.log,limit 128
 
 ```
-**11、配置默认规则：**
+**9、配置snortrules默认规则：**
 ```py
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar zxvf snortrules-snapshot-2970.tar.gz -C /etc/snort/
@@ -257,7 +234,7 @@ output unified2:filename snort.log,limit 128
 
 ```
 
-**12、配置IDS启动脚本：**
+**10、配置开机自启动Snort程序：**
 ```py
 
 [root@localhost ~]# cd /snort/snort-2.9.7.0/rpm/
@@ -270,7 +247,7 @@ output unified2:filename snort.log,limit 128
 
 ```
 
-**13、测试Snort：**
+**11、测试Snort：**
 ```py
 [root@localhost ~]# snort -T -i eht0 -u snort -g snort -c /etc/snort/snort.conf
  
@@ -752,9 +729,79 @@ Snort exiting
 【说明】如果出现“success”的字样说明配置好了
 
 ```
+
+
+**12、添加规则：**
+```py
+
+[root@localhost ~]# vim /etc/snort/rules/local.rules
+
+文件最后添加一条检查ping包的规则：
+alert icmp any any -> any any (msg: "IcmP Packet detected";sid:1000001;)
+其他规则：
+drop icmp any any -> any any (itype:0;msg:"Chan Ping";sid:1000002;)
+alert icmp any any -> $HOME_NET 81 (msg:"Scanning Port 81";sid:1000001;rev:1;)
+alert tcp any any -> $HOME_NET 22 (msg:"Scanning Port 22";sid:1000002;rev:1;)
+alert icmp any any -> any any (msg:"UDP Tesing Rule";sid:1000006;rev:1;)
+alert tcp any any -> $HOME_NET 80(msg:"HTTP Test!!!"; classtype:not-suspicious; sid:1000005;  rev:1;)
+
+【说明】
+规则注解：
+alert                触发规则后做出的动作
+icmp                 协议类型
+第一个any             源IP（网段），any表示任意
+第二个any            源端口，any表示任意
+->      　　　　　　  表示方向
+第三个any             目标IP（网段），any表示任意
+第四个any             目标端口，any表示任意
+Msg字符               告警名称
+Sid                   id号，个人编写的规则使用1,000,000以上
+ID：　　　　　　　　    报警序号
+特征：　　　　　　      报警名称 对应Msg字段
+
+
+[root@localhost ~]# tail -f /var/log/snort/alert 
+我本机测试地址就是172.30.105.19
+07/05-02:54:22.589329  [**] [1:1000002:1] Scanning Port 22 [**] [Priority: 0] {TCP} 172.30.105.19:60761 -> 172.30.105.115:22
+07/05-02:54:22.617650  [**] [1:1000002:1] Scanning Port 22 [**] [Priority: 0] {TCP} 172.30.105.19:60761 -> 172.30.105.115:22
+07/05-02:54:22.826095  [**] [1:1000002:1] Scanning Port 22 [**] [Priority: 0] {TCP} 172.30.105.19:60761 -> 172.30.105.115:22
+07/05-02:54:23.143549  [**] [1:1000002:1] Scanning Port 22 [**] [Priority: 0] {TCP} 172.30.105.19:60761 -> 172.30.105.115:22
+07/05-02:54:23.202371  [**] [1:1000001:0] IcmP Packet detected [**] [Priority: 0] {ICMP} 172.30.105.19 -> 172.30.105.115
+07/05-02:54:23.202387  [**] [1:1000001:0] IcmP Packet detected [**] [Priority: 0] {ICMP} 172.30.105.115 -> 172.30.105.19
+07/05-02:54:23.343173  [**] [1:1000002:1] Scanning Port 22 [**] [Priority: 0] {TCP} 172.30.105.19:60761 -> 172.30.105.115:22
+07/05-02:54:23.374751  [**] [1:1000002:1] Scanning Port 22 [**] [Priority: 0] {TCP} 172.30.105.19:60761 -> 172.30.105.115:22
+07/05-02:54:23.510720  [**] [1:1000002:1] Scanning Port 22 [**] [Priority: 0] {TCP} 172.30.105.19:60761 -> 172.30.105.115:22
+07/05-02:54:23.545026  [**] [1:1000002:1] Scanning Port 22 [**] [Priority: 0] {TCP} 172.30.105.19:60761 -> 172.30.105.115:22
+
+```
+
+**13、配置MySQL：**
+```py
+
+启动MySQL：
+[root@localhost ~]# service mysqld start
+
+为root用户设置密码：
+[root@localhost ~]# mysql
+mysql> SET PASSWORD FOR 'root'@'localhost'=PASSWORD('wangzongyu');
+
+以root登陆mysql，并创建snort库：
+[root@localhost ~]# mysql -u root -p
+mysql> create database snort;
+
+创建名为snort、密码为snort的数据库用户并赋予名为snort数据库权限：
+mysql> grant create,select,update,insert,delete on snort.* to snort@localhost identified by 'snort';
+
+创建数据库表：
+[root@localhost ~]# mysql -usnort -p -Dsnort < /snort/barnyard2-1.9/schemas/create_mysql 
+Enter password: snort
+
+```
+
 **14、安装barnyard2：**
 ```py
 
+[root@localhost snort]# tar xvf barnyard2-1.9.tar.gz 
 [root@localhost snort]# cd /snort/barnyard2-1.9
 [root@localhost barnyard2-1.9]# ./configure --with-mysql --with-mysql-libraries=/usr/lib64/mysql/
 [root@localhost barnyard2-1.9]# make && make install 
@@ -884,36 +931,8 @@ InvChkSum: 0          (0.000%)
 
 ```
 
-**15、添加一条规则：**
-```py
 
-[root@localhost ~]# vim /etc/snort/rules/local.rules
-
-文件最后添加一条检查ping包的规则：
-alert icmp any any -> any any (msg: "IcmP Packet detected";sid:1000001;)
-其他规则：
-drop icmp any any -> any any (itype:0;msg:"Chan Ping";sid:1000002;)
-alert icmp any any -> $HOME_NET 81 (msg:"Scanning Port 81";sid:1000001;rev:1;)
-alert tcp any any -> $HOME_NET 22 (msg:"Scanning Port 22";sid:1000002;rev:1;)
-alert icmp any any -> any any (msg:"UDP Tesing Rule";sid:1000006;rev:1;)
-alert tcp any any -> $HOME_NET 80(msg:"HTTP Test!!!"; classtype:not-suspicious; sid:1000005;  rev:1;)
-
-【说明】
-规则注解：
-alert                触发规则后做出的动作
-icmp                 协议类型
-第一个any             源IP（网段），any表示任意
-第二个any            源端口，any表示任意
-->      　　　　　　  表示方向
-第三个any             目标IP（网段），any表示任意
-第四个any             目标端口，any表示任意
-Msg字符               告警名称
-Sid                   id号，个人编写的规则使用1,000,000以上
-ID：　　　　　　　　    报警序号
-特征：　　　　　　      报警名称 对应Msg字段
-
-```
-**16、测试Snort和Barnyard：**
+**15、测试Snort和Barnyard：**
 ```py
 
 [root@localhost ~]# snort -q -u snort -g snort -c /etc/snort/snort.conf -i eth0 -D
@@ -936,7 +955,7 @@ Enter password:
 
 
 
-**17、测试IDS：**
+**16、测试IDS：**
 ```py
 
 向IDS的IP发送ping包，base的页面会出现ICMP告警
@@ -948,6 +967,7 @@ C:\Users\Administrator>ping 172.30.105.115
 来自 172.30.105.115 的回复: 字节=32 时间=1ms TTL=64
 来自 172.30.105.115 的回复: 字节=32 时间=1ms TTL=64
 来自 172.30.105.115 的回复: 字节=32 时间=1ms TTL=64
+
 ```
 ###### 会变成下面这样
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort9.png)
