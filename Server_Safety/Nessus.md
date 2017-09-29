@@ -27,7 +27,10 @@ All plugins loaded (1sec)
 ```
 连接nessus-WEB界面：（必须要使用https）
 https://172.30.105.115:8834/
-
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus1.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus2.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus3.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus4.png)
 
 **激活Nessus：**
 ```py
@@ -80,7 +83,10 @@ D045-2403-4D1C-FB85-7E88
 手动更新：
 登陆Nessus → Setting → Software Update → 右上角 Manual Software Update → Upload your own plugin archive
 
+更新插件成功如下所示：
 ```
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus5.png)
+
 
 **Nessus的使用操作：**
 ##### 个性化扫描说明操作：
