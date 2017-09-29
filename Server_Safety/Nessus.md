@@ -71,6 +71,8 @@ Your activation code for the Nessus Home is
 D045-2403-4D1C-FB85-7E88
 
 下载all-2.0.tar.gz与nessus-fetch.rc文件：
+下载地址：http://plugins.nessus.org/get.php?f=all-2.0.tar.gz&u=84f20fb9412017633d98a9ea60e0c832&p=ac1d4023e673024d421e8e811fb007bb 
+
 
 下载完成执行：（两条命令不分先后）
 [root@localhost nessus]# /opt/nessus/sbin/nessuscli update /nessus/all-2.0.tar.gz 
