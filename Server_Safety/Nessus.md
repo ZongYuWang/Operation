@@ -106,4 +106,4 @@ D045-2403-4D1C-FB85-7E88
 - 同个性化扫描配置步骤一致，即事先配置好了策略
 - 可以在New Scan里找到配置好的策略，添加项目名、描述、归档类、目标IP地址，单击Save保存，在主界面单击扫描键（Launch ）执行。
 
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus5.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus6.png)
