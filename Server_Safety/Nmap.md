@@ -50,7 +50,6 @@ Nmap done: 1 IP address (1 host up) scanned in 5.11 seconds
 ```
 
 - **扫描多台主机**  
-
 可以简单的在Nmap命令后加上多个IP地址或主机名来扫描多台主机。
 ```py
 
@@ -76,7 +75,6 @@ Nmap done: 2 IP addresses (2 hosts up) scanned in 7.33 seconds
 ```
 
 - **扫描整个子网**  
-
 可以使用*通配符来扫描整个子网或某个范围的IP地址
 ```py
 [root@localhost ~]# /usr/bin/nmap  172.30.105.*
@@ -344,7 +342,6 @@ Nmap done: 256 IP addresses (21 hosts up) scanned in 29.41 seconds
 ```
 
 - **扫描一个IP地址范围** 
-
 可以在nmap执行扫描时指定IP范围
 ```py
 [root@localhost ~]# /usr/bin/nmap 172.30.105.100-120
@@ -374,9 +371,7 @@ Nmap done: 21 IP addresses (3 hosts up) scanned in 7.84 seconds
 
 ```
 
-
 - **使用IP地址的最后一个字节扫描多台服务器**  
-
 可以简单的指定IP地址的最后一个字节来对多个IP地址进行扫描。例如，我在下面执行中扫描了IP地址172.30.105.116和172.30.105.111
 ```py
 [root@localhost ~]# /usr/bin/nmap 172.30.105.116,111
@@ -401,7 +396,6 @@ Nmap done: 2 IP addresses (2 hosts up) scanned in 7.33 seconds
 ```
 
 - **从一个文件中扫描主机列表**  
-
 如果有多台主机需要扫描且所有主机信息都写在一个文件中，那么你可以直接让nmap读取该文件来执行扫描，如：创建一个名为“nmaptest.txt ”的文本文件，并定义所有你想要扫描的服务器IP地址或主机名
 ```py
 [root@localhost ~]# cat nmaptest.txt 
@@ -438,7 +432,6 @@ Nmap done: 2 IP addresses (2 hosts up) scanned in 7.32 seconds
 
 ```
 - **扫描操作系统信息和路由跟踪**  
-
 使用Nmap，你可以检测远程主机上运行的操作系统和版本。为了启用操作系统和版本检测，脚本扫描和路由跟踪功能，我们可以使用NMAP的“-A“选项。
 ```py
 [root@localhost ~]# /usr/bin/nmap -A 172.30.105.116
@@ -471,7 +464,6 @@ Nmap done: 1 IP address (1 host up) scanned in 7.78 seconds
 ```
 
 - **启用Nmap的操作系统探测功能** 
-
 使用选项“-O”和“-osscan-guess”也帮助探测操作系统信息。
 ```py
 [root@localhost ~]# /usr/bin/nmap -O 172.30.105.116
@@ -785,5 +777,19 @@ Nmap done: 1 IP address (1 host up) scanned in 5.10 seconds
 ```
 - **执行TCP空扫描以骗过防火墙**
 ```py
+[root@localhost ~]# /usr/bin/nmap -sN test-server3
 
+Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:46 CST
+Warning: 172.30.105.111 giving up on port because retransmission cap hit (10).
+Stats: 0:02:37 elapsed; 0 hosts completed (1 up), 1 undergoing NULL Scan
+NULL Scan Timing: About 19.09% done; ETC: 00:59 (0:11:10 remaining)
+Nmap scan report for test-server3 (172.30.105.111)
+Host is up (0.0012s latency).
+Not shown: 999 filtered ports
+PORT     STATE         SERVICE
+1107/tcp open|filtered isoipsigport-2
+MAC Address: 00:0C:29:FA:19:86 (VMware)
+
+Nmap done: 1 IP address (1 host up) scanned in 1000.85 seconds
+【注意】这项检测耗时比较慢
 ```
