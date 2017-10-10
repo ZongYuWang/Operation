@@ -115,6 +115,8 @@ D045-2403-4D1C-FB85-7E88
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus9.png)
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus10.png)
 先要选择Disable All，关闭所有扫描插件，然后选择对应漏洞的扫描插件，再开启插件。关闭后每个插件都是DISABLED的，开启需要选择左侧的Plugin Family，然后在右侧将所有相关的Plugin Name点击灰色位置，开启插件，变成ENABLED，然后点击SAVE再点击Apply
+
+
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus11.png)
 在My Scans → User defined中可以看到自定义的策略
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus12.png)
