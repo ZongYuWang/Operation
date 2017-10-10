@@ -91,7 +91,7 @@ D045-2403-4D1C-FB85-7E88
 
 
 **Nessus的使用操作：**
-##### 个性化扫描说明操作：
+##### 个性化扫描说明操作（使用Nessus默认的策略）：
 - 选择Scans → New Scan，这时可以看到所有的扫描模板(All Templates)。Scanner模板是程序带有的扫描模板，User模板我们自己配置的策略模板；
 - 选择Advanced Scan，有Settings、Credentials、Compliance、Plugins子项，在Settings设置基本配置，Credentials添加目标权限，Compliance添加目标服务配置文件，Plugins插件激活与关闭设置；
 - Settings中BASIC有三个子项：General、Schedule、Notification。在General配置基本信息，包括项目命名，描述，归档，目标地址（家庭版一次项目只支持16个IP）。Schedule是定时扫描设置。Notification是扫描结束后邮件通知设置，添加项目名，扫描IP地址；
@@ -100,12 +100,18 @@ D045-2403-4D1C-FB85-7E88
 - REPORT报告设置，保存默认设置即可；
 - ADVANCED高级选项设置，配置同时扫描的主机数和主机扫描线程数，保存默认设置即可；
 - 最后单击save保存，在主界面单击扫描键（Launch ）执行；
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus6.png)
 
-
-##### 策略扫描操作：
-- 选择Policies>New Policy
+##### 策略扫描操作（自定义策略）：
+- 选择Policies → New Policy
 - 选择高级扫描Advanced Scan
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus7.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus8.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus9.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus10.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus11.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus12.png)
 - 同个性化扫描配置步骤一致，即事先配置好了策略
 - 可以在New Scan里找到配置好的策略，添加项目名、描述、归档类、目标IP地址，单击Save保存，在主界面单击扫描键（Launch ）执行。
 
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus6.png)
+![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus13.png)
