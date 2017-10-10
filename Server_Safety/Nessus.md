@@ -100,12 +100,14 @@ D045-2403-4D1C-FB85-7E88
 - REPORT报告设置，保存默认设置即可；
 - ADVANCED高级选项设置，配置同时扫描的主机数和主机扫描线程数，保存默认设置即可；
 - 最后单击save保存，在主界面单击扫描键（Launch ）执行；
+
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus6.png)
 
 ##### 自定义策略扫描：
 - 选择Policies → New Policy
 - 选择高级扫描Advanced Scan
 首先设置好策略名称和策略的一些描述
+
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus7.png)
 在Permissions(权限)中配置策略的权限，选择Can use表示其他用户也可以使用该策略，选择No access表示仅创建者可以使用该策略
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus8.png)
