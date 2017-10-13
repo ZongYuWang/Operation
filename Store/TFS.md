@@ -89,10 +89,10 @@ gcc version 4.1.2
 
 ```
 ##### 5、TFS的配置：
-**`参考`**[TFS的配置部署](http://code.taobao.org/p/tfs/wiki/deploy/ )
+`参考`[TFS的配置部署](http://code.taobao.org/p/tfs/wiki/deploy/ )
 
 ##### 6、TFS的启动运行：
-**`参考`**[TFS的启动运行](http://code.taobao.org/p/tfs/wiki/start/)
+`参考`[TFS的启动运行](http://code.taobao.org/p/tfs/wiki/start/)
 
 ##### 7、TFS的挂载说明：
 ` TFS不一定非得挂载一整个磁盘，可以单独挂载一个文件夹为disk目录`
