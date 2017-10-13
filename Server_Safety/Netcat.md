@@ -68,7 +68,17 @@ server1：
 
 
 #### 克隆硬盘和分区：
-可以使用netcat甚至通过网络克隆硬盘驱动器/分区。 在这个例子中，我想将/ dev / sda从server1克隆到server2 。 当然，要克隆的分区必须在目标系统上卸载，所以如果要克隆系统分区，则必须从救援系统或Live-CD（如Knoppix ）引导目标系统（ server2 ）。 请记住，目标系统的IP地址可能会在实时系统下更改
+
+操作与上面的拷贝是雷同的，只需要由dd获得硬盘或分区的数据，然后传输即可。
+克隆硬盘或分区的操作，不应在已经mount的的系统上进行。当然，要克隆的分区必须在目标系统上卸载，所以需要使用安装光盘引导后，进入拯救模式（或使用Knoppix工具光盘）启动系统后，
+在server2(172.30.105.116)上进行类似的监听动作：
+```py
+[root@localhost ~]# nc -l -p 1234 | dd of=/dev/sda
+
+server1(172.30.105.115)上执行传输，即可完成从server1克隆sda硬盘到server2的任务：
+[root@localhost ~]# dd if=/dev/sda | nc 172.30.105.116 1234
+
+```
 
 #### 服务网页：
 可以使用netcat作为Web服务器
@@ -115,3 +125,25 @@ http://172.30.105.115/somepage.html
 现在可以在两个系统上键入消息，然后按ENTER键 ，它们将显示在另一个系统上。 要关闭聊天，请在两个系统上按CTRL + C。
 
 ```
+#### 欺骗HTTP头：
+```py
+其实就是自己编写一些模拟客户端的的信息(也就是HTTP请求头部)：
+GET / HTTP/1.1
+Host: nctest
+Referrer: mypage.com
+User-Agent: my-nc
+
+[root@localhost ~]# nc www.linuxfly.org 80
+输入上面的模拟http头信息，然后按两次Enter，就会输出下面的内容(模拟假的HTTP头部，正常请求了网页)：
+HTTP/1.1 200 OK
+Date: Fri, 13 Oct 2017 03:36:38 GMT
+Server: Apache/2.2.15 (CentOS)
+X-Powered-By: PHP/5.3.3
+Expires: Mon, 26 Jul 1997 05:00:00 GMT
+Last-Modified: Fri, 13 Oct 2017 03:36:41 GMT
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=utf-8
+.....
