@@ -1,4 +1,4 @@
-**安装Netcat：**
+####  安装Netcat：
 ```py
 [root@localhost netcat]# tar xvf netcat-0.7.1.tar.gz -C /usr/local
 [root@localhost netcat]# cd /usr/local/
@@ -7,7 +7,7 @@
 [root@localhost netcat]# ./configure && make && make install
 
 ```
-**配置Netcat环境变量：**
+#### 配置Netcat环境变量：
 ```py
 [root@localhost ~]# vim /etc/profile
     # set  netcat path
