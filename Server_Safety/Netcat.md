@@ -69,3 +69,49 @@ server1：
 
 #### 克隆硬盘和分区：
 可以使用netcat甚至通过网络克隆硬盘驱动器/分区。 在这个例子中，我想将/ dev / sda从server1克隆到server2 。 当然，要克隆的分区必须在目标系统上卸载，所以如果要克隆系统分区，则必须从救援系统或Live-CD（如Knoppix ）引导目标系统（ server2 ）。 请记住，目标系统的IP地址可能会在实时系统下更改
+
+#### 服务网页：
+可以使用netcat作为Web服务器
+```py
+[root@localhost ~]# vim somepage.html 
+123
+
+[root@localhost ~]# while true; do nc -l -p 80 < somepage.html; done
+【说明】用浏览器请求somepage页面，在nc服务器端会输出下面信息：
+GET /somepage.html HTTP/1.1
+Host: 172.30.105.115
+Connection: keep-alive
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.8
+
+按ctrl+c会输出：
+^CGET /favicon.ico HTTP/1.1
+Host: 172.30.105.115
+Connection: keep-alive
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36
+Accept: image/webp,image/apng,image/*,*/*;q=0.8
+Referer: http://172.30.105.115/somepage.html
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.8
+
+同时浏览器会输出：
+http://172.30.105.115/somepage.html
+123
+```
+
+#### 聊天：
+甚至可以在命令行中使用netcat从一个系统到另一个系统进行聊天
+```py
+在server2(172.30.105.116)上执行：
+[root@localhost ~]# nc -lp 1234  #  server2会等到server1在端口1234上连接
+
+在server1(172.30.105.115)上执行：
+[root@localhost ~]# nc 172.30.105.116 1234
+
+现在可以在两个系统上键入消息，然后按ENTER键 ，它们将显示在另一个系统上。 要关闭聊天，请在两个系统上按CTRL + C。
+
+```
