@@ -991,3 +991,70 @@ C:\Users\Administrator>ping 172.30.105.115
 ```
 ###### 会变成下面这样
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Snort9.png)
+
+**补充(snort的其他启动方式)：**
+```py
+
+[root@localhost ~]# cp idsctl /sbin
+[root@localhost ~]# chmod 755 /sbin/idsct
+[root@localhost ~]# idsctl start
+```
+
+
+```py
+
+#!/bin/bash
+
+###########################################################
+# runing shell script For IDS 
+# description: IDS by CentOS 6.5,snort-2.9.7.0,barnyard2-1.9
+# Edit by wangzy
+# QQ :479414941
+# Versions : 1.0
+###########################################################
+
+intface=eth0
+
+case "$1" in
+  stat)
+    sn=`ps -ef | grep snort | grep -v grep |awk '{print $2}'`
+    if [ "${sn}" = "" ]
+        then
+    echo snortt is not runing
+        else
+    echo snort is running
+    fi
+  ;;
+  start)
+    echo "Starting snort"
+        barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -D 1>/dev/null
+        snort -c /etc/snort/snort.conf -i $intface -D 1>/dev/null
+  ;;
+  stop)
+    echo "Stopping snort"
+        killall -9 snort barnyard2
+  ;;
+  restart)
+    echo "Stopping snort"
+        killall -9 snort barnyard2
+    echo "Starting snort"
+        barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -D 1>/dev/null
+        snort -c /etc/snort/snort.conf -i $intface -D 1>/dev/null        
+  ;;
+
+    help)
+    cat <<HELP
+    stop -- stops snort service
+   start -- starts snort service
+    stat -- displays status of snort service
+ restart -- stops and restarts snort
+HELP
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|stat|help}"
+    exit 1
+    ;;
+esac
+
+exit 0
+```
