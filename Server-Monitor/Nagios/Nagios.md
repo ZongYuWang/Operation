@@ -43,7 +43,7 @@ PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk M
 # chown -R nagios.nagios /usr/local/nagios/libexec/*
 # /etc/init.d/npcd restart
 ```
-修改pnp4nagios使用Bulk Mode的方式：
+#### 修改pnp4nagios使用Bulk Mode的方式：
 ```
 # vim /usr/local/nagios/etc/nagios.cfg
 enable_environment_macros=1
@@ -109,7 +109,7 @@ RRDPATH = /usr/local/pnp4nagios/var/perfdata
 http://192.168.1.111/pnp4nagios/
 # mv /usr/local/pnp4nagios/share/install.php /usr/local/pnp4nagios/share/install.php.bak
 ```
-添加Nagios监控图像：
+#### 添加Nagios监控图像：
 ```py
 将/etc/httpd/conf.d/pnp4nagios.conf 中的所有内容全部添加到apache的httpd.conf文件最后
 Alias /pnp4nagios "/usr/local/pnp4nagios/share"
@@ -141,7 +141,8 @@ Alias /pnp4nagios "/usr/local/pnp4nagios/share"
 </Directory>
 ```
 弹窗方式显示性能图表：
-效果图：
+效果图：   
+
 ![](https://github.com/ZongYuWang/Operation/blob/master/image/Nagios-pnp4nagios1.png)
 
 ```py
@@ -149,7 +150,7 @@ cp /nagios_soft/pnp4nagios-0.6.6/contrib/ssi/status-header.ssi /usr/local/nagios
 【注意】status-header.ssi必须没有执行权限
 
 ```
-修改Nagios的模板文件：
+#### 修改Nagios的模板文件：
 ```py
 # vim /usr/local/nagios/etc/objects/templates.cfg
 define host {
