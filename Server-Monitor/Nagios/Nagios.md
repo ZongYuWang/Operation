@@ -17,7 +17,7 @@ mysql> create database nagios;
 mysql> quit
 ```
 
-#### 配置ndoitils：
+#### 安装ndoitils：
 ```py
 #下面是yum安装mysql之后，编译ndoitils的方式:
 [root@localhost ~]# mkdir /nagios
@@ -50,7 +50,7 @@ make: *** [all] Error 2
 [root@localhost ndoutils-2.0.0]# make clean all
 [root@localhost ndoutils-2.0.0]# make
 ```
-
+#### 配置ndoitils：
 ```py
 [root@localhost ~]# cp config/{ndo2db.cfg-sample,ndomod.cfg-sample} /usr/local/nagios/etc  
 [root@localhost ~]# mv /usr/local/nagios/etc/ndo2db.cfg-sample /usr/local/nagios/etc/ndo2db.cfg
