@@ -313,7 +313,7 @@ Stopping ndo2db: head: cannot open `/usr/local/nagios/var/ndo2db.lock' for readi
 done.
 【说明】关闭ndo2db会存在问题
 ```
-
+[ndo2pnp.pl下载地址]( https://github.com/ZongYuWang/File/tree/master/File )
 ```py
 
 [root@localhost ~]# cd /usr/local/nagios/libexec/
@@ -334,7 +334,7 @@ Usage :
       --export-as-pnp   Export ndo content as a bulk file used by process_perfdata.pl.
 
 ```
-[ndo2pnp.pl下载地址]( https://github.com/ZongYuWang/File/tree/master/File )
+
 
 查看存入数据库的数据：
 ```py
