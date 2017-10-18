@@ -334,6 +334,8 @@ Usage :
       --export-as-pnp   Export ndo content as a bulk file used by process_perfdata.pl.
 
 ```
+![ndo2pnp.pl下载地址]("https://github.com/ZongYuWang/File/blob/master/File/ndo2pnp.pl")
+
 查看存入数据库的数据：
 ```py
 [root@localhost libexec]# ./ndo2pnp.pl -u root -p Tianjin_sunvsoft.2017! --dbname nagios --list-service
