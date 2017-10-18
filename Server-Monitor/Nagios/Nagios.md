@@ -143,7 +143,7 @@ Alias /pnp4nagios "/usr/local/pnp4nagios/share"
 弹窗方式显示性能图表：
 效果图：   
 
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nagios-pnp4nagios1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios-pnp4nagios1.png)
 
 ```py
 cp /nagios_soft/pnp4nagios-0.6.6/contrib/ssi/status-header.ssi /usr/local/nagios/share/ssi/
@@ -181,7 +181,7 @@ define service {
 ```
 
 ### 3、使用NDOUtils将Nagios监控信息存入MySQL:
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nagios-NDOUtils1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios-NDOUtils1.png)
 
 #### 安装配置MySQL：
 ```py
