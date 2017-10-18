@@ -334,7 +334,7 @@ Usage :
       --export-as-pnp   Export ndo content as a bulk file used by process_perfdata.pl.
 
 ```
-[ndo2pnp.pl下载地址]("https://github.com/ZongYuWang/File/tree/master/File")
+![ndo2pnp.pl下载地址]("https://github.com/ZongYuWang/File/tree/master/File")
 
 查看存入数据库的数据：
 ```py
