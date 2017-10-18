@@ -1209,7 +1209,7 @@ service nagios restart
 【说明】首先保证系统防火墙开放5666端口号
 ```
 ######  4.7 监控MySQL（官网自带的check_mysql和check_mysql_health）：
-```js
+```py
 
 监控端IP：172.30.105.112
 被监控端IP：172.30.105.115（111）
