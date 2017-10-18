@@ -1546,7 +1546,7 @@ HTTP OK: Status line output matched "200" - 381 bytes in 5.083 second response t
 ```
 
 #### 三、Nagios BPI（Business Process Intelligence）:
-`Nagios Business Process Intelligence is an advanced grouping tool that allows you to set more complex dependencies to determine groups states. Nagios BPI provides an interface to effectively view the ‘real’ state of the network. Rules for group states can be determined by the user, and parent-child relationships are easily identified when you need to ‘drill down’ on a problem. This tool can also be used in conjunction with a check plugin to allow for notifications through Nagios.  This document describes how to fully utilize the Nagios Business Process Intelligence (or BPI) add-on and incorporate checks into Nagios.`
+`Nagios Business Process Intelligence is an advanced grouping tool that allows you to set more complex dependencies to determine groups states. Nagios BPI provides an interface to effectively view the ‘real’ state of the network. Rules for group states can be determined by the user, and parent-child relationships are easily identified when you need to ‘drill down’ on a problem. This tool can also be used in conjunction with a check plugin to allow for notifications through Nagios.  This document describes how to fully utilize the Nagios Business Process Intelligence (or BPI) add-on and incorporate checks into Nagios.`  
 【说明】Nagios Business Process Intelligence （BPI）是一种高级的分组工具，允许你设置更复杂的依赖关系来确定组状态。 Nagios BPI提供了一个界面来有效地查看网络的“真实”状态。 组状态的规则可以由用户确定。此工具也可以与检查插件结合使用，以通过Nagios进行通知。 本文档介绍如何充分利用Nagios业务流程智能（或BPI）附件，并将检查纳入Nagios。
 
 ```js
@@ -1618,6 +1618,5 @@ define localServices2 {
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-BPI4.png) 
 
 - Primary Groups
-`“Primary” BPI groups are seen from the top level of BPI page, while a non-primary group must have a visible parent group in order to be seen on the display. If a non-primary group is defined but never assigned as a member somewhere else, it will not be visible on the display.`
-
+`“Primary” BPI groups are seen from the top level of BPI page, while a non-primary group must have a visible parent group in order to be seen on the display. If a non-primary group is defined but never assigned as a member somewhere else, it will not be visible on the display.`  
 【说明】“Primary”BPI组会在BPI的页面的最顶端看到，然而没有主组的必要要有一个依赖的“父组”，为了是能在页面中显示，如果一个“non-primary”组被定义了，但是没有委派任何的成员，那么这个组将不会再页面中显示
