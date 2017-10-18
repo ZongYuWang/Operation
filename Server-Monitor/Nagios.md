@@ -12,7 +12,7 @@ PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk M
 # yum install -y rrdtool perl-Time-HiRes perl-devel perl-CPAN
 ```
 #### 安装pnp4nagios：
-```py
+```js
 # cd /nagios_soft/
 # tar xvf pnp4nagios-0.6.6.tar.gz
 # cd pnp4nagios-0.6.6
@@ -23,7 +23,7 @@ PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk M
 # make install-init
 ```
 #### 配置pnp4nagios：
-```py
+```js
 # cd /usr/local/pnp4nagios/etc
 # mv misccommands.cfg-sample misccommands.cfg        
 # mv nagios.cfg-sample nagios.cfg        
@@ -44,7 +44,7 @@ PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk M
 # /etc/init.d/npcd restart
 ```
 #### 修改pnp4nagios使用Bulk Mode的方式：
-```
+```js
 # vim /usr/local/nagios/etc/nagios.cfg
 enable_environment_macros=1
 process_performance_data=1
@@ -68,7 +68,7 @@ service_perfdata_command=process-service-perfdata-file
 
 ```
 修改commands.cfg、templates.cfg、localhost.cfg（主机配置文件）：
-```py
+```js
 # vim /usr/local/nagios/etc/objects/commands.cfg
 define command{
        command_name    process-service-perfdata-file
@@ -97,7 +97,7 @@ define service{
 
 ```
 修改RRD文件路径的配置文件：
-```py
+```js
 # vim /usr/local/pnp4nagios/etc/config.php 
 $conf['rrdbase'] = "/usr/local/pnp4nagios/var/perfdata/";
 
@@ -105,12 +105,12 @@ $conf['rrdbase'] = "/usr/local/pnp4nagios/var/perfdata/";
 RRDPATH = /usr/local/pnp4nagios/var/perfdata
 ```
 检查pnp4nagios是否安装正确：
-```py
+```js
 http://192.168.1.111/pnp4nagios/
 # mv /usr/local/pnp4nagios/share/install.php /usr/local/pnp4nagios/share/install.php.bak
 ```
 #### 添加Nagios监控图像：
-```py
+```js
 将/etc/httpd/conf.d/pnp4nagios.conf 中的所有内容全部添加到apache的httpd.conf文件最后
 Alias /pnp4nagios "/usr/local/pnp4nagios/share"
 <Directory "/usr/local/pnp4nagios/share">
@@ -145,13 +145,13 @@ Alias /pnp4nagios "/usr/local/pnp4nagios/share"
 
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-pnp4nagios1.png)
 
-```py
+```js
 cp /nagios_soft/pnp4nagios-0.6.6/contrib/ssi/status-header.ssi /usr/local/nagios/share/ssi/
 【注意】status-header.ssi必须没有执行权限
 
 ```
 #### 修改Nagios的模板文件：
-```py
+```js
 # vim /usr/local/nagios/etc/objects/templates.cfg
 define host {
         name       host-pnp
@@ -166,16 +166,16 @@ define service {
 }
 ```
 检查配置文件是否正确：
-```py
+```js
 # /usr/local/nagios/bin/nrpe -c /usr/local/nagios/etc/nrpe.cfg -d
 ```
 
 重启npcd服务：
-```py
+```js
 # /etc/init.d/npcd restart 
 ```
 重启nagios服务：
-```py
+```js
 # service nagios restart
 【注意】监控内存FREE的单位错误，单位应该是M，此处体现是K，但是数据正确
 ```
@@ -184,7 +184,7 @@ define service {
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-NDOUtils1.png)
 
 #### 安装配置MySQL：
-```py
+```js
 # yum install mysql mysql-server mysql-devel perl-DBD-MySQL
 mysql> USE mysql;
 mysql> update user set Password=password('newpassword') where User='root';
@@ -194,7 +194,7 @@ mysql> quit
 ```
 
 #### 安装ndoitils：
-```py
+```js
 #下面是yum安装mysql之后，编译ndoitils的方式:
 [root@localhost ~]# mkdir /nagios
 [root@localhost ~]# cd /nagios/
@@ -227,7 +227,7 @@ make: *** [all] Error 2
 [root@localhost ndoutils-2.0.0]# make
 ```
 #### 配置ndoitils：
-```py
+```js
 [root@localhost ~]# cp config/{ndo2db.cfg-sample,ndomod.cfg-sample} /usr/local/nagios/etc  
 [root@localhost ~]# mv /usr/local/nagios/etc/ndo2db.cfg-sample /usr/local/nagios/etc/ndo2db.cfg
 [root@localhost ~]# mv /usr/local/nagios/etc/ndomod.cfg-sample /usr/local/nagios/etc/ndomod.cfg 
@@ -284,7 +284,7 @@ DBI connect('database=nagios;host=localhost','root',...) failed: Can't connect t
 ```
 
 #### 设置ndo2db开机自启动：
-```py
+```js
 
 [root@localhost ndoutils-2.0.0]# cd /nagios_soft/ndoutils-2.0.0
 [root@localhost ndoutils-2.0.0]# cp ./daemon-init /etc/init.d/ndo2db
@@ -314,7 +314,7 @@ done.
 【说明】关闭ndo2db会存在问题
 ```
 [ndo2pnp.pl下载地址]( https://github.com/ZongYuWang/File/tree/master/File )
-```py
+```js
 
 [root@localhost ~]# cd /usr/local/nagios/libexec/
 [root@localhost ~]# chmod +x ndo2pnp.pl  // 将附件中的ndo2pnp.pl上传到上面的目录中
@@ -337,7 +337,7 @@ Usage :
 
 
 查看存入数据库的数据：
-```py
+```js
 [root@localhost libexec]# ./ndo2pnp.pl -u root -p Tianjin_sunvsoft.2017! --dbname nagios --list-service
 Hostname                       | Service
 -------------------------------+-------------------
@@ -719,7 +719,7 @@ htmlcgi="/nagios/cgi-bin"
 #### 二、配置监控端
 
 ###### 2.1 安装NRPE
-```py
+```js
 # tar -zxvf nrpe-2.12.tar.gz
 # cd nrpe-2.12
 # ./configure --with-nrpe-user=nagios \
@@ -889,7 +889,7 @@ define service {
 
 ###### 3.3 安装NRPE
 
-```py
+```js
 # tar -zxvf nrpe-2.15.tar.gz
 # cd nrpe-2.15.tar.gz
 # ./configure --with-nrpe-user=nagios \
@@ -988,7 +988,7 @@ command[check_all_procs]=/usr/local/nagios/libexec/check_procs -w 150 -c 200
 ```
 #### 四、配置被监控端监控项
 ###### 4.1 监控硬盘I/O
-```py
+```js
 
 【说明】Params-Validate-0.91、Class-Accessor-0.31、Config-Tiny-2.14、Math-Calc-Units-1.07、Nagios-Plugin-0.37、Regexp-Common-2013031301都是iostat所需要的软件
 
@@ -1068,7 +1068,7 @@ OK - I/O stats tps=0.00 KB_read/s=0.03 KB_written/s=0.00 | 'tps'=0.00; 'KB_read/
 
 ```
 ###### 4.2 监控主机存活状态
-```py
+```js
 
 Ping的检测：
 -c 次数
@@ -1374,7 +1374,7 @@ OK - 0.08 seconds to connect as root | connection_time=0.0842s;1;5
 ```
 
 ######  4.8 日志监控：
-```py
+```js
 
 # yum install ntp
 # ntpdate cn.pool.ntp.org
