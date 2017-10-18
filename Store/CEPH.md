@@ -1,6 +1,6 @@
 ## ceph的高级使用：
-#### 1、作为OSD的日志盘，不涉及到CRUSH的修改:
-![](https://github.com/ZongYuWang/Operation/blob/master/image/ceph1.png)  
+#### 1、作为OSD的日志盘，不涉及到CRUSH的修改:  
+![](https://github.com/ZongYuWang/image/blob/master/ceph1.png)
  Ceph使用日志来提高性能及保证数据一致性。使用快速的SSD作为OSD的日志盘来提高集群性能是SSD应用于Ceph环境中最常见的使用场景。由于OSD日志读写的特点，在选择SSD盘时，除了关注IOPS性能外，要重点注意以下3个方面：
 - 写密集场景
 OSD日志是大量小数据块、随机IO写操作。选购SSD作为日志盘，需要重点关注随机、小块数据、写操作的吞吐量及IOPS；当一块SSD作为多个OSD的日志盘时，因为涉及到多个OSD同时往SSD盘写数据，要重点关注顺序写的带宽。
@@ -14,7 +14,7 @@ O_DIRECT表示不使用Linux内核Page Cache; O_DSYNC表示数据在写入到磁
 使用工具测试SSD性能时，应添加对应的flag：dd … oflag=direct,dsync; fio … —direct=1, —sync=1…
 
 #### 2、 与性能较低的SATA、SAS硬盘混用，但独立组成全SSD的Pool。需要修改CRUSH MAP，可以引出后面第四种场景:
-![](https://github.com/ZongYuWang/Operation/blob/master/image/ceph2.png)
+![](https://github.com/ZongYuWang/image/blob/master/ceph2.png)
 - 基本思路是编辑CRUSH MAP，先标示出散落在各存储服务器的SSD OSD以及硬盘OSD(host元素)，再把这两种类型的OSD聚合起来形成两种不同的数据根(root元素)，然后针对两种不同的数据源分别编写数据存取规则(rule元素)，最后，创建SSD Pool，并指定其数据存取操作都在SSD OSD上进行。
 
 - 在该场景下，同一个Ceph集群里存在传统机械盘组成的存储池，以及SSD组成的快速存储池，可把对读写性能要求高的数据存放在SSD池，而把备份数据存放在普通存储池。
@@ -88,7 +88,7 @@ rule ssd {
 ```
 
 #### 3、配置CRUSH数据读写规则，使主备数据中的主数据落在SSD的OSD上，涉及CRUSH MAP的修改:  
-![](https://github.com/ZongYuWang/Operation/blob/master/image/ceph3.png)
+![](https://github.com/ZongYuWang/image/blob/master/ceph3.png)
 该场景基本思路和第二种类似，SATA/SAS机械盘和SSD混用，但SSD的OSD节点不用来组成独立的存储池，而是配置CURSH读取规则，让所有数据的主备份落在SSD OSD上。Ceph集群内部的数据备份从SSD的主OSD往非SSD的副OSD写数据。
 这样，所有的Ceph客户端直接读写的都是SSD OSD 节点，既提高了性能又节约了对OSD容量的要求。
 配置重点是CRUSH读写规则的设置，关键点如下：
@@ -106,7 +106,7 @@ rule ssd-primary {
 }
 ```
 #### 4、作为Ceph Cache Tiering技术中的Cache层，涉及CRUSH MAP的修改:
-![](https://github.com/ZongYuWang/Operation/blob/master/image/ceph4.png)
+![](https://github.com/ZongYuWang/image/blob/master/ceph4.png)
 - Cache Tiering的基本思想是冷热数据分离，用相对快速/昂贵的存储设备如SSD盘，组成一个Pool来作为Cache层，后端用相对慢速/廉价的设备来组建冷数据存储池。
 - Ceph Cache Tiering Agent处理缓存层和存储层的数据的自动迁移，对客户端透明操作透明。Cahe层有两种典型使用模式：
   (1) Writeback模式
@@ -124,7 +124,7 @@ Ceph客户端在写操作时往后端冷数据池直接写，读数据时，Ceph
 `纠删码和Cache分层是两个紧密联系的功能。这2个功能是redhat收购Ceph后一直重视的功能。
 纠删码提高了存储容量，却降低了速度；而Cache分层刚好解决了这个问题；`
 原理架构如下：  
-![](https://github.com/ZongYuWang/Operation/blob/master/image/ceph5.png)  
+![](https://github.com/ZongYuWang/image/blob/master/ceph5.png)  
 ##### Cache分层的分层部署不只解决纠删码速度慢的问题:
 CRUSH算法是Ceph集群的核心，在深刻理解CRUSH算法的基础上，利用SSD的高性能，可利用较少的成本增加，满足企业关键应用对存储性能的高要求。
  
