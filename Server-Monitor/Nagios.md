@@ -3,7 +3,7 @@
 ### 1、Nagios基本安装： ###
 
 
-### 2、PNP4Nagios的安装:
+### 一、PNP4Nagios的安装:
 PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk Mode with NPCD；
 本实验使用Bulk Mode方式
 
@@ -716,7 +716,7 @@ htmlcgi="/nagios/cgi-bin"
 
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-NRPE1.png)
 
-#### 2、配置监控端
+#### 二、配置监控端
 
 ###### 2.1 安装NRPE
 ```py
@@ -867,7 +867,7 @@ define service {
 
 ```
 
-#### 3、配置被监控端
+#### 三、配置被监控端
 ```py
 
 # 安装相关软件包：
@@ -986,7 +986,7 @@ command[check_zombies]=/usr/local/nagios/libexec/check_procs -w 5 -c 10 -s Z
 command[check_all_procs]=/usr/local/nagios/libexec/check_procs -w 150 -c 200
 
 ```
-#### 4、配置被监控端监控项
+#### 四、配置被监控端监控项
 ###### 4.1 监控硬盘I/O
 ```py
 
