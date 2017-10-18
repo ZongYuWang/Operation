@@ -1,4 +1,4 @@
-## Snort ##
+## CentOS基于snort+barnyard2+base的入侵检测系统的搭建
 
 - Snort作为一种开源IDS(Intrusion Detection Systems)系统,不但可以主动发现网络内遭受攻击，还可以作为防火墙的补充，虽然不能阻止网络入侵行为，但是能够帮助系统对网络攻击进行报警和分析。
 
