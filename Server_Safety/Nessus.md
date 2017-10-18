@@ -27,10 +27,10 @@ All plugins loaded (1sec)
 ```
 连接nessus-WEB界面：（必须要使用https）
 https://172.30.105.115:8834/
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus1.png)
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus2.png)
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus3.png)
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus4.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus2.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus3.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus4.png)
 
 **激活Nessus：**
 ```py
@@ -87,7 +87,7 @@ D045-2403-4D1C-FB85-7E88
 
 更新插件成功如下所示：
 ```
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus5.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus5.png)
 
 
 **Nessus的使用操作：**
@@ -101,26 +101,26 @@ D045-2403-4D1C-FB85-7E88
 - ADVANCED高级选项设置，配置同时扫描的主机数和主机扫描线程数，保存默认设置即可；
 - 最后单击save保存，在主界面单击扫描键（Launch ）执行；
 
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus6.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus6.png)
 
 ##### 自定义策略扫描：
 - 选择Policies → New Policy
 - 选择高级扫描Advanced Scan
 首先设置好策略名称和策略的一些描述
 
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus7.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus7.png)
 在Permissions(权限)中配置策略的权限，选择Can use表示其他用户也可以使用该策略，选择No access表示仅创建者可以使用该策略
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus8.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus8.png)
 将Port Scanning中的扫描端口范围设置为1-65535，并且配置Report中的报告尽可能的显示详细，其他的配置可以参考默认策略扫描设置
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus9.png)
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus10.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus9.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus10.png)
 先要选择Disable All，关闭所有扫描插件，然后选择对应漏洞的扫描插件，再开启插件。关闭后每个插件都是DISABLED的，开启需要选择左侧的Plugin Family，然后在右侧将所有相关的Plugin Name点击灰色位置，开启插件，变成ENABLED，然后点击SAVE再点击Apply
 
 
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus11.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus11.png)
 在My Scans → User defined中可以看到自定义的策略
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus12.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus12.png)
 - 接下来同默认扫描配置步骤一致，即事先配置好了策略
 - 可以在New Scan里找到配置好的策略，添加项目名、描述、归档类、目标IP地址，单击Save保存，在主界面单击扫描键（Launch ）执行。
 
-![](https://github.com/ZongYuWang/Operation/blob/master/image/Nessus13.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nessus13.png)
