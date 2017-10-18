@@ -689,3 +689,20 @@ htmlcgi="/nagios/cgi-bin"
 添加：ServerName localhost:80
 # service httpd restart
 ```
+#### 添加一个MAP：
+`Options`  -> `Manage Maps` -> `Create Map中填写ID(tradeease)`
+`Open` -> `选择上面创建的Map`
+
+添加主机、添加相关服务：
+`都是在上面的MAP下操作`
+`Edit Map` -> `Add Icon` ->
+
+如果要对主机或者服务图标操作，需要先Unlock和lock，右键图标操作即可
+
+`图片格式都是png`
+`Logo`:/usr/local/nagvis/share/frontend/nagvis-js/images/internal
+`背景图片路径`：/usr/local/nagvis/share/userfiles/images/maps
+`服务器图片路径`：/usr/local/nagvis/share/userfiles/images/iconsets
+
+`Edit Map` -> `Map Options`
+![](https://github.com/ZongYuWang/image/blob/master/Nagios-Nagvis1.png)
