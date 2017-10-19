@@ -1,10 +1,10 @@
 ## 安装Nagios ##
 
 ### 一、Nagios基本安装： ###
-[Nagios的相关软件包下载1](https://sourceforge.net/projects/nagios/files/)
-[Nagios的相关软件包下载2](https://www.nagios.org/downloads/nagios-core-addons/)
-[Nagios的相关软件包下载3](http://nagios-plugins.org/download/)
-[Nagios的插件下载](https://labs.consol.de/nagios/)  
+[Nagios的相关软件包下载1](https://sourceforge.net/projects/nagios/files/)  
+[Nagios的相关软件包下载2](https://www.nagios.org/downloads/nagios-core-addons/)   
+[Nagios的相关软件包下载3](http://nagios-plugins.org/download/)    
+[Nagios的插件下载](https://labs.consol.de/nagios/)     
 
 #### 1.1 解决安装Nagios的依赖关系：
 `Nagios基本组件的运行依赖于httpd、gcc和gd。可以通过以下命令来检查nagios所依赖的rpm包是否已经完全安装：`
