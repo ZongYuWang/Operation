@@ -115,3 +115,6 @@ zenpass 回车输入新密码
 ```
 然后重启zenoss服务。
 到此为止，不出意外的话，数据迁移完毕。
+
+
+[Zenoss相关文件下载](https://pan.baidu.com/disk/home#list/vmode=list&path=%2F%E5%90%8C%E6%AD%A5%E4%B8%BA%E7%9F%A5%E7%AC%94%E8%AE%B0%2FZenoss)
