@@ -97,12 +97,12 @@ mysqldump -uzenoss -pzenoss events > events.sql  #从旧的导出
 mysql -uzenoss -pzenoss events < events.sql   #往新的导入
 ```
 其他配置
-zenoss数据迁移后，admin的密码应该依照旧机器。如果登不上，可以自行修改密码
-zenpass 回车输入新密码
-再次强调，zenoss目录下的所有文件的所有者都应该是zenoss。
-每次做完更改之后，可以重启zenoss服务，看看进展情况。
-计划任务配置如下。
-复制如下文件到相应的位置：
+zenoss数据迁移后，admin的密码应该依照旧机器。如果登不上，可以自行修改密码   
+zenpass 回车输入新密码   
+再次强调，zenoss目录下的所有文件的所有者都应该是zenoss。   
+每次做完更改之后，可以重启zenoss服务，看看进展情况。    
+计划任务配置如下。   
+复制如下文件到相应的位置：   
 ```py
 /etc/cron.weekly/
 /home/zenoss/ 目录下的所有脚本。
@@ -113,7 +113,7 @@ zenpass 回车输入新密码
 */10 * * * *  su - zenoss -c '/home/zenoss/dobeat'
 */5 * * * *  su - zenoss -c '/home/zenoss/check.sh >> /usr/local/zenoss/log/check_stat.log 2>&1 '
 ```
-然后重启zenoss服务。
+然后重启zenoss服务。    
 到此为止，不出意外的话，数据迁移完毕。
 
 
