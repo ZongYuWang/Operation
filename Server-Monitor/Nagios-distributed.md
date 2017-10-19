@@ -336,13 +336,13 @@ accept_passive_host_checks=1
 ```
 
 #### 3.8 添加被监控客户端：
-【注意】
-① 中心服务器和分布式服务器的时间一定要调整一致
-② 中心服务器和分布式服务器都需要添加监控的主机和服务，分布式服务器监控客户端主机可以用任何方式，主动/被动都可以（此实验分布式服务器是通过主动方式NRPE监控被监控端）
-③ 中心服务器主机定义的host_name值需要和分布式服务器主机定义的host_name值一致；
-④ 中心服务器服务定义的service_description值需要和分布式服务器服务定义的service_description值一致；
-⑤ 分布式服务器上定义的服务检测命令（check_command）是真正的检测服务的命令 ，中心服务器上定义的服务检测命令   （check_command）是当中心服务器由被动检测变为主动刷新检测时执行的命令（也就是当分布式主机不发送检测命令或超时发送告警时中心服务器执行的命令），正常情况下不执行这个命令。
-⑥ 分布服务器通常上面只安装有Nagios，它不需要安装Web接口
+【注意】  
+① 中心服务器和分布式服务器的时间一定要调整一致   
+② 中心服务器和分布式服务器都需要添加监控的主机和服务，分布式服务器监控客户端主机可以用任何方式，主动/被动都可以（此实验分布式服务器是通过主动方式NRPE监控被监控端）   
+③ 中心服务器主机定义的host_name值需要和分布式服务器主机定义的host_name值一致；   
+④ 中心服务器服务定义的service_description值需要和分布式服务器服务定义的service_description值一致；   
+⑤ 分布式服务器上定义的服务检测命令（check_command）是真正的检测服务的命令 ，中心服务器上定义的服务检测命令   （check_command）是当中心服务器由被动检测变为主动刷新检测时执行的命令（也就是当分布式主机不发送检测命令或超时发送告警时中心服务器执行的命令），正常情况下不执行这个命令。   
+⑥ 分布服务器通常上面只安装有Nagios，它不需要安装Web接口   
 
 
 - 分布式服务器
@@ -430,7 +430,9 @@ define service{
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-distributed5.png)
 
 分布式服务器发送到监控中心
+```py
 # echo "172.30.105.114;wangzy service;0;testOK"| /usr/local/nagios/bin/send_nsca 172.30.105.112 -d ";" -c /usr/local/nagios/etc/send_nsca.cfg 
+```
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-distributed6.png)
 
 【说明】手动测试发送，通过一个管道将要发送的数据传给send_nsca插件，然后send_nsca再将数据发送到监控中心的nsca服务，其中172.30.105.114是被监控的客户端，wangzy service是nagios中定义的被动监控检测服务的名称，0是表示正常，testOK是输出信息，管道符之前的也就是分布式服务器中定义的submit_check_result 脚本中，$1、$2、$3、$4定义的内容；
@@ -439,7 +441,7 @@ define service{
 分布式服务器显示信息：
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-distributed7.png)
 
-10、监控中心展示效果说明：
+#### 3.10 监控中心展示效果说明：
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-distributed8.png)
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-distributed9.png)
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-distributed10.png)
@@ -451,8 +453,8 @@ define service{
 - 被动模式工作原理：
 相比与主动模式中服务器主动去被监控机上轮询获取监控数据的方式，被动模式则是在被监控机上面通过插件或脚本获取监控数据，然后将数据通过send_nsca发往监控机，最后监控机通过nsca接收并解析数据，并传递给Nagios。这样做的一个很大的优势就是将除去处理数据的其他工作都放在了被监控机上面（包括了数据的传输），这样就避免了被监控机数量大时，一次轮询时间过长而导致监控反应延迟，这也是被动模式能承担更大监控量的关键
 
-NSCA由两个部分组成：
-nsca （安装在MonitorServer上，用来接收并解析MonitorClient发来的监控数据，传递给nagios）
+- NSCA由两个部分组成：
+nsca （安装在MonitorServer上，用来接收并解析MonitorClient发来的监控数据，传递给nagios）  
 send_nsca（安装在MonitorClient上，用来发送监控数据。）
 
 - 被动监控的过程：
