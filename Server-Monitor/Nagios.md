@@ -386,7 +386,7 @@ Nagios通过功能强大的继承引擎来实现基于模板的对象继承。�
 
 #### 2.10 安装出现问题集合：
 - 在首次配置了nagios监控端后，在浏览器输入地址后连接不上   
-```py
+```ruby
 可能是防火墙屏蔽了80端口，此时打开防火墙的80端口即可：
 firewall-cmd --add-service=http （即时打开）
 firewall-cmd --permanent --add-service=http（写入配置文件）
