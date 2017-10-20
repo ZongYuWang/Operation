@@ -24,7 +24,7 @@
 ```
 
 #### 1.3 编译安装nagios：
-```js
+```ruby
 解决Perl软件编译问题:
 # echo 'export LC_ALL=C' >> /etc/profile
 # source /etc/profile
