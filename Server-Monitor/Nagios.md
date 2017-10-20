@@ -64,7 +64,7 @@ Adding password for user nagiosadmin
 ```
 
 #### 1.4 编译、安装nagios-plugins
-```js
+```ruby
 nagios的所有监控工作都是通过插件完成的，因此，在启动nagios之前还需要为其安装官方提供的插件。
 # tar zxf nagios-plugins-2.1.4.tar.gz 
 # cdnagios-plugins-2.1.4
