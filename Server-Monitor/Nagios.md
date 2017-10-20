@@ -47,10 +47,10 @@ C
 为email指定您想用来接收nagios警告信息的邮件地址，默认是本机的nagios用户:
 # vi /usr/local/nagios/etc/objects/contacts.cfg 
 email        nagios@localhost       #这个是默认设置
-【说明】修改为 email                           479414941@qq.com
+#【说明】修改为 email                           479414941@qq.com
 
 创建一个登录nagios web程序的用户，这个用户帐号在以后通过web登录nagios认证时所用：
-【说明】增加nagios登陆认证文件，一定要用默认的nagiosadmin作为用户，否则需要修改其他文件
+#【说明】增加nagios登陆认证文件，一定要用默认的nagiosadmin作为用户，否则需要修改其他文件
 [root@nagios etc]# cd /usr/local/nagios/etc
 [root@nagios etc]# sed -i s@nagiosadmin@nagiosadmin\,admin@g cgi.cfg
 [root@nagios etc]# sed -i s@\#default_user_name=guest@default_user_name=admin@g cgi.cfg
