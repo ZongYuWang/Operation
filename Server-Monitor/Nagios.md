@@ -993,7 +993,7 @@ service nagios restart
 ### 六、Nagvis安装： 
 `【说明】需要前提先安装NDOUtils，将Nagios监控信息存入MySQL`
 
-```js
+```ruby
 # yum install php-mbstring php-pdo graphviz rsync
 
 # cd /nagios_soft/
