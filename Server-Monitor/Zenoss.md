@@ -10,7 +10,7 @@
 - yum源正常可用  
 
 #### 1.1 安装zenoss依赖的软件包
-```py
+```ruby
 yum install -y mysql-server
 yum install -y net-snmp net-snmp-utils net-snmp-devel
 yum install -y liberation-fonts libgcj libgomp
@@ -18,19 +18,19 @@ yum install -y liberation-fonts libgcj libgomp
 然后安装zenoss包
 ```
 #### 1.2 安装zenoss
-```py
+```ruby
 rpm -ivh zenoss-3.2.1.el5.x86_64.rpm
 有warning不怕，无视掉，进行下一步配置
 ```
 #### 1.3 启动zenoss
-```py
+```ruby
 service mysqld start
 /etc/init.d/zenoss start
 到此为止，zenoss安装完毕。
 
 ```
 #### 1.4 配置防火墙
-```py
+```ruby
 service iptables start
 chkconfig iptables on
 iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
@@ -44,7 +44,7 @@ iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
 - Extentions目录
 - ZenPacks目录
 - 以及一个文件 /etc/my.cnf，更换这个文件后记得设置权限并重启mysql。
-```py
+```ruby
 # chmod 644 /etc/my.cnf
 # service mysqld restart
 然后进入bin目录,执行
@@ -58,7 +58,7 @@ iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
 然后要注意，zenoss文件夹里的所有文件，其所有者都要改为zenoss。
 ```
 以新的products目录为例：
-```py
+```ruby
 chown -R zenoss:zenoss Products/
 这时候重启zenoss，会报一个zenactions.py的错误。
 把附件中的文件替换掉 Products/ZenEvents/ 下的同名文件就好了
@@ -92,7 +92,7 @@ zopectl restart
 这里真正有用的，只有Data.fs开头的那几个文件。其他的那些pid文件可以删掉。 然后把var目录整个替换掉。
 3.4 mysql数据
 这里都是些旧的告警数据，如果不需要旧的告警，这一步可以省略。
-```py
+```ruby
 mysqldump -uzenoss -pzenoss events > events.sql  #从旧的导出
 mysql -uzenoss -pzenoss events < events.sql   #往新的导入
 ```
@@ -103,7 +103,7 @@ zenpass 回车输入新密码
 每次做完更改之后，可以重启zenoss服务，看看进展情况。    
 计划任务配置如下。   
 复制如下文件到相应的位置：   
-```py
+```ruby
 /etc/cron.weekly/
 /home/zenoss/ 目录下的所有脚本。
 之后 crontab -e 打开计划任务，将命令清单9粘贴到crontab
