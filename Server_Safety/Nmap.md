@@ -1,14 +1,14 @@
 ## Nmap ##
 
 **安装Nmap**
-```py
+```ruby
 [root@localhost ~]# rpm -ivh nmap-7.60-1.x86_64.rpm 
 Preparing...                ########################################### [100%]
    1:nmap                   ########################################### [100%]
 
 ```
 - **用主机名和IP地址扫描系统**
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap test-server2
 [root@localhost ~]# /usr/bin/nmap 172.30.105.116
 
@@ -25,7 +25,7 @@ Nmap done: 1 IP address (1 host up) scanned in 5.80 seconds
 ```
 
 - **扫描使用-v选项**
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -v test-server2
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:14 CST
@@ -51,7 +51,7 @@ Nmap done: 1 IP address (1 host up) scanned in 5.11 seconds
 
 - **扫描多台主机**  
 可以简单的在Nmap命令后加上多个IP地址或主机名来扫描多台主机。
-```py
+```ruby
 
 [root@localhost ~]# /usr/bin/nmap test-server2 test-server3
 
@@ -76,7 +76,7 @@ Nmap done: 2 IP addresses (2 hosts up) scanned in 7.33 seconds
 
 - **扫描整个子网**  
 可以使用*通配符来扫描整个子网或某个范围的IP地址
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap  172.30.105.*
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:22 CST
@@ -343,7 +343,7 @@ Nmap done: 256 IP addresses (21 hosts up) scanned in 29.41 seconds
 
 - **扫描一个IP地址范围** 
 可以在nmap执行扫描时指定IP范围
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap 172.30.105.100-120
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:39 CST
@@ -373,7 +373,7 @@ Nmap done: 21 IP addresses (3 hosts up) scanned in 7.84 seconds
 
 - **使用IP地址的最后一个字节扫描多台服务器**  
 可以简单的指定IP地址的最后一个字节来对多个IP地址进行扫描。例如，我在下面执行中扫描了IP地址172.30.105.116和172.30.105.111
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap 172.30.105.116,111
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:27 CST
@@ -397,14 +397,14 @@ Nmap done: 2 IP addresses (2 hosts up) scanned in 7.33 seconds
 
 - **从一个文件中扫描主机列表**  
 如果有多台主机需要扫描且所有主机信息都写在一个文件中，那么你可以直接让nmap读取该文件来执行扫描，如：创建一个名为“nmaptest.txt ”的文本文件，并定义所有你想要扫描的服务器IP地址或主机名
-```py
+```ruby
 [root@localhost ~]# cat nmaptest.txt 
 172.30.105.116
 test-server3
 
 ```
 接下来运行带“iL” 选项的nmap命令来扫描文件中列出的所有IP地址
-```py
+```ruby
 [root@localhost ~]# nmap -iL nmaptest.txt 
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:32 CST
@@ -427,13 +427,13 @@ Nmap done: 2 IP addresses (2 hosts up) scanned in 7.32 seconds
 ```
 
 - **排除一些远程主机后再扫描** 
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap 172.30.105.* --exclude 172.30.105.116
 
 ```
 - **扫描操作系统信息和路由跟踪**  
 使用Nmap，你可以检测远程主机上运行的操作系统和版本。为了启用操作系统和版本检测，脚本扫描和路由跟踪功能，我们可以使用NMAP的“-A“选项。
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -A 172.30.105.116
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:47 CST
@@ -465,7 +465,7 @@ Nmap done: 1 IP address (1 host up) scanned in 7.78 seconds
 
 - **启用Nmap的操作系统探测功能** 
 使用选项“-O”和“-osscan-guess”也帮助探测操作系统信息。
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -O 172.30.105.116
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:50 CST
@@ -488,7 +488,7 @@ Nmap done: 1 IP address (1 host up) scanned in 7.22 seconds
 ```
 - **扫描主机侦测防火墙** 
 下面的命令将扫描远程主机以探测该主机是否使用了包过滤器或防火墙
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -sA 172.30.105.116
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:52 CST
@@ -505,7 +505,7 @@ Nmap done: 1 IP address (1 host up) scanned in 5.11 seconds
 
 - **扫描主机检测是否有防火墙保护**
 扫描主机检测其是否受到数据包过滤软件或防火墙的保护
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -PN 172.30.105.116
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-09 23:58 CST
@@ -521,7 +521,7 @@ Nmap done: 1 IP address (1 host up) scanned in 5.12 seconds
 ```
 - **找出网络中的在线主机**
 使用“-sP”选项，我们可以简单的检测网络中有哪些在线主机，该选项会跳过端口扫描和其他一些检测
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -sP 172.30.105.*
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:00 CST
@@ -593,7 +593,7 @@ Nmap done: 256 IP addresses (21 hosts up) scanned in 14.43 seconds
 
 - **执行快速扫描**
 可以使用“-F”选项执行一次快速扫描，仅扫描列在nmap-services文件中的端口而避开所有其它的端口
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -F 172.30.105.116
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:04 CST
@@ -609,7 +609,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.27 seconds
 ```
 - **顺序扫描端口**
 使用“–r”选项表示不会随机的选择端口扫描
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -r 172.30.105.116
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:13 CST
@@ -626,7 +626,7 @@ Nmap done: 1 IP address (1 host up) scanned in 5.53 seconds
 
 - **打印主机接口和路由**
 可以使用nmap的“–iflist”选项检测主机接口和路由信息
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap --iflist
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:19 CST
@@ -650,7 +650,7 @@ ff00::/8                     eth0 256
 ```
 - **扫描特定的端口**
 使用Nmap扫描远程机器的端口有各种选项，你可以使用“-P”选项指定你想要扫描的端口，默认情况下nmap只扫描TCP端口
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -p 22 test-server2
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:20 CST
@@ -667,7 +667,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds
 
 - **扫描TCP端口**
 可以指定具体的端口类型和端口号来让nmap扫描
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -p -T:8888,80 test-server2
 
 ```
@@ -679,19 +679,19 @@ Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds
 ```
 - **扫描多个端口**
 可以使用选项“-P”来扫描多个端口
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -p 80,443 test-server2
 
 ```
 - **扫描指定范围内的端口**
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -p 80-160 test-server2
 
 ```
 
 - **查找主机服务版本号**
 可以使用“-sV”选项找出远程主机上运行的服务版本
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -sV test-server2
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:39 CST
@@ -708,7 +708,7 @@ Nmap done: 1 IP address (1 host up) scanned in 5.82 seconds
 ```
 - **使用TCP ACK (PA)和TCP Syn (PS)扫描远程主机**
 有时候包过滤防火墙会阻断标准的ICMP ping请求，在这种情况下，我们可以使用TCP ACK和TCP Syn方法来扫描远程主机
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -PS test-server3
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:40 CST
@@ -724,7 +724,7 @@ Nmap done: 1 IP address (1 host up) scanned in 5.11 seconds
 ```
 
 - **使用TCP ACK扫描远程主机上特定的端口**
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -PA -p 22,80 test-server3
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:41 CST
@@ -740,7 +740,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds
 
 ```
 - **使用TCP Syn扫描远程主机上特定的端口**
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -PS -p 22,80 test-server3
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:42 CST
@@ -757,7 +757,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.04 seconds
 ```
 
 - **执行一次隐蔽的扫描**
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -sS test-server3
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:43 CST
@@ -772,11 +772,11 @@ Nmap done: 1 IP address (1 host up) scanned in 5.10 seconds
 ```
 
 - **使用TCP Syn扫描最常用的端口**
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -sT test-server3
 ```
 - **执行TCP空扫描以骗过防火墙**
-```py
+```ruby
 [root@localhost ~]# /usr/bin/nmap -sN test-server3
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2017-10-10 00:46 CST
