@@ -4,7 +4,7 @@
 `但是先不要安装gcc 4.1.2版本的，先要安装依赖软件，最后再对gcc降级，否则会出现大量的错误`
 
 ##### 1、安装依赖包：
-```py
+```ruby
 [root@localhost ~]# yum -y install  automake libtool readline readline-devel libuuid-devel zlib-devel mysql-devel gcc-c++
 
 安装jemalloc(编译tfs源码会用到)
@@ -17,7 +17,7 @@
 
 ```
 ##### 2、安装tbsys和tbnet(TFS依赖底层开发包tbnet)：
-```py
+```ruby
 [root@localhost jemalloc-4.4.0]# yum install subversion
 [root@localhost jemalloc-4.4.0]# cd /usr/local/src/
 [root@localhost src]# svn checkout -r 18 http://code.taobao.org/svn/tb-common-utils/trunk/ tb-common-utils
@@ -34,7 +34,7 @@ export TBLIB_ROOT=/opt/tblib/
 
 ##### 3、对GCC降级：
 `CentOS默认是gcc版本是4.4.7`
-```py
+```ruby
 [root@localhost tb-common-utils]# cd /root/tfs/
 [root@localhost tfs]# wget http://www.mirrorservice.org/sites/sources.redhat.com/pub/gcc/releases/gcc-4.1.2/gcc-4.1.2.tar.bz2
 
@@ -66,7 +66,7 @@ MAKEINFO = /usr/bin/makeinfo
 [root@localhost gcc-4.1.2]# ln -s /opt/gcc-4.1.2/bin/g++ /usr/bin/g++
 ```
 `查看目前gcc的版本是gcc 4.1.2`
-```py
+```ruby
 [root@localhost gcc-4.1.2]# gcc -v
 Using built-in specs.
 Target: x86_64-unknown-linux-gnu
@@ -77,7 +77,7 @@ gcc version 4.1.2
 ```
 
 ##### 4、编译安装TFS：
-```py
+```ruby
 [root@localhost gcc-4.1.2]# cd /root/tfs/
 [root@localhost tfs]# svn co http://code.taobao.org/svn/tfs/tags/release-2.2.16
 【说明】release-2.6.6版本有点问题，报EASY_ROOT is not work! expect EASY_ROOT/include/easy and EASY_ROOT/lib64 directory错误
@@ -96,7 +96,7 @@ gcc version 4.1.2
 
 ##### 7、TFS的挂载说明：
 ` TFS不一定非得挂载一整个磁盘，可以单独挂载一个文件夹为disk目录`
-```py
+```ruby
 #编译安装之后需要从源码目录/conf下copy配置文件到安装目录
 [root@localhost release-2.2.16]# cp /root/tfs/release-2.2.16/conf/ds.conf /opt/tfs-2.2.16/conf/
 [root@localhost release-2.2.16]# mkdir -p /home/disk
@@ -112,6 +112,6 @@ gcc version 4.1.2
 ##### 8、FAQ：
 ` 64为的系统，如果启动ds的时候提示error while loading shared libraries: libjemalloc.so.1: cannot open shared object file: No such file or directory 
 做一下软链接就可以了 `
-```py
+```ruby
 [root@localhost ~]# ln -s /usr/local/lib/libjemalloc.so.1 /usr/lib64/libjemalloc.so.1
 ```
