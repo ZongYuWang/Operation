@@ -1871,26 +1871,26 @@ Usage: check_logfiles [-t timeout] -f <configfile>
 
 The configfile looks like this:
 
-$seekfilesdir = '/opt/nagios/var/tmp';                                                //  写状态信息的目录，这里面记录已经检查过的日志内容，相当于历史记录  
+$seekfilesdir = '/opt/nagios/var/tmp';    //  写状态信息的目录，这里面记录已经检查过的日志内容，相当于历史记录  
 # where the state information will be saved.
 
-$protocolsdir = '/opt/nagios/var/tmp';                                             //  写协议信息的目录，这里面记录日志检查的匹配信息
+$protocolsdir = '/opt/nagios/var/tmp';   //  写协议信息的目录，这里面记录日志检查的匹配信息
 # where protocols with found patterns will be stored.
 
-$scriptpath = '/opt/nagios/var/tmp';                                                // 可调用的脚本或程序 
+$scriptpath = '/opt/nagios/var/tmp';    // 可调用的脚本或程序 
 # where scripts will be searched for.
 
-$MACROS = { CL_DISK01 => "/dev/dsk/c0d1", CL_DISK02 => "/dev/dsk/c0d2" };            // 定义宏，我们可以调用的变量  
+$MACROS = { CL_DISK01 => "/dev/dsk/c0d1", CL_DISK02 => "/dev/dsk/c0d2" };          // 定义宏，我们可以调用的变量  
 
-@searches = (                // 此处为配置文件的内容，我们可以通过配置文件来执行程序，也可以通过在命令行中直接定义。通过配置文件更方便  
+@searches = (    // 此处为配置文件的内容，我们可以通过配置文件来执行程序，也可以通过在命令行中直接定义。通过配置文件更方便  
   {
-    tag => 'temperature',         // tag可以理解为一个自定义的标志，它将在生成状态信息或协议信息中作为名字中的一部分使用，并没有实际的意义  
-    logfile => '/var/adm/syslog/syslog.log',                // logfile为所要监控的日志文件  
-    rotation => 'bmwhpux',                        // rotation如果有截断日志的话用来定义如何匹配截断日志  
-    criticalpatterns => ['OVERTEMP_EMERG', 'Power supply failed'],                // 严重错误，可以匹配一个或多个正则表达式 
+    tag => 'temperature',       // tag可以理解为一个自定义的标志，它将在生成状态信息或协议信息中作为名字中的一部分使用，并没有实际的意义  
+    logfile => '/var/adm/syslog/syslog.log',    // logfile为所要监控的日志文件  
+    rotation => 'bmwhpux',     // rotation如果有截断日志的话用来定义如何匹配截断日志  
+    criticalpatterns => ['OVERTEMP_EMERG', 'Power supply failed'],              // 严重错误，可以匹配一个或多个正则表达式 
     warningpatterns => ['OVERTEMP_CRIT', 'Corrected ECC Error'],                // 警告错误，可以匹配一个或多个正则表达式  
-    options => 'script,protocol,nocount',                // 选项列表，我们可以选择启动脚本，写协议，不计数等操作  
-    script => 'sendnsca_cmd'                                    //脚本的名字  
+    options => 'script,protocol,nocount',             // 选项列表，我们可以选择启动脚本，写协议，不计数等操作  
+    script => 'sendnsca_cmd'          //脚本的名字  
   },
   {
     tag => 'scsi',
