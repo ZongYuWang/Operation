@@ -13,7 +13,7 @@
 【说明】以上软件包您也可以通过编译源代码的方式安装，只是后面许多要用到的相关文件的路径等需要按照您的源代码安装时的配置逐一修改。此外，您还得按需启动必要的服务，如httpd等。
 ```
 #### 1.2 添加nagios运行所需要的用户和组：
-```js
+```ruby
 # groupadd  nagcmd
 # useradd -G nagcmd nagios
 # passwd nagios
@@ -87,7 +87,7 @@ nagios的所有监控工作都是通过插件完成的，因此，在启动nagio
 ```
 
 ###### 1.5.3 如果上面的语法检查没有问题，接下来就可以正式启动nagios服务了：
-```js
+```ruby
 # service nagios start
 
 配置selinux
@@ -110,20 +110,20 @@ nagios的所有监控工作都是通过插件完成的，因此，在启动nagio
 
 #### 2.1 Nagios的主配置文件
 Nagios的主配置文件为nagios.cfg，参数的设置格式为<parameter>=<value>；其中，有些参数是可以重复出现的。其中常用的参数说明如下：
-```js
-    log_file: 设定Nagios的日志文件；
-    cfg_file: Nagios对象定义的相关文件，此参数可重复使用多次以指定多个文件；
-    cfg_dir:  设定Nagios对象定义的相关文件所在的目录，此目录中的所有文件都会被作为对象定义的文件；此参数可重复使用多次以指定多个目录；
-    resource_file: 设定Nagios附加的宏定义的相关文件；
-    status_file: 设定Nagios存储所有主机和服务当前状态信息的文件；
-    status_update_interval: 设定status_file指定的文件中状态信息的更新频率；
-    service_check_timeout: 设定服务检测的超时时间，默认为60秒；
-    host_check_timeout: 设定主机检测的超时时间，默认为30秒；
-    notification_timeout: 设定通知信息发送尝试的超时时间，默认为30秒；
+```ruby
+log_file: 设定Nagios的日志文件；
+cfg_file: Nagios对象定义的相关文件，此参数可重复使用多次以指定多个文件；
+cfg_dir:  设定Nagios对象定义的相关文件所在的目录，此目录中的所有文件都会被作为对象定义的文件；此参数可重复使用多次以指定多个目录；
+resource_file: 设定Nagios附加的宏定义的相关文件；
+status_file: 设定Nagios存储所有主机和服务当前状态信息的文件；
+status_update_interval: 设定status_file指定的文件中状态信息的更新频率；
+service_check_timeout: 设定服务检测的超时时间，默认为60秒；
+host_check_timeout: 设定主机检测的超时时间，默认为30秒；
+notification_timeout: 设定通知信息发送尝试的超时时间，默认为30秒；
 ```
 
 #### 2.2 resource_file和宏定义
-```js
+```ruby
 # less /usr/local/nagios/etc/resource.cfg 
 在主配置文件中，参数resource_file用于定义所有用户变量(即“宏”)的存储文件，它用于存储对象定义中的可以访问的额外信息，如访问某服务的密码等；因此，这些信息通常都是些敏感数据，一般不允许通过Web接口来访问。此文件中可以定义的宏可多达32个，它们分别为$USER1$,$USER2$...$USER32，这些宏一般在check命令中引用。通常情况下$USER1$用于引用Nagios插件所在目录这个路径信息，因此，一般不建议修改其值。
 
@@ -174,7 +174,7 @@ Nagios 3还支持自定义宏，只是它的定义和使用方式比较独特。
 ```
 
 #### 2.3 定义命令对象
-```js
+```ruby
 “命令”用于描述如何对主机或服务进行状态检测。服务对象的定义包含两个指令：名字(command_name)和命令行(command_line)；名字用于标识此命令对象，命令行则是执行检测时真正要执行的命令。
 
 当命令对象用于检测其它对象时，其通常需要用到额外的参数以标识要检测的某特定对象，此时，命令对象需要以command_name[!arg1][!arg2][...]的语法格式进行引用。因此，命令对象的定义中，命令行指令中通常会用到宏$ARG1$, $ARG2$...，对应用于接收[!arg1][!arg2][...]传递而来的参数。
@@ -197,7 +197,7 @@ Nagios 3还支持自定义宏，只是它的定义和使用方式比较独特。
 
 ```
 #### 2.4 定义主机对象
-```
+```ruby
 “主机”指的是被监控的机器，可是物理主机，也可以是虚拟设备。一个主机对象的定义至少应该包含一个简名(short name)、一个别名、一个IP地址和用到的检测命令。此外，很多时候，其定义中还应该包含监控时段、联系人及要通知的相关问题、检测的频率、重试检测的方式、发送通知的频率等。具体的各指令及说明请参见官方文档：http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#host。
 
 一个主机定义的例子：
@@ -236,7 +236,7 @@ Nagios 3还支持自定义宏，只是它的定义和使用方式比较独特。
 
 ```
 #### 2.5 定义服务对象
-```js
+```ruby
 “服务”即某“主机”所提供的功能或资源对象，如HTTP服务、存储空间资源或CPU负载等。服务附属于主机，每一个服务使用服务名来标识，此服务名要求在特定的主机上具有唯一性。每一个服务对象还通常定义一个检测命令及如何进行问题通知等。
 
 	define service
@@ -276,7 +276,7 @@ Nagios 3还支持自定义宏，只是它的定义和使用方式比较独特。
 ```
 
 #### 2.6 定义“时段”对象
-```js
+```ruby
 “时段”用于定义某“操作”可以执行或不能执行的日期和时间跨度，如工作日内的每天8:00-18:00等，其可以在多个不同的操作中重复引用。一个时段对象的定义包含一个全局唯一的名称标识及一个或多个时间跨度。例如：
 
 	define timeperiod
@@ -298,7 +298,7 @@ Nagios 3还支持自定义宏，只是它的定义和使用方式比较独特。
 	星期几：如monday, tuesday等；
 ```
 #### 2.7 定义联系人对象
-```js
+```ruby
 “联系人”对象用于定义某主机设备的拥有者或某问题出现时接受通知者。联系人对象的定义包含一个全局唯一的标识名称、一个描述名及一个或多个邮件地址等。此外，其通常还应该包括对相应的主机或服务出现故障时所用到的通知命令。例如：
 
 	define contact
@@ -327,7 +327,7 @@ Nagios 3还支持自定义宏，只是它的定义和使用方式比较独特。
 
 ```
 #### 2.8 模板及对象继承
-```js
+```ruby
 Nagios通过功能强大的继承引擎来实现基于模板的对象继承。这就意味着可以定义将某类型的对象的通用属性组织起来定义为对象模板，并在定义其类型中的对象时直接从此模板继承其相关属性的定义。定义对象模板的方法很简单，通常只需要在定义某类型对象时使用register指令并将其值设定为0即可。对象模板的名称通常使用name指令定义，这与某特定类型对象使用的指令也有所不同。而定义此种类型的对象时，只需要使用use指令并将其值设定为对应模板的名称即可。例如：
 
 	define host
@@ -357,7 +357,7 @@ Nagios通过功能强大的继承引擎来实现基于模板的对象继承。�
 
 ```
 #### 2.9 依赖关系
-```js
+```ruby
 为了描述Nagios对象间的依赖关系，这里要用到两个术语：master（被依赖的主机或服务）和dependent（依赖关系中的依赖于master的Nagios对象）。Nagios可以定义对象间的彼此依赖性，也可以为某对象定义其父对象，甚至也可以指定此依赖关系生效的时段。下面是一个关于依赖关系定义的例子：
 
 	define hostdependency
@@ -398,7 +398,7 @@ yum install php –y
 然后重启httpd
 ```
 - 启动nrpe后却不能互相通信   
-```py
+```ruby
 首先启动nrpe进程
 systemctl restart nrped.service
 此时可以检查nrpe绑定的5666端口是否被防火墙屏蔽了：
@@ -411,14 +411,14 @@ firewall-cmd --reload （重启防火墙）
 ```
 
 - 安装pnp4nagios后出现The requested URL /pnp4nagios/graph was not found on this server.   
-```py
+```ruby
 当你在pnp4nagios安装的时候执行了make install-webconf，注意它生成了一个apache的配置文件。
 你把这个文件：/etc/httpd/conf.d/pnp4nagios.conf 中的所有内容全部添加到apache的httpd.conf文件最后，再重新启动nagios和apache就应该可以
 
 ```
 
 - 出现“CHECK_NRPE: Error - Could not complete SSL handshake.”的错误   
-```py
+```ruby
 yum install openssl openssl-devel
 检查nagios监控端的允许地址和目标端的nrpe允许地址配置正确。比如被监控端的配置（命令：vi  /usr/local/nagios/etc/nrpe.cfg）：
 allowed_hosts=127.0.0.1,192.168.1.112 （两个地址之间只有一个逗号，不能有空格）
@@ -429,7 +429,7 @@ yum -y install openssl-devel
 ```
 
 - 解压./configure 后，在nagios-4.0.8进行make all报错   
-```py
+```ruby
 cd ./base && make
 make[1]:Entering directory '/tmp/nagios/base'
 make[1]:*** No rule to make target '/include/locations.h', needed by 'broker.o'. Stop.
@@ -443,7 +443,7 @@ yum -y install perl
 
 ```
 - 安装nrpe时执行.configure出错   
-```py
+```ruby
 ./configure 提示报错：
 checking for SSL headers... configure: error: Cannot find ssl headers
 如果这时运行命令 make all，则会报错：make: *** 没有规则可以创建目标“all”。停止。
@@ -455,7 +455,7 @@ make install-plugin
 ```
 
 - 错误：perfdata directory "/usr/local/pnp4nagios/var/perfdata/" is empty   
-```py
+```ruby
 # vim /usr/local/pnp4nagios/etc/config.php 
 $conf['rrdbase'] = "/usr/local/pnp4nagios/var/";
 
@@ -470,11 +470,11 @@ PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk M
 本实验使用Bulk Mode方式
 
 #### 3.1 安装依赖包：
-```py
+```ruby
 # yum install -y rrdtool perl-Time-HiRes perl-devel perl-CPAN
 ```
 #### 3.2 安装pnp4nagios：
-```js
+```ruby
 # cd /nagios_soft/
 # tar xvf pnp4nagios-0.6.6.tar.gz
 # cd pnp4nagios-0.6.6
@@ -485,7 +485,7 @@ PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk M
 # make install-init
 ```
 #### 3.3 配置pnp4nagios：
-```js
+```ruby
 # cd /usr/local/pnp4nagios/etc
 # mv misccommands.cfg-sample misccommands.cfg        
 # mv nagios.cfg-sample nagios.cfg        
@@ -506,7 +506,7 @@ PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk M
 # /etc/init.d/npcd restart
 ```
 #### 3.4 修改pnp4nagios使用Bulk Mode的方式：
-```js
+```ruby
 # vim /usr/local/nagios/etc/nagios.cfg
 enable_environment_macros=1
 process_performance_data=1
@@ -530,7 +530,7 @@ service_perfdata_command=process-service-perfdata-file
 
 ```
 修改commands.cfg、templates.cfg、localhost.cfg（主机配置文件）：
-```js
+```ruby
 # vim /usr/local/nagios/etc/objects/commands.cfg
 define command{
        command_name    process-service-perfdata-file
@@ -559,7 +559,7 @@ define service{
 
 ```
 修改RRD文件路径的配置文件：
-```js
+```ruby
 # vim /usr/local/pnp4nagios/etc/config.php 
 $conf['rrdbase'] = "/usr/local/pnp4nagios/var/perfdata/";
 
@@ -567,12 +567,12 @@ $conf['rrdbase'] = "/usr/local/pnp4nagios/var/perfdata/";
 RRDPATH = /usr/local/pnp4nagios/var/perfdata
 ```
 检查pnp4nagios是否安装正确：
-```js
+```ruby
 http://192.168.1.111/pnp4nagios/
 # mv /usr/local/pnp4nagios/share/install.php /usr/local/pnp4nagios/share/install.php.bak
 ```
 #### 3.5 添加Nagios监控图像：
-```js
+```ruby
 将/etc/httpd/conf.d/pnp4nagios.conf 中的所有内容全部添加到apache的httpd.conf文件最后
 Alias /pnp4nagios "/usr/local/pnp4nagios/share"
 <Directory "/usr/local/pnp4nagios/share">
@@ -607,13 +607,13 @@ Alias /pnp4nagios "/usr/local/pnp4nagios/share"
 
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-pnp4nagios1.png)
 
-```js
+```ruby
 cp /nagios_soft/pnp4nagios-0.6.6/contrib/ssi/status-header.ssi /usr/local/nagios/share/ssi/
 【注意】status-header.ssi必须没有执行权限
 
 ```
 #### 3.6 修改Nagios的模板文件：
-```js
+```ruby
 # vim /usr/local/nagios/etc/objects/templates.cfg
 define host {
         name       host-pnp
@@ -628,16 +628,16 @@ define service {
 }
 ```
 检查配置文件是否正确：
-```js
+```ruby
 # /usr/local/nagios/bin/nrpe -c /usr/local/nagios/etc/nrpe.cfg -d
 ```
 
 重启npcd服务：
-```js
+```ruby
 # /etc/init.d/npcd restart 
 ```
 重启nagios服务：
-```js
+```ruby
 # service nagios restart
 【注意】监控内存FREE的单位错误，单位应该是M，此处体现是K，但是数据正确
 ```
@@ -646,7 +646,7 @@ define service {
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-NDOUtils1.png)
 
 #### 4.1 安装配置MySQL：
-```js
+```ruby
 # yum install mysql mysql-server mysql-devel perl-DBD-MySQL
 mysql> USE mysql;
 mysql> update user set Password=password('newpassword') where User='root';
@@ -656,7 +656,7 @@ mysql> quit
 ```
 
 #### 4.2 安装ndoitils：
-```js
+```ruby
 #下面是yum安装mysql之后，编译ndoitils的方式:
 [root@localhost ~]# mkdir /nagios
 [root@localhost ~]# cd /nagios/
@@ -671,7 +671,7 @@ mysql> quit
 【说明】make完之后，不要make install
 ```
 `make可能会报如下错误:`
-```py
+```ruby
 [root@localhost ndoutils-2.0.0]# make && echo ok
 cd ./src && make
 make[1]: Entering directory `/nagios/ndoutils-2.0.0/src'
@@ -689,7 +689,7 @@ make: *** [all] Error 2
 [root@localhost ndoutils-2.0.0]# make
 ```
 #### 4.3 配置ndoitils：
-```js
+```ruby
 [root@localhost ~]# cp config/{ndo2db.cfg-sample,ndomod.cfg-sample} /usr/local/nagios/etc  
 [root@localhost ~]# mv /usr/local/nagios/etc/ndo2db.cfg-sample /usr/local/nagios/etc/ndo2db.cfg
 [root@localhost ~]# mv /usr/local/nagios/etc/ndomod.cfg-sample /usr/local/nagios/etc/ndomod.cfg 
@@ -700,7 +700,7 @@ make: *** [all] Error 2
 [root@localhost ~]# chown nagios:nagios /usr/local/nagios/etc/*
 [root@localhost ~]# chown nagios:nagios /usr/local/nagios/bin/*
 ```
-```py
+```ruby
 [root@localhost ~]# vim /usr/local/nagios/etc/nagios.cfg 
 event_broker_options=-1
 broker_module=/usr/local/nagios/bin/ndomod-3x.o config_file=/usr/local/nagios/etc/ndomod.cfg
@@ -734,7 +734,7 @@ Done!
 
 ```
 `可能会出现如下错误：`
-```py
+```ruby
 [root@localhost db]# ./installdb -u root -p wangzongyu -h localhost -d nagios
 DBI connect('database=nagios;host=localhost','root',...) failed: Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2) at ./installdb line 41
 
@@ -746,7 +746,7 @@ DBI connect('database=nagios;host=localhost','root',...) failed: Can't connect t
 ```
 
 #### 4.4 设置ndo2db开机自启动：
-```js
+```ruby
 
 [root@localhost ndoutils-2.0.0]# cd /nagios_soft/ndoutils-2.0.0
 [root@localhost ndoutils-2.0.0]# cp ./daemon-init /etc/init.d/ndo2db
@@ -756,7 +756,7 @@ DBI connect('database=nagios;host=localhost','root',...) failed: Can't connect t
 [root@localhost ndoutils-2.0.0]# service ndo2db start
 ```
 `可能报如下错误：`
-```py
+```ruby
 [root@localhost ndoutils-2.0.0]# service ndo2db start
 Starting ndo2db:/usr/local/nagios/bin/ndo2db: error while loading shared libraries: libmysqlclient.so.18: cannot open shared object file: No such file or directory
 done.
@@ -765,18 +765,18 @@ done.
 [root@localhost ~]# ln -s /usr/local/mysql/lib/* /usr/lib64
 ```
 检查开启的端口：
-```py
+```ruby
 [root@localhost ~]# netstat -antup | grep 5668
 tcp        0      0 0.0.0.0:5668                0.0.0.0:*                   LISTEN      121725/ndo2db-3x 
 ```
-```py
+```ruby
 [root@localhost ~]# service ndo2db stop
 Stopping ndo2db: head: cannot open `/usr/local/nagios/var/ndo2db.lock' for reading: No such file or directory
 done.
 【说明】关闭ndo2db会存在问题
 ```
 [ndo2pnp.pl下载地址]( https://github.com/ZongYuWang/File/tree/master/File )
-```js
+```ruby
 
 [root@localhost ~]# cd /usr/local/nagios/libexec/
 [root@localhost ~]# chmod +x ndo2pnp.pl  // 将附件中的ndo2pnp.pl上传到上面的目录中
@@ -799,7 +799,7 @@ Usage :
 
 
 查看存入数据库的数据：
-```js
+```ruby
 [root@localhost libexec]# ./ndo2pnp.pl -u root -p Tianjin_sunvsoft.2017! --dbname nagios --list-service
 Hostname                       | Service
 -------------------------------+-------------------
@@ -821,7 +821,7 @@ B2B-WEB                        | System Load
 ```
 
 查看连接数据库的日志：
-```py
+```ruby
 [root@localhost ~]# tail -f 1000 /usr/local/nagios/var/nagios.log
 tail: cannot open `1000' for reading: No such file or directory
 ==> /usr/local/nagios/var/nagios.log <==
@@ -835,7 +835,7 @@ tail: cannot open `1000' for reading: No such file or directory
 ```
 
 ### 五、Nagios告警通知设置： 
-```py
+```ruby
 # yum install mailx*
 # vim /etc/mail.rc
 set from=13662097373@163.com
@@ -929,7 +929,7 @@ define host{
 
 ```
 `测试：`
-```py
+```ruby
 # echo "hello word" | mailx -s "mail title" 479414941@qq.com
 设置延时：
 # vim /usr/local/nagios/etc/nagios.cfg
@@ -956,7 +956,7 @@ host_notification_options：d,u,r
 service_notification_options:w,u,c,r
 ```
 #### 5.1 设置告警次数:
-```py
+```ruby
 vi /usr/local/nagios/etc/objects/escalations.cfg
 define serviceescalation{
 host_name                    192.168.1.1      ;被监控主机名称，多个用逗号隔开与Hosts.cfg中一致
@@ -1131,7 +1131,7 @@ service nagios restart
 |     Password: admin                                                          |
 +------------------------------------------------------------------------------+
 ```
-```py
+```ruby
 # vim /usr/local/nagvis/etc/nagvis.ini.php
 ndo2db MySQL backend (ndomy)
 The ndo2db MySQL backend, in short ndomy backend, is used to fetch Nagios information like status and configuration data via a MySQL database. The Nagios addon called ndoutils stores all information which are present in a running Nagios in a MySQL database. This database is being queried by the NagVis ndomy backend.
@@ -1181,7 +1181,7 @@ htmlcgi="/nagios/cgi-bin"
 #### 7.2 配置监控端
 
 ###### 7.2.1 安装NRPE
-```js
+```ruby
 # tar -zxvf nrpe-2.12.tar.gz
 # cd nrpe-2.12
 # ./configure --with-nrpe-user=nagios \
@@ -1195,7 +1195,7 @@ htmlcgi="/nagios/cgi-bin"
 ```
 
 ###### 7.2.2 check_nrpe语法：
-```py
+```ruby
 通过NRPE监控远程Linux主机要使用chech_nrpe插件进行，其语法格式如下：
 check_nrpe -H <host> [-n] [-u] [-p <port>] [-t <timeout>] [-c <command>] [-a <arglist...>]
 【说明】# ls /usr/local/nagios/libexec/会多出来一个check_nrpe插件
@@ -1204,7 +1204,7 @@ check_nrpe -H <host> [-n] [-u] [-p <port>] [-t <timeout>] [-c <command>] [-a <ar
 
 - 使用示例1：
 定义监控远程Linux主机swap资源的命令：
-```py
+```ruby
 	define command
 	{
 		command_name check_swap_nrpe
@@ -1236,7 +1236,7 @@ command[check_cpu]=/usr/local/nagios/libexec/check_cpu.sh  -w 70 -c 90
 - 使用示例2：
 如果希望上面的command定义更具有通用性，那么上面的定义也可以修改为如下：
 
-```py
+```ruby
 定义监控远程Linux主机的命令：
 	define command
 	{
@@ -1262,7 +1262,7 @@ command[check_cpu]=/usr/local/nagios/libexec/check_cpu.sh  -w 70 -c 90
 
 - 使用示例3：
 如果还希望在监控远程Linux主机时还能向其传递参数，则可以使用类似如下方式进行：
-```py
+```ruby
 定义监控远程Linux主机disk资源的命令：
 	define command
 	{
@@ -1308,7 +1308,7 @@ cfg_file=/usr/local/nagios/etc/objects/linux.cfg
 ```
 
 - 使用示例4：
-```py
+```ruby
 # vim commands.cfg
 define command{
 	   command_name check_nrpe
@@ -1330,18 +1330,18 @@ define service {
 ```
 
 #### 7.3 配置被监控端
-```py
+```ruby
 
 # 安装相关软件包：
 # yum -y groupinstall "Development Tools" "Development Libraries" openssl*
 ```
 ###### 7.3.1 添加nagios用户
-```py
+```ruby
 # useradd -s /sbin/nologin nagios
 ```
 
 ###### 7.3.2 NRPE依赖于nagios-plugins，因此，需要先安装之
-```py
+```ruby
 # tar zxf nagios-plugins-1.4.15.tar.gz 
 # cd nagios-plugins-1.4.15
 # ./configure --with-nagios-user=nagios --with-nagios-group=nagios
@@ -1351,7 +1351,7 @@ define service {
 
 ###### 7.3.3 安装NRPE
 
-```js
+```ruby
 # tar -zxvf nrpe-2.15.tar.gz
 # cd nrpe-2.15.tar.gz
 # ./configure --with-nrpe-user=nagios \
@@ -1369,7 +1369,7 @@ define service {
 
 ###### 7.3.4 配置NRPE
 
-```py
+```ruby
 # vim /usr/local/nagios/etc/nrpe.cfg
 
 log_facility=daemon
@@ -1387,7 +1387,7 @@ debug=0
 ```
 
 ###### 7.3.5 启动NRPE
-```py
+```ruby
 # /usr/local/nagios/bin/nrpe -c /usr/local/nagios/etc/nrpe.cfg -d
 【说明】这种启动方式不利于开机自动启的设置，为了便于NRPE服务的启动，可以将如下内容定义为/etc/init.d/nrped脚本：
 #!/bin/bash
@@ -1435,7 +1435,7 @@ service nrpe
 }
 ```
 ###### 7.3.6 配置允许远程主机监控的对象
-```py
+```ruby
 在被监控端，可以通过NRPE监控的服务或资源需要通过nrpe.cfg文件使用命令进行定义，
 定义命令的语法格式为：command[<command_name>]=<command_to_execute>。比如：
 
@@ -1450,7 +1450,7 @@ command[check_all_procs]=/usr/local/nagios/libexec/check_procs -w 150 -c 200
 ```
 #### 7.4 配置被监控端监控项
 ###### 7.4.1 监控硬盘I/O
-```js
+```ruby
 
 【说明】Params-Validate-0.91、Class-Accessor-0.31、Config-Tiny-2.14、Math-Calc-Units-1.07、Nagios-Plugin-0.37、Regexp-Common-2013031301都是iostat所需要的软件
 
@@ -1530,7 +1530,7 @@ OK - I/O stats tps=0.00 KB_read/s=0.03 KB_written/s=0.00 | 'tps'=0.00; 'KB_read/
 
 ```
 ###### 7.4.2 监控主机存活状态
-```js
+```ruby
 
 Ping的检测：
 -c 次数
@@ -1549,7 +1549,7 @@ command[check-host-alive]=/usr/local/nagios/libexec/check_ping -w 3000.0,80% -c 
 
 ```
 ###### 7.4.3 check_load检测：
-```py
+```ruby
 例如check_load -w 15,10,5 -c 30,25,20这个命令的意义如下
 当1分钟多于15个进程等待,5分钟多于10个,15分钟多于5个则为warning状态
 当1分钟多于30个进程等待,5分钟多于25个,15分钟多于20个则为critical状态
@@ -1566,7 +1566,7 @@ command[check_iostat]=/usr/local/nagios/libexec/check_iostat -d sda -w 1000 -c 2
 
 ```
 ###### 7.4.4 监控CPU使用情况：
-```py
+```ruby
 
 [root@localhost ~]# /usr/local/nagios/libexec/check_cpu.sh                        
 OK: CPU=3.92 | used=3.92;;;; system=2.05;;;; user=1.09;;;; nice=0;;;; iowait=.38;;;; irq=.04;;;; softirq=.34;;;;
@@ -1576,7 +1576,7 @@ CRITICAL: CPU=2.70 | used=2.70;0;0;; system=1.01;;;; user=.90;;;; nice=0;;;; iow
 ```
 
 ###### 7.4.5 监控内存使用情况：
-```py
+```ruby
 # ./check_memory.pl -h            
 usage:
  check_mem.pl -<f|u> -w <warnlevel> -c <critlevel>
@@ -1593,7 +1593,7 @@ CRITICAL - 91.2% (915680 kB) used!|TOTAL=1004412KB;;;; USED=915680KB;;;; FREE=88
 ```
 
 ###### 7.4.6 监控网络流量：
-```py
+```ruby
 监控端和被监控端都需要安装 # yum install net-snmp* bc
 
 被监控端配置：
@@ -1836,7 +1836,7 @@ OK - 0.08 seconds to connect as root | connection_time=0.0842s;1;5
 ```
 
 ###### 7.4.8 日志监控：
-```js
+```ruby
 
 # yum install ntp
 # ntpdate cn.pool.ntp.org
@@ -1970,7 +1970,7 @@ define service{
 ```
 
 ###### 7.4.9 监控Tomcat服务：
-```py
+```ruby
 
 在tomcat的webapps目录下，新建一个目录jiankong（这个目录随便建），然后在其下面放一个asp文件。然后修改commands.cfg ，在里面添加
 #tomcat1 set
@@ -2011,7 +2011,7 @@ HTTP OK: Status line output matched "200" - 381 bytes in 5.083 second response t
 `Nagios Business Process Intelligence is an advanced grouping tool that allows you to set more complex dependencies to determine groups states. Nagios BPI provides an interface to effectively view the ‘real’ state of the network. Rules for group states can be determined by the user, and parent-child relationships are easily identified when you need to ‘drill down’ on a problem. This tool can also be used in conjunction with a check plugin to allow for notifications through Nagios.  This document describes how to fully utilize the Nagios Business Process Intelligence (or BPI) add-on and incorporate checks into Nagios.`  
 【说明】Nagios Business Process Intelligence （BPI）是一种高级的分组工具，允许你设置更复杂的依赖关系来确定组状态。 Nagios BPI提供了一个界面来有效地查看网络的“真实”状态。 组状态的规则可以由用户确定。此工具也可以与检查插件结合使用，以通过Nagios进行通知。 本文档介绍如何充分利用Nagios业务流程智能（或BPI）附件，并将检查纳入Nagios。
 
-```js
+```ruby
 # cd /tmp
 # wget https://github.com/NagiosEnterprises/nagiosbpi/archive/master.zip
 # unzip master.zip 
@@ -2085,7 +2085,7 @@ define localServices2 {
 
 
 ### 九、Nagios BP（Business Process AddOns）:
-```js
+```ruby
 # wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 # rpm -ivh epel-release-6-8.noarch.rpm
 # yum install --enablerepo=epel perl-JSON-XS perl-CGI-Simple
@@ -2113,7 +2113,7 @@ ndodb_username=root
 ndodb_password=wangzongyu
 
 ```
-```py
+```ruby
 [root@localhost ~]# /usr/local/nagiosbp/bin/nagios-bp-check-ndo-connection.pl 
 
 Report of actual status information in NDO
@@ -2136,7 +2136,7 @@ which got it's last update at 2017-04-27 14:59:42
        [mysql1;check users] [CRITICAL] CHECK_NRPE: Socket timeout after 10 seconds.
 
 ```
-```py
+```ruby
 # vim /usr/local/nagiosbp/etc/nagios-bp.conf
 <hostname>;<servicename>
 
@@ -2175,7 +2175,7 @@ info_url  website;/more_info/website.html
 【说明】只要有一个服务是CRITIAL的，那么整个过程都是CRITIAL的（&）
 ```
 检查nagios-bp.conf配置文件是否正确：
-```py
+```ruby
 # /usr/local/nagiosbp/bin/nagios-bp-consistency-check.pl
 ```
 
@@ -2183,7 +2183,7 @@ info_url  website;/more_info/website.html
 `监控端和被监控端都需要安装NRPE（有些插件如check_memory.pl是NRPE格式编写，所以必须结合nrpe插件使用）`
 
 - 启动NRPE：/usr/local/nagios/bin/nrpe -c /usr/local/nagios/etc/nrpe.cfg -d
-```py
+```ruby
 # chmod 755 check_memory.pl
 # /usr/local/nagios/libexec/check_memory.pl -f -w 40 -c 20    
   // -f是free memory  -u是used memory  ，剩余40%以下是警告，剩余20%以下是严重
@@ -2216,7 +2216,7 @@ command[check_iostat]=/usr/local/nagios/libexec/check_iostat -d sda -w 1000 -c 2
 command[check_load]=/usr/local/nagios/libexec/check_load -w 15,10,5 -c 30,25,20
 ```
 - 监控CPU：  
-```oy
+```ruby
 
 在监控端配置：
 define command{
@@ -2225,7 +2225,7 @@ define command{
         }
 ```
 - 监控内存：  
-```py
+```ruby
 
 在监控端配置：
  define command {
@@ -2246,7 +2246,7 @@ define service {
 【说明】不需要在objects/commands.cfg文件中再定义define command的memory，因为在objects/commands.cfg中已经定义了check_nrpe -c后面就可以接检测插件
 ```
 - 监控硬盘：   
-```py
+```ruby
 【注意】在编译NRPE的时候必须指明--enable-command-args参数，而且nrpe.cfg中需要设置dont_blame_nrpe=1
 
 在监控端配置：
