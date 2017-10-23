@@ -1,5 +1,5 @@
 ####  安装Netcat：
-```py
+```ruby
 [root@localhost netcat]# tar xvf netcat-0.7.1.tar.gz -C /usr/local
 [root@localhost netcat]# cd /usr/local/
 [root@localhost local]# mv netcat-0.7.1/ netcat
@@ -8,7 +8,7 @@
 
 ```
 #### 配置Netcat环境变量：
-```py
+```ruby
 [root@localhost ~]# vim /etc/profile
     # set  netcat path
     export NETCAT_HOME=/usr/local/netcat
@@ -19,7 +19,7 @@
 #### Netcat命令基本使用（端口扫描）：
 
 **1、测试Netcat-nc命令：**
-```py
+```ruby
 [root@localhost ~]# nc --help  # 获取nc的参数
 
 ```
@@ -27,7 +27,7 @@
 #### 2、使用Netcat进行Banner获取： ####
 服务Banner标识正在运行的服务，通常也是版本号。Banner抓取是一种在开放端口上检索有关特定服务的信息的技术，可用于进行漏洞评估的渗透测试。当使用Netcat进行Banner抓取时，您实际上将与指定端口上的指定主机进行原始连接。当Banner可用时，它会打印到控制台
 
-```py
+```ruby
 [root@localhost ~]# nc -z -v -n 127.0.0.1 21-25  
 127.0.0.1 22 (ssh) open
 127.0.0.1 25 (smtp) open
@@ -53,7 +53,7 @@ SSH-2.0-OpenSSH_6.6.1
 ```
 
 #### 将文件从一个系统复制到另外一个系统：
-```py
+```ruby
 server1:172.30.105.115
 server2:172.30.105.116
 
@@ -72,7 +72,7 @@ server1：
 操作与上面的拷贝是雷同的，只需要由dd获得硬盘或分区的数据，然后传输即可。
 克隆硬盘或分区的操作，不应在已经mount的的系统上进行。当然，要克隆的分区必须在目标系统上卸载，所以需要使用安装光盘引导后，进入拯救模式（或使用Knoppix工具光盘）启动系统后，
 在server2(172.30.105.116)上进行类似的监听动作：
-```py
+```ruby
 [root@localhost ~]# nc -l -p 1234 | dd of=/dev/sda
 
 server1(172.30.105.115)上执行传输，即可完成从server1克隆sda硬盘到server2的任务：
@@ -82,7 +82,7 @@ server1(172.30.105.115)上执行传输，即可完成从server1克隆sda硬盘�
 
 #### 服务网页：
 可以使用netcat作为Web服务器
-```py
+```ruby
 [root@localhost ~]# vim somepage.html 
 123
 
@@ -115,7 +115,7 @@ http://172.30.105.115/somepage.html
 
 #### 聊天：
 甚至可以在命令行中使用netcat从一个系统到另一个系统进行聊天
-```py
+```ruby
 在server2(172.30.105.116)上执行：
 [root@localhost ~]# nc -lp 1234  #  server2会等到server1在端口1234上连接
 
@@ -126,7 +126,7 @@ http://172.30.105.115/somepage.html
 
 ```
 #### 欺骗HTTP头：
-```py
+```ruby
 其实就是自己编写一些模拟客户端的的信息(也就是HTTP请求头部)：
 GET / HTTP/1.1
 Host: nctest
