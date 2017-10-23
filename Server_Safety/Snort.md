@@ -1001,7 +1001,7 @@ C:\Users\Administrator>ping 172.30.105.115
 ```
 
 
-```py
+```ruby
 
 #!/bin/bash
 
