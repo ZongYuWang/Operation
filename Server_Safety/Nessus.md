@@ -88,7 +88,7 @@ D045-2403-4D1C-FB85-7E88
 登陆Nessus → Setting → Software Update → 右上角 Manual Software Update → Upload your own plugin archive
 
 更新插件成功如下所示：
-```
+
 ![](https://github.com/ZongYuWang/image/blob/master/Nessus5.png)
 
 
