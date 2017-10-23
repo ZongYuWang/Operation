@@ -1,6 +1,6 @@
 
 **安装Nessus：**
-```py
+```ruby
 
 [root@localhost ~]# mkdir /nessus
 [root@localhost ~]# cd /nessus/
@@ -33,7 +33,7 @@ https://172.30.105.115:8834/
 ![](https://github.com/ZongYuWang/image/blob/master/Nessus4.png)
 
 **激活Nessus：**
-```py
+```ruby
 
 http://www.tenable.com/products/nessus-home
 
@@ -53,7 +53,7 @@ A244-2600-BD0F-BDA9-****
 
 **更新插件：**
 家庭版不支持在线更新的方法，需要离线更新：
-```py
+```ruby
 关闭nessus程序：
 [root@localhost ~]# service nessusd stop
 
@@ -72,16 +72,18 @@ D045-2403-4D1C-FB85-7E88
 
 下载all-2.0.tar.gz与nessus-fetch.rc文件：
 下载地址：http://plugins.nessus.org/get.php?f=all-2.0.tar.gz&u=84f20fb9412017633d98a9ea60e0c832&p=ac1d4023e673024d421e8e811fb007bb 
-
+```
 
 下载完成执行：（两条命令不分先后）
+```ruby
 [root@localhost nessus]# /opt/nessus/sbin/nessuscli update /nessus/all-2.0.tar.gz 
 [root@localhost nessus]# /opt/nessus/sbin/nessuscli fecth --register-offline nessus.license
 【说明】Challenge code和Active code后，没有nessus.license文件下载，而是nessus-fetch.rc。这是由于没有关闭nessus程序导致的，再申请只有nessus-fetch.rc
-
+```
 重启nessus服务：
+```ruby
 [root@localhost nessus]# service nessusd restart
-
+```
 手动更新：
 登陆Nessus → Setting → Software Update → 右上角 Manual Software Update → Upload your own plugin archive
 
