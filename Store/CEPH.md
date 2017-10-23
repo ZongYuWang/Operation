@@ -21,7 +21,7 @@ O_DIRECT表示不使用Linux内核Page Cache; O_DSYNC表示数据在写入到磁
 - 对应于Ceph作为OpenStack里统一存储后端，各组件所使用的四个存储池：Glance Pool存放镜像及虚拟机快照、Nova Pool存放虚拟机系统盘、Cinder Volume Pool存放云硬盘及云硬盘快照、Cinder Backup Pool存放云硬盘备份，可以判断出，Nova及Cinder Volume存储池对IO性能有相对较高的要求，并且大部分都是热数据，可存放在SSD Pool；而Glance和Cinder Backup存储池作为备份冷数据池，对性能要求相对较低，可存放在普通存储池。
 - 这种使用场景，SSD Pool里的主备数据都是在SSD里，但正常情况下，Ceph客户端直接读写的只有主数据，这对相对昂贵的SSD来说存在一定程度上的浪费。这就引出了下一个使用场景—配置CRUSH数据读写规则，使主备数据中的主数据落在SSD的OSD上。
 
-```py
+```ruby
 Ceph里的命令操作不详细叙述，简单步骤示例如下：  
 (1)标示各服务器上的SSD与硬盘OSD
 # SAS HDD OSD
@@ -92,7 +92,7 @@ rule ssd {
 该场景基本思路和第二种类似，SATA/SAS机械盘和SSD混用，但SSD的OSD节点不用来组成独立的存储池，而是配置CURSH读取规则，让所有数据的主备份落在SSD OSD上。Ceph集群内部的数据备份从SSD的主OSD往非SSD的副OSD写数据。
 这样，所有的Ceph客户端直接读写的都是SSD OSD 节点，既提高了性能又节约了对OSD容量的要求。
 配置重点是CRUSH读写规则的设置，关键点如下：
-```py
+```ruby
 
 rule ssd-primary {
   ruleset 1
