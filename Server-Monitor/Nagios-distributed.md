@@ -15,17 +15,17 @@
 ### 一、安装被监控服务器：
 
 #### 1.1 设置防火墙
-```py
+```ruby
 [root@localhost ~]# iptables -I INPUT -p tcp -m tcp --dport 5666 -j ACCEPT
 ```
 
 #### 1.2安装相关软件包
-```py
+```ruby
 [root@localhost ~]# yum -y install vim  gcc glibc glibc-common gd gd-devel  openssl-devel
 
 ```
 #### 1.3 设置登陆账号
-```py
+```ruby
 # groupadd nagcmd
 # useradd -G nagcmd nagios
 # passwd nagios
@@ -33,7 +33,7 @@
 ```
 
 #### 1.4 安装nagios-plugins
-```py
+```ruby
 # cd /nagios_soft/
 # tar xvf nagios-plugins-2.1.4.tar.gz
 # cd nagios-plugins-2.1.4
@@ -41,7 +41,7 @@
 # make && make install && echo ok
 ```
 #### 1.5 安装nrpe
-```py
+```ruby
 # cd /nagios_soft/
 # tar xvf nrpe-2.15.tar.gz 
 # cd nrpe-2.15
@@ -57,7 +57,7 @@
 # make install-daemon-config
 ```
 #### 1.6 配置并启动nrpe
-```py
+```ruby
 # vim /usr/local/nagios/etc/nrpe.cfg
 allowed_hosts=192.168.5.128
 【说明】填写分布式服务器的IP地址,如果本地也想使用NRPE监控，则allowed_hosts也需要写上127.0.0.1
@@ -74,12 +74,12 @@ server_address=192.168.1.105
 ### 二、安装分布式服务器
 
 #### 2.1 安装相关软件包
-```py
+```ruby
 [root@localhost ~]# yum -y install vim  gcc glibc glibc-common gd gd-devel  openssl-devel
 
 ```
 #### 2.2 设置登陆账号
-```py
+```ruby
 # useradd nagios
 # passwd nagios
 # groupadd nagcmd
@@ -87,14 +87,14 @@ server_address=192.168.1.105
 ```
 
 #### 2.3 安装nagios-plugins
-```py
+```ruby
 # tar xvf nagios-plugins-2.1.4.tar.gz 
 # cd nagios-plugins-2.1.4
 # ./configure --with-nagios-user=nagios --with-nagios-group=nagcmd 
 # make && make install 
 ```
 #### 2.4 安装nagios
-```
+```ruby
 # mkdir /nagios_soft
 # cd /nagios_soft/
 # tar xvf nagios-3.5.0.tar.gz 
@@ -110,7 +110,7 @@ server_address=192.168.1.105
 # chkconfig nagios on
 ```
 #### 2.5 安装nrpe
-```py
+```ruby
 # tar xvf nrpe-2.15.tar.gz 
 # cd nrpe-2.15
 # ./configure --with-nrpe-user=nagios \
@@ -133,7 +133,7 @@ define command{
 【说明】上面是添加NRPE的外部检测命令，监控主机一般是通过check_nrpe插件进行远程或者本地主机的监控，check_nrpe插件会连接到远程的nrpe daemon，所用的方式是SSL
 ```
 #### 2.6 安装nsca
-```py
+```ruby
 # tar xvf nsca-2.7.2.tar.gz 
 # cd nsca-2.7.2
 # ./configure 
@@ -146,7 +146,7 @@ define command{
 # chown nagios.nagios send_nsca 
 ```
 #### 2.7 修改配置文件
-```
+```ruby
 修改send_nsca.cfg配置文件：
 # vim /usr/local/nagios/etc/send_nsca.cfg
 password=wangzongyu
@@ -246,19 +246,19 @@ cfg_dir=/usr/local/nagios/etc/objects/monitor
 ### 三、安装监控中心服务器：
 
 #### 3.1 设置防火墙：
-```py
+```ruby
 [root@localhost ~]# iptables -I INPUT -p tcp -m tcp --dport 5667 -j ACCEPT
 [root@localhost ~]# iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT
 同时需要关闭SElinux，否则会报如下错误：
 ```
 
 #### 3.2 安装相关软件包
-```py
+```ruby
 # yum -y install httpd gcc glibc glibc-common gd gd-devel php php-mysql mysql mysql-devel mysql-server vim perl-devel perl-CPAN -y
 ```
 
 #### 3.3 设置登陆账号
-```py
+```ruby
 # useradd nagios
 # passwd nagios
 # groupadd nagcmd
@@ -267,7 +267,7 @@ cfg_dir=/usr/local/nagios/etc/objects/monitor
 ```
 
 #### 3.4 安装nagios-plugins
-```py
+```ruby
 # tar xvf nagios-plugins-2.1.4.tar.gz 
 # cd nagios-plugins-2.1.4
 # ./configure --with-nagios-user=nagios --with-nagios-group=nagcmd --enable-perl-modules
@@ -280,7 +280,7 @@ cfg_dir=/usr/local/nagios/etc/objects/monitor
 ![](https://github.com/ZongYuWang/image/blob/master/nagios-distributed3.png)
 
 #### 3.5 安装nagios
-```py
+```ruby
 #mkdir /nagios_soft
 # cd /nagios_soft/
 # tar xvf nagios-3.5.0.tar.gz 
@@ -297,12 +297,12 @@ cfg_dir=/usr/local/nagios/etc/objects/monitor
 ```
 
 #### 3.6 设置nagiosadmin的登陆密码
-```
+```ruby
 # htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
 ```
 
 #### 3.7 安装nsca
-```py
+```ruby
 # tar xvf nsca-2.7.2.tar.gz 
 # cd nsca-2.7.2
 # ./configure 
@@ -351,7 +351,7 @@ accept_passive_host_checks=1
      根据以上提到的注意事项，原则是中心服务器和分布式服务器的host_name和 service_descriptio一
      样，这样数据才可以在主的nagios中显示；  
 - 添加passive模式的主机和服务模板：  
-```
+```ruby
 # vim /usr/local/nagios/etc/objects/templates.cfg 
   define host{
         name                            passive-host
@@ -376,7 +376,7 @@ accept_passive_host_checks=1
 
 ```
 - 添加强制刷新监测命令  
-```py
+```ruby
 
 # vim /usr/local/nagios/libexec/staleservice.sh
 #!/bin/sh 
@@ -392,7 +392,7 @@ define command{
 
 ```
 - 添加主机和服务   
-```py
+```ruby
 
 复制分布式服务器中的hosts和services到nagios中心服务器中，修改定义主机中的use模板为定义的passive-host，之前默认一般为linux-server，修改定义服务器中的use模板为定义的passive-service，取消check_command值的定义，类似如下：
 define host {
@@ -430,7 +430,7 @@ define service{
 ![](https://github.com/ZongYuWang/image/blob/master/nagios-distributed5.png)
 
 分布式服务器发送到监控中心
-```py
+```ruby
 # echo "172.30.105.114;wangzy service;0;testOK"| /usr/local/nagios/bin/send_nsca 172.30.105.112 -d ";" -c /usr/local/nagios/etc/send_nsca.cfg 
 ```
 ![](https://github.com/ZongYuWang/image/blob/master/nagios-distributed6.png)
