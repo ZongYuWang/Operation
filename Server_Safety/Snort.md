@@ -32,7 +32,7 @@
 **1、准备工作：**
 - 使用CentOS-6.5-x86_64-minimal.iso，（用CentOS7后面配置base会报错），需要设置系统的IP和DNS让其可以联网
 
-```py
+```ruby
 查看主机名：
 [root@localhost ~]# hostname
 localhost.localdomain
@@ -57,13 +57,13 @@ NAME="System eth0"
 
 ```
 ###### 1.1安装依赖包
-```py
+```ruby
 [root@localhost ~]# yum install -y gcc flex bison zlib libpcap tcpdump gcc-c++ pcre* zlib* 
 
 ```
 
 ###### 1.2 更换yum源
-```py
+```ruby
 
 [root@localhost ~]# yum install -y wget
 
@@ -79,7 +79,7 @@ NAME="System eth0"
 ```
 
 ###### 1.3 创建用户和用户组：
-```py
+```ruby
 [root@localhost ~]# groupadd -g 40000 snort
 [root@localhost ~]# useradd snort -u 40000 -d /var/log/snort -s /sbin/nologin -c SNORT_IDS -g snort
 ```
@@ -87,7 +87,7 @@ NAME="System eth0"
 
 **2、安装配置LAMP环境：**
 ###### 2.1安装LAMP：
-```py
+```ruby
 [root@localhost ~]# yum install -y httpd mysql-server php php-mysql php-mbstring php-mcrypt mysql-devel php-gd
 
 修改php.ini：
@@ -101,13 +101,13 @@ error_reporting = E_ALL & ~E_NOTICE
 ```
 
 ###### 2.2安装PHP插件：
-```py
+```ruby
 [root@localhost ~]# yum install -y mcrypt libmcrypt libmcrypt-devel
 
 ```
 
 ###### 2.3安装pear插件：
-```py
+```ruby
 [root@localhost ~]# yum install -y php-pear
 [root@localhost ~]# pear upgrade pear
 [root@localhost ~]# pear channel-update pear.php.net
@@ -119,7 +119,7 @@ error_reporting = E_ALL & ~E_NOTICE
 
 **3、安装adodb：**
 
-```py
+```ruby
 [root@localhost snort]# tar zxvf adodb519.tar.gz -C /var/www/html
 [root@localhost snort]# mv /var/www/html/adodb5 /var/www/html/adodb
 
@@ -129,14 +129,14 @@ error_reporting = E_ALL & ~E_NOTICE
 ```
 
 **4、安装base：**
-```py
+```ruby
 
 [root@localhost snort]# tar zxvf base-1.4.5.tar.gz -C /var/www/html
 [root@localhost snort]# mv /var/www/html/base-1.4.5 /var/www/html/base
 
 ```
 ###### 4.1 配置base
-```py
+```ruby
 [root@localhost ~]# service mysqld start                                         
 [root@localhost ~]# service httpd start
 [root@localhost ~]# service iptables stop
@@ -156,7 +156,7 @@ http://172.30.105.115/base/setup/index.php
 
 
 **5、安装libdnet：（必须使用这个版本）**
-```py
+```ruby
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar xvf libdnet-1.12.tgz
 [root@localhost snort]# cd libdnet-1.12
@@ -165,7 +165,7 @@ http://172.30.105.115/base/setup/index.php
 ```
 
 **6、安装libpcap：**
-```py
+```ruby
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar zxvf libpcap-1.0.0.tar.gz
 [root@localhost snort]# cd libpcap-1.0.0
@@ -173,7 +173,7 @@ http://172.30.105.115/base/setup/index.php
 ```
 
 **7、安装DAQ：**
-```py
+```ruby
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar zxvf daq-2.0.4.tar.gz 
 [root@localhost snort]# cd daq-2.0.4
@@ -182,14 +182,14 @@ http://172.30.105.115/base/setup/index.php
 ```
 
 **8、安装Snort：**
-```py
+```ruby
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar zxvf snort-2.9.7.0.tar.gz 
 [root@localhost snort]# cd snort-2.9.7.0
 [root@localhost snort-2.9.7.0]# ./configure && make && make install
 ```
 ###### 8.1 配置Snort：
-```py
+```ruby
 
 [root@localhost ~]# mkdir /etc/snort
 [root@localhost ~]# chown -R snort:snort /etc/snort
@@ -226,7 +226,7 @@ output unified2:filename snort.log,limit 128
 
 ```
 **9、配置snortrules默认规则：**
-```py
+```ruby
 [root@localhost ~]# cd /snort/
 [root@localhost snort]# tar zxvf snortrules-snapshot-2970.tar.gz -C /etc/snort/
 
@@ -235,7 +235,7 @@ output unified2:filename snort.log,limit 128
 ```
 
 **10、配置开机自启动Snort程序：**
-```py
+```ruby
 
 [root@localhost ~]# cd /snort/snort-2.9.7.0/rpm/
 [root@localhost ~]# cp snortd /etc/init.d/snortd
@@ -248,7 +248,7 @@ output unified2:filename snort.log,limit 128
 ```
 
 **11、测试Snort：**
-```py
+```ruby
 [root@localhost ~]# snort -i eth0 -u snort -g snort -c /etc/snort/snort.conf -l /var/log/snort/
  
 【参数解释】：
@@ -732,7 +732,7 @@ Snort exiting
 
 
 **12、添加规则：**
-```py
+```ruby
 
 [root@localhost ~]# vim /etc/snort/rules/local.rules
 
@@ -780,7 +780,7 @@ ID：　　　　　　　　    报警序号
 
 
 **13、配置MySQL：**
-```py
+```ruby
 
 启动MySQL：
 [root@localhost ~]# service mysqld start
@@ -805,7 +805,7 @@ Enter password: snort
 **14、安装barnyard2：**
 - Snort配置文件中自身含有插件允许将Snort报警记录到Mysql中，但这样以来，系统会形成瓶颈 ，当IDS系统检测到攻击行为，就会用到INSERT语句向数据库里写入数据，导致到UPDATE时非常慢。所以直接将Snort输出到数据库，这种方案的效率并不高。这里就使用外部代理将报警输出到Barnyard2。言而言之Barnyard的作用是读取snort产生的二进制事件文件并存储到MySQL
 
-```py
+```ruby
 
 [root@localhost snort]# tar xvf barnyard2-1.9.tar.gz 
 [root@localhost snort]# cd /snort/barnyard2-1.9
@@ -814,7 +814,7 @@ Enter password: snort
 
 ```
 ###### 14.1 配置barnyard2
-```py
+```ruby
 
 [root@localhost ~]# mkdir /var/log/barnyard2
 [root@localhost ~]# chown snort.snort /var/log/barnyard2
@@ -847,7 +847,7 @@ output database:log,mysql,user=snort password=snort dbname=snort host=localhost
 ```
 
 ###### 14.2 测试barnyard2
-```py
+```ruby
 [root@localhost ~]# barnyard2 -c /etc/snort/barnyard2.conf -f /var/log/snort/snort.log -w /var/log/snort/barnyard2.waldo -u snort -g snort -d /var/log/snort/ -v
 
 
@@ -944,7 +944,7 @@ InvChkSum: 0          (0.000%)
 
 
 **15、测试Snort和Barnyard2：**
-```py
+```ruby
 
 [root@localhost ~]# snort -q -u snort -g snort -c /etc/snort/snort.conf -i eth0 -D
 Spawning daemon child...
@@ -976,7 +976,7 @@ mysql> select * from sensor;
 
 
 **16、测试IDS：**
-```py
+```ruby
 
 向IDS的IP发送ping包，base的页面会出现ICMP告警
 
@@ -993,7 +993,7 @@ C:\Users\Administrator>ping 172.30.105.115
 ![](https://github.com/ZongYuWang/image/blob/master/Snort9.png)
 
 **补充(snort的其他启动方式)：**
-```py
+```ruby
 
 [root@localhost ~]# cp idsctl /sbin
 [root@localhost ~]# chmod 755 /sbin/idsct
