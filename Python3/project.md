@@ -222,6 +222,30 @@ wangzongyu
 
 ```
 
+* ## 实现简单的shell sed替换功能
+```ruby
+import sys
+
+file = open('test1','r')
+file_new = open('test2','w')
+
+find_str = sys.argv[1]
+replace_str = sys.argv[2]
+
+for line in file.readlines():
+    line = line.replace(find_str,replace_str)
+    print(line)   # 将所有的内容全部打印
+    file_new.write(line)
+
+file.close()
+file_new.close()
+
+运行：
+E:\PycharmProjects\untitled\study\ATM\test>python main.py myname yourname
+
+```
+
+
 ## 模拟实现一个ATM + 购物商城程序
 
 要求：
