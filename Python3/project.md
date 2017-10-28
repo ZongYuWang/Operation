@@ -233,7 +233,7 @@ wangzongyu
 
 ```
 
-* ## 实现简单的shell sed替换功能
+* ## 实现简单的shellsed替换功能
 ```ruby
 import sys
 
@@ -257,7 +257,7 @@ E:\PycharmProjects\untitled\study\ATM\test>python main.py myname yourname
 ```
 ## 修改haproxy配置文件
 
-## 模拟实现一个ATM + 购物商城程序
+## 模拟实现一个ATM+购物商城程序
 
 要求：
 - 额度 15000或自定义
