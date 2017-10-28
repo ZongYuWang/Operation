@@ -1,4 +1,4 @@
-<span id="jump">2.购物卡项目</span>
+
 [2.购物卡项目](#jump)
 
 
@@ -134,6 +134,7 @@ while not exit_flag:
 
 
 * ## 购物卡项目
+<span id="2">* ##2.购物卡项目</span>
 #### 代码如下：
 ```py
 
