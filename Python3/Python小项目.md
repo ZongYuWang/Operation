@@ -256,6 +256,108 @@ E:\PycharmProjects\untitled\study\ATM\test>python main.py myname yourname
 
 ```
 ## 修改haproxy配置文件
+```ruby
+
+# Author：wangzongyu
+# -*- coding:utf-8 -*-
+
+########################  search begin ########################
+back_domain = input("请输入要查询的域名(eg:www.baidu.com)>>>:")
+
+def search(back_domain):   # back_domain = "www.wangzy.com"
+    flag = "green"
+    result = []  #最终通过return将返回值存入result
+    with open("haproxy.conf",'r',encoding="utf-8") as f:
+        for line in f:
+            if line.strip() == "backend %s" %back_domain:
+               flag = "red"      #读到想查询的那条记录了，先停住，将flag设置为red，跳出这个循环，执行一些动作，green的时候会一直读取，不做任何动作
+               continue          # 跳出本次循环，继续向下执行；
+
+            if flag == "red":
+                '''
+                >>> print(line)
+                        server 100.1.7.9 100.1.7.9 weight 20 maxconn 3000
+                backend www.oldboy.com
+                        server 100.1.7.19 100.1.7.19 weight 20 maxconn 3000
+                '''
+                if line.strip().startswith("backend"):  # 读取到某条是以backend开头的数据，就不再存入到result中了，下面设置为green，让程序自己再去向下读取吧
+                    flag = "green"
+                    break # 找到相应的backend之后，下面如果还有很多backend，就不再读取了
+                else:   #如果不是backend，就存到result中，也就是匹配到的backend和下一个backend之间的值要存取
+                    if line.strip(): # 空值是假，line.strip()是非空值，是真，如果不写这行，backend下面有一个空行会显示出来
+                        result.append(line.strip())
+
+    return result
+
+print( search(back_domain) )
+
+########################  search end  ########################
+
+########################  add begin  ########################
+def add():
+
+    import json
+
+    domain = input("请输入backend的域名(eg:www.baidu.com)>>>:")
+    ipaddr = input("请输入backend的服务器IP地址(eg:192.168.1.100)>>>:")
+    weight = input("请输入backend相应的权重值(eg:20)>>>:")
+    maxconn = input("请输入backend的最大链接数(eg:50)>>>:")
+
+    # json的标准格式：要求必须 只能使用双引号作为键 或者 值的边界符号，不能使用单引号，而且“键”必须使用边界符（双引号）
+    arg = ''' {
+         "backend":"%s",
+         "record":{
+             "server":"%s",
+             "weight":%s,
+             "maxconn":%s
+          }
+    }'''  % (domain,ipaddr,weight,maxconn)
+
+    # print(arg)   # 输出用户输入的字符串
+
+    dict_domain = json.loads(arg) # 将用户输入的格式转换成字典格式
+    back_domain = dict_domain["backend"] # 获取backend后的域名(www.test.com)
+    # print(back_domain)
+    back_record = "server %s %s weight %d maxconn %d" %(dict_domain["record"]["server"],
+                                                        dict_domain["record"]["server"],
+                                                        dict_domain["record"]["weight"],
+                                                        dict_domain["record"]["maxconn"])
+   # 获取backend域名之下的服务器信息，如：server 100.1.7.9 100.1.7.9 weight 20 maxconn 3000
+
+    record_list = search(back_domain) # 通过上面的search函数，获取域名下的所有server数据
+    record_list.append(back_record)  # 将新的server信息使用append加入到原来的record_list列表中
+    # print(record_list)
+
+    flag = "green"  #定义开始一路绿灯
+    with open("haproxy.conf",'r',encoding="utf-8") as f_old,open("haproxy.conf_new",'w',encoding="utf-8") as f_new:
+
+        for line in f_old:
+            if line.strip() == "backend %s" %back_domain:  #当遇到输入的域名(这个域名需要提前在配置文件中存在)
+
+                user_confirm = input("%s already exists,You will continue to add? " %back_domain)
+                if user_confirm == "yes":
+                    flag = "red"  # 先把灯置为红灯，接下来后面都是红灯了，红灯之后，先把backend+域名写入到new文件中
+                    f_new.write(line)
+
+                    for new_line in record_list:  #接下来也要一行行的遍历对应backend+域名下的server信息，一行行的写入到新的文件中
+                        f_new.write(" "*8 + new_line + "\n")
+                    continue
+                else:  # user_confirm == "no"
+                    pass #调用删除或者修改函数
+
+            if flag == "green":
+                f_new.write(line)
+
+            else:  # 也就是还是红灯的时候，也不能都不写入，响应backend后面的backend也要继续写入到新的文件
+                flag = "green"
+                f_new.write(line)
+
+        #back_domain不在配置文件中，也就是backend后面的域名不是提前存在配置文件中（line.strip() ！= "backend %s" %back_domain）
+        f_new.write("backend %s" %back_domain + "\n")
+        f_new.write(" "*8 + back_record)
+
+add()
+```
 
 ## 模拟实现一个ATM+购物商城程序
 
