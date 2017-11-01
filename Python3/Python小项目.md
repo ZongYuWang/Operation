@@ -357,6 +357,28 @@ def add():
         f_new.write(" "*8 + back_record)
 
 add()
+
+########################  delete begin  ########################
+
+def delete():
+
+    back_domain = input("请输入需要删除的backend域名(eg:www.baidu.com)>>>:")
+    record_list = search(back_domain)
+    flag = "green"
+    with open('haproxy.conf','r',encoding="utf-8") as f_old,open('haproxy.conf_new1','w',encoding="utf-8") as f_new:
+        for line in f_old:
+            if line.strip() != "backend %s" %back_domain and flag=="green":
+                f_new.write(line)
+
+            else:  # line.strip() == "backend %s" %back_domain
+                flag = "red"
+
+                if line.strip().startswith("backend") and line.strip() != "backend %s" %back_domain:
+                    f_new.write(line)
+                    flag = "green"
+
+delete()
+########################  delete end  ########################
 ```
 
 ## 模拟实现一个ATM+购物商城程序
