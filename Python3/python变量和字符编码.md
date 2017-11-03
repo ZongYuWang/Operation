@@ -78,5 +78,6 @@ Unicode（统一码、万国码、单一码）是一种在计算机上使用的�
 
 - ######  UTF-8编码：
 UTF-8，是对Unicode编码的压缩和优化，他不再使用最少使用2个字节，而是将所有的字符和符号进行分类：ASCII码中的内容用1个字节保存、欧洲的字符用2个字节保存，东亚的字符用3个字节保存，也就是存英文字符或西欧语言字符按照ASCII存储，存其他字符(如汉字)就按照UTF-8存放-占 3B=24bite
+![](https://github.com/ZongYuWang/image/blob/master/python-asscii1.png)
 
 ### 代码注释：
