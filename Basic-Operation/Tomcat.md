@@ -53,8 +53,8 @@ CATALINA_HOME=/trade/tomcat7/apache-tomcat-8.0.33
 [root@cxy-65 bin]# /trade/tomcat7/bin/catalina.sh start
 
 ```
-项目路径需要在：
-/trade/tomcat/webapps/ROOT，这是因为server.xml文件中定义的（vim /trade/tomcat/conf/server.xml ）
+项目路径需要在：   
+/trade/tomcat/webapps/ROOT，这是因为server.xml文件中定义的`（vim /trade/tomcat/conf/server.xml ）`
 ```ruby
  <Host name="localhost"  appBase="webapps"
             unpackWARs="true" autoDeploy="true">
