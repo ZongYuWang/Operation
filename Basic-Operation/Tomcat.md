@@ -1,6 +1,6 @@
 ## Tomcat
 
-目录：
+目录：   
 [一、Tomcat服务器的配置](#一、Tomcat服务器的配置)    
 [二、一个Tomcat部署多个项目](#二、一个Tomcat部署多个项目)      
 [三、Tomcat性能优化](#三、Tomcat性能优化)     
@@ -118,7 +118,7 @@ Linux系统，在catalina.sh里：
 CATALINA_OPTS="-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8899"
 
 - 方法2：     
-startup.sh 中的最后一行 exec "$PRGDIR"/"$EXEXUTABLE" start "$@"中的start修改成jpda start ；
+startup.sh 中的最后一行 exec "$PRGDIR"/"$EXEXUTABLE" start "$@"中的start修改成jpda start ；      
 默认的调试端口是8000 ，可以在catalina.sh 文件中设置JPDA_APPDESS=8000
 使用startup.sh 或者catalina.sh jpda start 启动tomcat
 
