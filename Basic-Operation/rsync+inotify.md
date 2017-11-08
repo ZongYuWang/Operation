@@ -56,12 +56,14 @@ secrets file = /etc/rsync.password    #虚拟用户的密码文件
 
 ```ruby
 [root@localhost ~]# echo "wangzongyu:tradeease" >/etc/rsync.password
-【说明】这个名称要跟上面的配置文件中的配置文件名称一致 （/etc/rsync112.password）
+#【说明】这个名称要跟上面的配置文件中的配置文件名称一致 （/etc/rsync112.password）
 [root@localhost ~]# cat /etc/rsync.password
-【说明】wangzongyu为虚拟用户，tradeease是虚拟用户的密码
+#【说明】wangzongyu为虚拟用户，tradeease是虚拟用户的密码
 [root@localhost ~]# chmod 600 /etc/rsync.password 
-[root@localhost ~]# rsync --daemon
-【说明】启动rsync服务
+```
+- 启动rsync服务
+```ruby
+[root@localhost ~]# rsync --daemon  
 
 [root@localhost ~]# ps -ef | grep rsync
 root     15390 15227  0 06:12 pts/0    00:00:00 grep rsync
@@ -73,7 +75,7 @@ tcp        0      0 :::873                      :::*                        LIST
 ```
 
 #### 2.2、rsync在服务端（发送端）安装：
-- 测试发送文件
+- 发送端测试发送文件
 ```ruby
 [root@localhost ~]# yum install -y rsync gcc vim 
 [root@localhost ~]# echo "tradeease" >/etc/rsync.password  # 这里只要写密码即可
