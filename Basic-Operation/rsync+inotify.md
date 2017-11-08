@@ -1,5 +1,6 @@
 ## rsync+inotify实现实时同步
 
+![](https://github.com/ZongYuWang/image/blob/master/rsync1.png)
 ### 一、防火墙设置：
 ```ruby
 # vim /etc/sysconfig/iptables
