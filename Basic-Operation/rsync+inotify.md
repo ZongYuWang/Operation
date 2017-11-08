@@ -3,10 +3,10 @@
 ![](https://github.com/ZongYuWang/image/blob/master/rsync1.png)
 ### 一、防火墙设置：
 ```ruby
-# vim /etc/sysconfig/iptables
 
+# vim /etc/sysconfig/iptables
 192.168.1.106：
-      -A INPUT -p tcp -m state --state NEW -m tcp --dport 873 -j ACCEPT
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 873 -j ACCEPT #注意规则，不要添加在reject之后
       -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 192.168.1.57：
       -A INPUT -p tcp -m state --state NEW -m tcp --dport 873 -j ACCEPT
@@ -14,21 +14,23 @@
 192.168.1.139：
       -A INPUT -p tcp -m state --state NEW -m tcp --dport 873 -j ACCEPT
       -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+      
+[root@localhost ~]# service iptables restart     
 ```
 ### 二、rsync安装：
 #### 2.1、rsync在客户端（接收端）安装：
 ```ruby
 
 [root@localhost ~]# yum install -y rsync gcc vim 
-[root@localhost ~]# useradd rsync -s /sbin/nologin 
+[root@localhost ~]# useradd rsync -s /sbin/nologin  #最好就使用root账号，有些目录是对属主和属组有要求的，改为rsync之后，可能影响其他的服务正常运行
 [root@localhost ~]# grep rsync /etc/passwd
     rsync:x:500:500::/home/rsync:/sbin/nologin    
-[root@localhost ~]# mkdir /inotify_rsync_data
+[root@localhost ~]# mkdir /inotify_rsync_data  # 测试创建一个接收文件的目录，可以设置一个真正需要接收到的目录
 [root@localhost ~]# chown rsync.rsync /inotify_rsync_data/
 [root@localhost ~]# ll -d /inotify_rsync_data/
     drwxr-xr-x. 2 rsync rsync 4096 Apr  1 17:46 /inotify_rsync_data/
     
-[root@localhost ~]# vim /etc/rsyncd.conf
+[root@localhost ~]# vim /etc/rsyncd.conf  # 需要自己建立
 
 uid = rsync  #工作中指定用户(需要指定用户)
 gid = rsync
@@ -39,7 +41,7 @@ pid file = /var/run/rsyncd.pid   #进程号文件
 lock file = /var/run/rsync.lock  #日志文件
 log file = /var/log/rsyncd.log  #日志文件
 
-[inotify_rsync_data]  #模块名称随便起名，后面推送端需要用到这个名称
+[inotify_rsync_data]  #模块名称随便起名（后面推送端需要用到这个名称），如果该服务器需要同步多个目录，则需要另写多个模块
 path = /inotify_rsync_data  #需要同步的目录
 ignore errors  #表示出现错误忽略错误
 read only = false  #表示网络权限可写(本地控制真正可写)
@@ -47,7 +49,7 @@ read only = false  #表示网络权限可写(本地控制真正可写)
 #这里设置IP或让不让同步
 list = false
 hosts allow = 172.30.105.0/24 #指定允许的网段
-hosts deny = 0.0.0.0/32  #拒绝链接的地址，一下表示没有拒绝的链接
+hosts deny = 0.0.0.0/32  #拒绝链接的地址，这个表示没有拒绝的链接
 auth users = wangzongyu   #虚拟用户
 secrets file = /etc/rsync.password    #虚拟用户的密码文件                   
 
