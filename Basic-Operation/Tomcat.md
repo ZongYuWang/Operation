@@ -1,9 +1,9 @@
 ## Tomcat
 
 目录：   
-[一、Tomcat服务器的配置](#"一、Tomcat服务器的配置")    
-[二、一个Tomcat部署多个项目](#"二、一个Tomcat部署多个项目")      
-[三、Tomcat性能优化](#"三、Tomcat性能优化")     
+[一、Tomcat服务器的配置](#Tomcat服务器的配置)    
+[二、一个Tomcat部署多个项目](#一个Tomcat部署多个项目)      
+[三、Tomcat性能优化](#Tomcat性能优化)     
 
 ### 一、Tomcat服务器的配置
 #### 1.1 安装JDK环境：
