@@ -1,16 +1,16 @@
 ## Nagios监控部署 
 
 ## 目录：
-[一、Nagios基本安装](#一) 
-[二、配置Nagios](#二) 
-[三、PNP4Nagios的安装](#三) 
-[四、使用NDOUtils将Nagios监控信息存入MySQL](#四) 
-[五、Nagios告警通知设置](#五) 
-[六、Nagvis安装](#六) 
-[七、配置被监控端](#七) 
-[八、Nagios BPI（Business Process Intelligence）](#八) 
-[九、Nagios BP（Business Process AddOns）](#九) 
-[十、附：项目监控配置](#十)   
+[一、Nagios基本安装](#一)     
+[二、配置Nagios](#二)     
+[三、PNP4Nagios的安装](#三)      
+[四、使用NDOUtils将Nagios监控信息存入MySQL](#四)     
+[五、Nagios告警通知设置](#五)     
+[六、Nagvis安装](#六)       
+[七、配置被监控端](#七)       
+[八、Nagios BPI（Business Process Intelligence）](#八)      
+[九、Nagios BP（Business Process AddOns）](#九)       
+[十、附：项目监控配置](#十)       
 
 <h3 id="一">一、Nagios基本安装</h3>
 
@@ -479,7 +479,7 @@ RRDPATH = /usr/local/pnp4nagios/var
 
 <h3 id="三">三、PNP4Nagios的安装:</h3>    
 
-PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk Mode with NPCD；
+PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk Mode with NPCD；     
 本实验使用Bulk Mode方式
 
 #### 3.1 安装依赖包：
