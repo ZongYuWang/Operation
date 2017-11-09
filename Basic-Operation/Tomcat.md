@@ -1,12 +1,12 @@
 ## Tomcat
 
 目录：   
-[一、Tomcat服务器的配置](#Tomcat服务器的配置)    
+[一、Tomcat服务器的配置](#一)    
 [二、一个Tomcat部署多个项目](#一个Tomcat部署多个项目)      
 [三、Tomcat性能优化](#Tomcat性能优化)     
 
-### 一、Tomcat服务器的配置
-#### 1.1 安装JDK环境：
+<h3 id="一">一、Tomcat服务器的配置</h3>
+
 ```ruby
 [root@cxy-65 ~]# ls /trade/
 apache-tomcat-7.0.64.tar.gz  jdk-7u79-linux-x64.rpm  lost+found
