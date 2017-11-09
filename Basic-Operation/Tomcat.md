@@ -2,11 +2,12 @@
 
 目录：   
 [一、Tomcat服务器的配置](#一)    
-[二、一个Tomcat部署多个项目](#一个Tomcat部署多个项目)      
-[三、Tomcat性能优化](#Tomcat性能优化)     
+[二、一个Tomcat部署多个项目](#二)      
+[三、Tomcat性能优化](#三)     
 
 <h3 id="一">一、Tomcat服务器的配置</h3>
 
+#### 1.1 安装JDK环境：
 ```ruby
 [root@cxy-65 ~]# ls /trade/
 apache-tomcat-7.0.64.tar.gz  jdk-7u79-linux-x64.rpm  lost+found
@@ -96,7 +97,8 @@ catch( Exception e )
 %>
 ```
 
-### 二、一个Tomcat部署多个项目
+<h3 id="二">二、一个Tomcat部署多个项目</h3>
+
 #### 2.1、使用不同的端口：
 `使用不同的端口的情况下，每个项目会对应一个进程`
 每个Tomcat项目，需要修改的配置如下：
@@ -110,7 +112,8 @@ catch( Exception e )
 - tomcat连接数据库的配置文件说明：
 
 
-### 三、Tomcat性能优化
+<h3 id="三">三、Tomcat性能优化</h3>
+
 #### 3.1、开启远程调试端口：
 作用：本地电脑监控远程的tomcat端口，可以把服务器上运行的tomcat程序的断点打到本地电脑上面调试，也就是本地可以管理服务器的程序的运行（需要在服务器端配置监听的端口）
 - 方法1：    
