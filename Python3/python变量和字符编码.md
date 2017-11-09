@@ -81,3 +81,481 @@ UTF-8，是对Unicode编码的压缩和优化，他不再使用最少使用2个�
 ![](https://github.com/ZongYuWang/image/blob/master/python-ascii1.png)
 
 ### 代码注释：
+` 如果是多行注释，需要使用'''引用，多行赋值给一个变量时，也可以使用使用'''` 
+```ruby
+msg = '''
+name2 = name
+print("My name is",name,name2)
+name = "wangzy"
+'''
+print(msg)
+```
+` 如果是单行，可以直接使用双引号/单引号，引用之后可以赋值给一个变量` 
+```ruby
+msg = "name2 = name"
+```
+python中的单引号和双引号没什么区别(但是在后面讲解的json中有区别，json有严格的格式)，只是在如 msg = " I'm wangzy "中有区别，要么就是双引号套单引号，要么就是单引号套双引号
+
+### 接收用户输入：
+```ruby
+username = input("username: ")
+password = input("password: ")
+print(username,password)
+```
+
+### 字符串拼接：    
+- 方式1：    ` 不要用+拼接方式，会浪费内存块`
+
+```ruby
+name = input("name: ")
+age = input("age: ")
+job = input("job: ")
+salary = input("salary: ")
+
+info = '''  # 注意引号之间的对应关系
+-------------------- Info of ''' +name+ ''' --------------------
+name:'''+name+'''
+age:'''+age+'''
+job:'''+job+'''
+salary:'''+salary   # 最后一个+salary后面没有+号
+
+print(info)
+```
+- 方式二：   
+
+```ruby
+name = input("name: ")
+age = input("age: ")
+job = input("job: ")
+salary = input("salary: ")
+
+info = '''
+-------------------- Info of %s --------------------  # %s = %string
+name: %s  
+age: %s
+job: %s
+salary:%s
+''' %(name,name,age,job,salary)  # 一共5个%s，所以最后要给出5个变量，数量必须匹配
+
+print(info)
+
+```
+将上面的age:%s修改为age:%d   
+```ruby
+name = input("name: ")
+age = input("age: ")
+job = input("job: ")
+salary = input("salary: ")
+
+info = '''
+-------------------- Info of %s --------------------
+name: %s
+age: %d
+job: %s
+salary:%s
+''' %(name,name,age,job,salary)
+
+print(info)
+```
+*`输出:`*
+```ruby
+name: wangzy
+age: 20
+job: It
+salary: 2000
+Traceback (most recent call last):
+  File "E:/PycharmProjects/untitled/study/day01/123456789.py", line 15, in <module>
+    ''' %(name,name,age,job,salary)
+TypeError: %d format: a number is required, not str
+```
+键盘输入默认的是字符串，虽然眼睛看输入的是20(整型)数据，但是实际上输入的是字符串，下面的实验验证：
+```ruby
+age = input("age: ")
+print(type(age))
+age = int(input("age: "))
+print(type(age))
+
+输出：
+age: 20
+<class 'str'>
+age: 20
+<class 'int'>
+```
+- 方式3：
+
+```ruby
+name = input("name: ")
+age = input("age: ")
+job = input("job: ")
+salary = input("salary: ")
+
+info = '''
+-------------------- Info of {_name} --------------------
+name: {_name}
+age: {_age}
+job: {_job}
+salary: {_salary}
+''' .format(_name=name,
+            _age=age,
+            _job=job,
+            _salary=salary)
+
+print(info)
+```
+_name、_age、_job、_salary是自己定义的其他变量，目的是和上面的name、age、job、salary区分开,输出部分有两个_name，format中不用写两次_name=name，定义一次将name值赋值给_name即可
+
+- 方式4：
+
+```ruby
+name = input("name: ")
+age = input("age: ")
+job = input("job: ")
+salary = input("salary: ")
+
+info = '''
+-------------------- Info of {0} --------------------
+name: {0}
+age: {1}
+job: {2}
+salary: {3}
+''' .format(name,age,job,salary)
+
+print(info)
+```
+### 隐藏用户输入密码：
+
+```ruby
+import getpass
+username = input("username: ")
+password = getpass.getpass("password: ")
+
+print(username,password)
+```
+
+*`执行/输出：`*
+```ruby
+E:\PycharmProjects\untitled\study\day01>py 123456789.py
+username: wangzy
+password:
+wangzy 123456
+
+```
+
+### if语句：    
+- 实验一：根据输入的用户名，如果输入正确，就提示“Welcome user username login...”，如果输入错误就提示“Invalid username or password！”
+
+```ruby
+_username = "wangzy"
+_password = "wangzy"
+
+username = input("username: ")
+password = input("password: ")
+
+if _username == username and _password == password:
+    print("Welcome to {name} login..." .format(name=username))
+else:
+    print("Invalid username or password!")
+
+【说明】因为python没有结束符，shell中的if 最后有一个fi结束，因为python中没有结束符，所以就要强制缩进
+【说明】如果不是在“”双引号之内引用变量的情况，可以直接这么写： print ("Welcome to login..",username)
+
+
+if _username == username and _password == password:
+    print("Welcome to {name} login..." .format(name=username))
+ 
+else:
+    print("Invalid username or password!")
+【说明】if和else各是一块子程序代码
+```
+- 实验二：猜测一个人的年龄，如果给定的年龄大了，就提示往小猜，给的年龄小了就往大了猜，如果猜对了，就提示猜测正确    
+
+```ruby
+age_of_wangzy = 30
+
+guess_age = int(input("Plz guess wangzy's age: "))
+
+if age_of_wangzy == guess_age:
+    print(" yes,you got it! ")
+         
+elif age_of_wangzy > guess_age:
+    print(" think bigger! ")
+else:
+    print(" think smaller! ")
+    
+```
+### while语句：
+`python有 while-else的语法（while可以结合else使用）`
+
+```ruby
+# 对上面的实验改进：输入完3次之后，提示是否还要继续输入，只要不输入n/N就可以继续尝试猜测输入
+
+age_of_wangzy = 30
+count = 0
+
+while count < 3:
+    guess_age = int(input("Plz guess wangzy's age: "))
+    if age_of_wangzy == guess_age:
+        print(" yes,you got it! ")
+        break
+    elif age_of_wangzy > guess_age:
+        print(" think bigger! ")
+    else:
+        print(" think smaller! ")
+    count += 1
+
+if count == 3:
+    countine_confirm = input("do you want to keep guessing? ")
+    if countine_confirm != "n" or "N":
+        count == 0
+```
+### for语句：
+` for循环也有for...else语句 `
+
+```ruby
+age_of_wangzy = 30
+
+for count in range(3):
+    guess_age = int(input("Plz guess wangzy's age: "))
+    if age_of_wangzy == guess_age:
+        print(" yes,you got it! ")
+        break
+    elif age_of_wangzy > guess_age:
+        print(" think bigger! ")
+    else:
+        print(" think smaller! ")
+    
+else:
+    print("you have tried too many times,fuck off...")
+    
+【说明】上面的循环都正常走完了，才执行最后的else，如果if中的break执行了，那么最后一步的esle就不会被执行了
+```
+
+### range介绍：
+```ruby
+for count in range(1,5):
+    print(count)
+
+# 输出：
+1
+2
+3
+4
+【说明】（1,5）是从1取值，4结束
+```
+```ruby
+for count in range(1,10,2):
+    print(count)
+    
+# 输出：
+1
+3
+5
+7
+9
+【说明】（1,10,2）是每隔2个取一个值
+```
+
+### break和continue区别：
+- break
+
+```ruby
+for i in range(0,10):
+   print(i)
+   if i < 3:
+       print("loop",i)
+   else:
+       break
+   print("hehe...")
+
+# 输出：
+0
+loop 0
+hehe...
+1
+loop 1
+hehe...
+2
+loop 2
+hehe...
+3
+【说明】遇到break，直接跳出整个循环体
+```
+
+- continue    
+
+```ruby
+for i in range(0,10):
+   print(i)
+   if i < 3:
+       print("loop",i)
+   else:
+       continue
+   print("hehe...")
+   
+# 输出
+0
+loop 0
+hehe...
+1
+loop 1
+hehe...
+2
+loop 2
+hehe...
+3
+4
+5
+6
+7
+8
+9
+
+【说明】当使用continue的时候，假如当i=2时，会执行print("loop",i)，也会执行最后的print("hehe..")      
+当i=3时，会执行else，遇到continue，不会向下继续循环体内的语句，本例中就不会执行print("hehe")了，而是去执行上面的for循环 赋值 i=4
+```
+`print写在循环体之外：`
+```ruby
+for i in range(0,10):
+   print(i)
+   if i < 3:
+       print("loop",i)
+   else:
+       continue
+print("hehe...")
+
+# 输出
+0
+loop 0
+1
+loop 1
+2
+loop 2
+3
+4
+5
+6
+7
+8
+9
+hehe...
+```
+
+```ruby
+for i in range(3):
+   print("----------",i)
+   for j in range(5):
+       print(j)
+       
+# 输出：
+---------- 0
+0
+1
+2
+3
+4
+---------- 1
+0
+1
+2
+3
+4
+---------- 2
+0
+1
+2
+3
+4
+```
+
+```ruby
+for i in range(10):
+   print("----------",i)
+   for j in range(10):
+       print(j)
+       if j > 5:
+           break
+           
+# 输出：
+---------- 0
+0
+1
+2
+3
+4
+5
+6
+---------- 1
+0
+1
+2
+3
+4
+5
+6
+---------- 2
+0
+1
+2
+3
+4
+5
+6
+---------- 3
+0
+1
+2
+3
+4
+5
+6
+---------- 4
+0
+1
+2
+3
+4
+5
+6
+---------- 5
+0
+1
+2
+3
+4
+5
+6
+---------- 6
+0
+1
+2
+3
+4
+5
+6
+---------- 7
+0
+1
+2
+3
+4
+5
+6
+---------- 8
+0
+1
+2
+3
+4
+5
+6
+---------- 9
+0
+1
+2
+3
+4
+5
+6
+
+【说明】break结束的是j的循环，而不是结束的i的for循环
+```
