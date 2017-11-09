@@ -330,31 +330,6 @@ else:
 【说明】上面的循环都正常走完了，才执行最后的else，如果if中的break执行了，那么最后一步的esle就不会被执行了
 ```
 
-### range介绍：
-```ruby
-for count in range(1,5):
-    print(count)
-
-# 输出：
-1
-2
-3
-4
-【说明】（1,5）是从1取值，4结束
-```
-```ruby
-for count in range(1,10,2):
-    print(count)
-    
-# 输出：
-1
-3
-5
-7
-9
-【说明】（1,10,2）是每隔2个取一个值
-```
-
 ### break和continue区别：
 - break
 
