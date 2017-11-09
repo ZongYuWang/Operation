@@ -1,6 +1,19 @@
-## 安装Nagios ##
+## Nagios监控部署 
 
-### 一、Nagios基本安装： ###
+## 目录：
+[一、Nagios基本安装](#一) 
+[二、配置Nagios](#二) 
+[三、PNP4Nagios的安装](#三) 
+[四、使用NDOUtils将Nagios监控信息存入MySQL](#四) 
+[五、Nagios告警通知设置](#五) 
+[六、Nagvis安装](#六) 
+[七、配置被监控端](#七) 
+[八、Nagios BPI（Business Process Intelligence）](#八) 
+[九、Nagios BP（Business Process AddOns）](#九) 
+[十、附：项目监控配置](#十)   
+
+<h3 id="一">一、Nagios基本安装</h3>
+
 [Nagios的相关软件包下载1](https://sourceforge.net/projects/nagios/files/)  
 [Nagios的相关软件包下载2](https://www.nagios.org/downloads/nagios-core-addons/)   
 [Nagios的相关软件包下载3](http://nagios-plugins.org/download/)    
@@ -105,8 +118,7 @@ nagios的所有监控工作都是通过插件完成的，因此，在启动nagio
 
 ```
 
-
-### 二、配置Nagios
+<h3 id="二">二、配置Nagios</h3>  
 
 #### 2.1 Nagios的主配置文件
 Nagios的主配置文件为nagios.cfg，参数的设置格式为<parameter>=<value>；其中，有些参数是可以重复出现的。其中常用的参数说明如下：
@@ -465,7 +477,8 @@ RRDPATH = /usr/local/pnp4nagios/var
 
 ```
 
-### 三、PNP4Nagios的安装:
+<h3 id="三">三、PNP4Nagios的安装:</h3>    
+
 PHP4Nagios有三种工作模式，分别是Synchronous Mode、Bulk Mode和Bulk Mode with NPCD；
 本实验使用Bulk Mode方式
 
@@ -642,7 +655,8 @@ define service {
 【注意】监控内存FREE的单位错误，单位应该是M，此处体现是K，但是数据正确
 ```
 
-### 四、使用NDOUtils将Nagios监控信息存入MySQL:
+<h3 id="四">四、使用NDOUtils将Nagios监控信息存入MySQL</h3>    
+
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-NDOUtils1.png)
 
 #### 4.1 安装配置MySQL：
@@ -834,7 +848,8 @@ tail: cannot open `1000' for reading: No such file or directory
 [1508226602] ndomod: Successfully flushed 243 queued items to data sink.
 ```
 
-### 五、Nagios告警通知设置： 
+<h3 id="五">五、Nagios告警通知设置</h3>   
+
 ```ruby
 # yum install mailx*
 # vim /etc/mail.rc
@@ -990,7 +1005,8 @@ service nagios restart
 ```
 
 
-### 六、Nagvis安装： 
+<h3 id="六">六、Nagvis安装</h3>   
+
 `【说明】需要前提先安装NDOUtils，将Nagios监控信息存入MySQL`
 
 ```ruby
@@ -1170,7 +1186,8 @@ htmlcgi="/nagios/cgi-bin"
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios-Nagvis1.png)
 
 
-### 七、配置被监控端(NRPE)：
+<h3 id="七">七、配置被监控端(NRPE)</h3>    
+
 #### 7.1 NRPE简介：
 
 - Nagios监控远程主机的方法有多种，其方式包括SNMP、NRPE、SSH和NCSA等。这里介绍其通过NRPE监控远程Linux主机的方式。
@@ -2007,7 +2024,8 @@ HTTP OK: Status line output matched "200" - 381 bytes in 5.083 second response t
 
 ```
 
-### 八、Nagios BPI（Business Process Intelligence）:
+<h3 id="八">八、Nagios BPI（Business Process Intelligence）</h3>     
+
 `Nagios Business Process Intelligence is an advanced grouping tool that allows you to set more complex dependencies to determine groups states. Nagios BPI provides an interface to effectively view the ‘real’ state of the network. Rules for group states can be determined by the user, and parent-child relationships are easily identified when you need to ‘drill down’ on a problem. This tool can also be used in conjunction with a check plugin to allow for notifications through Nagios.  This document describes how to fully utilize the Nagios Business Process Intelligence (or BPI) add-on and incorporate checks into Nagios.`  
 【说明】Nagios Business Process Intelligence （BPI）是一种高级的分组工具，允许你设置更复杂的依赖关系来确定组状态。 Nagios BPI提供了一个界面来有效地查看网络的“真实”状态。 组状态的规则可以由用户确定。此工具也可以与检查插件结合使用，以通过Nagios进行通知。 本文档介绍如何充分利用Nagios业务流程智能（或BPI）附件，并将检查纳入Nagios。
 
@@ -2084,7 +2102,8 @@ define localServices2 {
 【说明】“Primary”BPI组会在BPI的页面的最顶端看到，然而没有主组的必要要有一个依赖的“父组”，为了是能在页面中显示，如果一个“non-primary”组被定义了，但是没有委派任何的成员，那么这个组将不会再页面中显示
 
 
-### 九、Nagios BP（Business Process AddOns）:
+<h3 id="九">九、Nagios BP（Business Process AddOns）</h3>      
+
 ```ruby
 # wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 # rpm -ivh epel-release-6-8.noarch.rpm
@@ -2179,7 +2198,8 @@ info_url  website;/more_info/website.html
 # /usr/local/nagiosbp/bin/nagios-bp-consistency-check.pl
 ```
 
-## 附：项目监控配置
+<h3 id="十">十、附：项目监控配置</h3>     
+
 `监控端和被监控端都需要安装NRPE（有些插件如check_memory.pl是NRPE格式编写，所以必须结合nrpe插件使用）`
 
 - 启动NRPE：/usr/local/nagios/bin/nrpe -c /usr/local/nagios/etc/nrpe.cfg -d
