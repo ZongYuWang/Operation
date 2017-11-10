@@ -849,26 +849,150 @@ for k,v in info.items():
 
 
 ### 集合：
+```ruby
+两种生成集合的方式：
+
+#方式1：
+list_1 = [1,4,5,7,3,6,7,9]
+list_1 = set(list_1)
+
+print(list_1,type(list_1))
+# 输出：
+{1, 3, 4, 5, 6, 7, 9} <class 'set'>
+
+方式2：
+list_2 = set([2,6,0,66,22,8,4])
+
+print(list_2)
+# 输出：
+{0, 2, 66, 4, 6, 8, 22}
+
+# 集合中是没有重复项的，集合也是无序的
+```
+
+- 集合的交接（也可以使用符号：list_1 & list_2）：
+```ruby
+
+list_1 = [1,4,5,7,3,6,7,9]
+list_1 = set(list_1)
+
+list_2 = set([2,6,0,66,22,8,4])
+
+print(list_1.intersection(list_2)) # 输出：{4, 6}
+```
+
+- 集合的并集（也可是使用符号：list_1 | list_2）：
+```ruby
+print(list_1.union(list_2))
+```
+- 差集：（也可以使用符号：list_1 - list_2）(in list_1 but not in list_2)
+```ruby
+print(list_1.difference(list_2))  # 输出:{1, 9, 3, 5, 7}
+print(list_2.difference(list_1))  # 输出:{0, 8, 2, 66, 22}
+```
+
+- 判断子集:
+```ruby
+print(list_1,list_2)
+print(list_1.issubset(list_2))
+
+# 输出:
+{1, 3, 4, 5, 6, 7, 9} {0, 2, 66, 4, 6, 8, 22}
+False
+```
+- 判断父集:
+```ruby
+list_1 = [1,4,5,7,3,6,7,9]
+list_1 = set(list_1)
+list_3 = set([1,3,7])
+print(list_3.issubset(list_1))   # 输出True
+print(list_1.issuperset(list_3)) # 输出True
+```
+- 对称差集：（也可以使用符号：list_1 ^ list_2）(在list_1或list_2中，但不会同时出现在二者中)
+```ruby
+list_1 = [1,4,5,7,3,6,7,9]
+list_1 = set(list_1)
+list_2 = set([2,6,0,66,22,8,4])
+list_3 = set([1,3,7])
+
+print(list_1.symmetric_difference(list_2))
+
+# 输出：
+{0, 1, 2, 66, 3, 5, 7, 8, 9, 22}
+```
+
+- isdisjoint
+```ruby
+list_3 = set([1,3,7])
+list_4 = set([5,6,8])
+
+# Return True if two sets have a null intersection
+print(list_3.isdisjoint(list_4))
+
+# return True
+
+# 如果list_4的集合是{5,6,7,3,1}，那么就会返回false
+```
+
+- 集合的添加：
+```ruby
+list_1.add(999)
+print(list_1)
+
+# 输出：
+{1, 3, 4, 5, 6, 7, 999, 9}
 
 
+# 在list_2中添加多项：
+list_2 = set([2,6,0,66,22,8,4])
+list_2.update([10,37,42])
 
+print(list_2)  # 输出：{0, 2, 66, 4, 37, 6, 8, 10, 42, 22}
 
+```
 
+- 集合的删除：
+```ruby
+remove：指定删除一项：
 
+list_1 = set([1,4,5,7,3,6,7,9])
+list_1.remove(9)
+print(list_1)  # 输出：{1, 3, 4, 5, 6, 7}
+#如果出现两个9，会删除第几个9呢？答：集合不会出现两个9，因为集合中是没有重复项的
+#【注意】remove如果删除一个不存在的数据会报错
 
+pop：随机删除一项：
+list_1 = set([1,4,5,7,3,6,7,9])
+print(list_1.pop())  # 输出：1
+print(list_1)        # 输出：{3, 4, 5, 6, 7, 9}
 
+discard：指定删除一项：
+list_1 = set([1,4,5,7,3,6,7,9])
+print(list_1.discard(6))  # 输出：None
+print(list_1)             # 输出：{1, 3, 4, 5, 7, 9}
+# discard无论删除的数据是否存在集合中，都会提示none
+# 不用print，删就删除了，不会有提示，其实print不用写了
 
+```
 
-
-
-
-
-
-
-
-
-
-
+- len:set的长度：
+```ruby
+list_1 = set([1,4,5,7,3,6,7,9])
+length = len(list_1)
+print(length)  # 输出7
+```
+- in：判断x是否为 list_1的成员
+```ruby
+list_1 = set([1,4,5,7,3,6,7,9])
+print(5 in list_1)    # 输出：True
+print(100 in list_1)  # 输出：False
+```
+- not in：判断x是否不是list_1的成员
+```ruby
+list_1 = set([1,4,5,7,3,6,7,9])
+print(5 not in list_1)
+print(100 not in list_1)
+```
 
 
 
