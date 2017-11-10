@@ -847,6 +847,46 @@ for k,v in info.items():
     print(k,v)
 ```
 
+
+### 集合：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 - pyc解释：
 【说明】这个路径下E:\PycharmProjects\untitled\study\day01\__pycache__会有.pyc文件
 python到底是什么？
