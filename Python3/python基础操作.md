@@ -367,6 +367,158 @@ print("ab23".isalpha())   # False
 #isalnum是不能有符号的，否则输出false；isalpha是必须纯字母的
 ```
 
+### 判断十进制：
+```ruby
+print("1A".isdigit())  # 输出：False
+
+```
+### 判断是不是整数：
+```ruby
+print("1A".isdigit())  # 输出：False
+print("123".isdigit()) # 输出：True
+```
+
+### 判断是不是合法的标识符：
+```ruby
+print("1A".isidentifier())  # 输出：False
+print("123".isidentifier()) # 输出：False
+```
+
+### join(把列表转换成字符串):
+```ruby
+print("+".join(["1","2","3"]))   # 输出：1+2+3
+```
+### ljuest(原字符在左侧输出，右侧补齐字符):
+```ruby
+name = "My name is wangzy"
+print(name.ljust(50,"*"))
+
+# 输出：
+My name is wangzy*********************************
+
+#首先保证这句话长50个字符，如果不够的话，用星号补上
+```
+
+### rjust(原字符在右侧，左侧补齐字符)
+```ruby
+name = "My name is wangzy"
+print(name.rjust(50,"+"))
+```
+
+### lower/upper(字符大小写转换)：
+```ruby
+print("Wangzy".lower())  # 输出：wangzy
+print("wangzy".upper())  # 输出：WANGZY
+```
+
+### lstrip/rstrip/strip(自动去掉空格和换行)
+```ruby
+lstrip()
+rstrip()
+strip() :左边和右边的空格和换行都去掉
+
+print("\n      Wangzy".lstrip())
+print("-------------")
+
+print("\nwangzy\n       ".rstrip())
+print("-------------")
+
+# 输出：
+Wangzy
+-------------
+
+wangzy
+-------------
+
+```
+
+### maketrans(字符替换)：
+`a替换1 b替换2 c替换3 d替换4 e替换5 f替换6`
+```ruby
+p = str.maketrans("abcdef","123456")
+print("wang zong yu".translate(p))
+
+# 输出：
+w1ng zong yu
+# 根据上面的匹配原则，wang中的w、n、g都没有匹配项，a匹配1，所以会输出a1ng zong yu
+```
+
+
+### replace(将某个字符替换成另外一个字符):
+```ruby
+print("wang zong yu".replace("n","N"))  # 输出：waNg zoNg yu
+
+# 只替换一个相关字符
+print("wang zong yu".replace("n","N",1)) # 输出：waNg zong yu
+```
+
+### rfind(顺序是自左至右找，但是如果有多个重复的，选取最右侧的，返回下角标值):
+```ruby
+print("wang zong yu".rfind("u"))  # 输出：11
+
+print("wang zong yu".rfind("n"))  # 输出：7
+```
+
+### split(将字符串按照空格分成列表)：
+```ruby
+print("wang zong yu".split())
+
+#按照n进行分割：
+print("wang zong yu".split("n"))
+
+# 输出：
+['wang', 'zong', 'yu']
+['wa', 'g zo', 'g yu']
+# 被当成分隔符的“n”会没了
+```
+
+###  splitlines：
+```ruby
+print("1+2\n3+4".splitlines())
+
+# 输出：
+['1+2', '3+4']
+```
+
+### startswith/endswitch(判断以什么字符开始/判断以什么字符结束)：
+```ruby
+print("12345".startswith("1"))      # 输出：True
+print("wangzy".startswith("y"))     # 输出：False
+
+print("wangzy".endswith("zy"))      # 输出：True
+print("wangzy".endswith("wangzy"))  # 输出：True
+```
+
+### swapcase(大写字符转换成小写字符，小写字符转换成大写字符)：
+```ruby
+print("wANG ZONG yU".swapcase())   # 输出：Wang zong Yu
+```
+
+### range介绍：
+```ruby
+for count in range(1,5):
+    print(count)
+
+# 输出：
+1
+2
+3
+4
+【说明】（1,5）是从1取值，4结束
+```
+```ruby
+for count in range(1,10,2):
+    print(count)
+    
+# 输出：
+1
+3
+5
+7
+9
+【说明】（1,10,2）是每隔2个取一个值
+```
+
 ### 列表：
 ```ruby
 列表循环：
@@ -460,29 +612,239 @@ print( name[name.find("wangzy"):])  # wangzy
 
 ```
 
-### range介绍：
+### 字典：
+` 字典是无序的，是因为没有下标`
 ```ruby
-for count in range(1,5):
-    print(count)
+info = {
+    "person1":"wangzy",
+    "person2":"baby",
+    "person3":"shen"
+}
+
+print(info)
+print(info["person1"])
+
+info["person3"] = "hello"
+print(info)
 
 # 输出：
-1
-2
-3
-4
-【说明】（1,5）是从1取值，4结束
+{'person2': 'baby', 'person1': 'wangzy', 'person3': 'shen'}
+wangzy
+{'person2': 'baby', 'person1': 'wangzy', 'person3': 'hello'}
 ```
+首先得确定字典中一定有那个key值，如果不确定是否有那个key值，则使用下面的办法：
 ```ruby
-for count in range(1,10,2):
-    print(count)
+info = {
+    "person1":"wangzy",
+    "person2":"baby",
+    "person3":"shen"
+}
+
+print(info.get("person2"))  # 输出：baby
+print(info.get("person4"))  # 输出：None
+
+# 在python2.x中使用语法 info.has_key(“person1”)
+```
+
+如果没有对应的key就是在字典中添加一项，如果有对应的key就是在字典中修改key对应的值
+```ruby
+
+info = {
+    "person1":"wangzy",
+    "person2":"baby",
+    "person3":"shen"
+}
+
+info["person3"] = "hello"
+info["person4"] = "world"
+
+print(info)
+
+# 输出：
+{'person1': 'wangzy', 'person3': 'hello', 'person2': 'baby', 'person4': 'world'}
+```
+- 删除字典数据：
+```ruby
+# 方式1：
+del info["person3"]
+
+方式2：
+info.pop("person3")
+
+方式3：popitem是随机删除一个
+info.popitem()
+```
+
+### 多级字典嵌套及操作：
+```ruby
+av_catalog = {
+    "欧美":{
+        "www.youporn.com": ["很多免费的,世界最大的","质量一般"],
+        "www.pornhub.com": ["很多免费的,也很大","质量比yourporn高点"],
+        "letmedothistoyou.com": ["多是自拍,高质量图片很多","资源不多,更新慢"],
+        "x-art.com":["质量很高,真的很高","全部收费,屌比请绕过"]
+    },
+    "日韩":{
+        "tokyo-hot":["质量怎样不清楚,个人已经不喜欢日韩范了","听说是收费的"]
+    },
+    "大陆":{
+        "1024":["全部免费,真好,好人一生平安","服务器在国外,慢"]
+    }
+}
+
+修改：
+av_catalog ["大陆"]["1024"][1] = "可以做镜像下载"
+print(av_catalog ["大陆"]["1024"])
+# 【注意】key尽量不要使用中文
+
+# 输出：
+['全部免费,真好,好人一生平安', '可以做镜像下载']
+```
+
+### setdefault(先去字典取值，如果没有对应的值，就创建一个，如果有也不会对原来的做修改操作)
+```ruby
+av_catalog.setdefault("大陆",{"www.baidu.com":["哈哈","还可以"]})
+print(av_catalog["大陆"])
+
+这样就新增了一条“taiwan”
+把key=“taiwan”设置成key=“大陆”，原来的key=“大陆”那条也不会被修改，还会是原来的
+
+# 输出：
+{'1024': ['全部免费,真好,好人一生平安', '服务器在国外,慢']}
+```
+
+### update(两个字典合并，有交叉的就覆盖，没有交叉的就合并了)
+```ruby
+
+info = {
+    "person1":"wangzy",
+    "person2":"baby",
+    "person3":"shen"
+}
+
+info_new = {
+   "person1":"babyshen",
+   "man1":"nihao",
+   "man2":"hehe"
+}
+
+info.update(info_new)
+print(info)
+print(info_new)
+
+# 输出：
+{'man1': 'nihao', 'person1': 'babyshen', 'person3': 'shen', 'person2': 'baby', 'man2': 'hehe'}
+{'person1': 'babyshen', 'man2': 'hehe', 'man1': 'nihao'}
+```
+
+### items(将字典转成列表): 
+```ruby
+info = {
+    "person1":"wangzy",
+    "person2":"baby",
+    "person3":"shen"
+}
+
+print(info.items())
+
+# 输出：
+dict_items([('person2', 'baby'), ('person1', 'wangzy'), ('person3', 'shen')])
+```
+
+- 通过一个列表生成默认的字典
+` 这是一个坑，少用`
+```ruby
+c = dict.fromkeys([1,2,3],'test')
+print(c)
+print(c.items())
+
+# 输出：
+{1: 'test', 2: 'test', 3: 'test'}
+dict_items([(1, 'test'), (2, 'test'), (3, 'test')])
+
+
+c = dict.fromkeys([1,2,3])
+print(c)
+# 输出：
+{1: None, 2: None, 3: None}
+
+# 列表中如果后面没有值，转化成字典的时候，value值都会显示none
+
+
+做一下修改：
+c = dict.fromkeys([6,7,8],[1,{"name":"wangzy"},444])
+print(c)
+
+c[7][1]["name"] = "baby"
+print(c)
+
+# 输出：
+{8: [1, {'name': 'wangzy'}, 444], 6: [1, {'name': 'wangzy'}, 444], 7: [1, {'name': 'wangzy'}, 444]}
+{8: [1, {'name': 'baby'}, 444], 6: [1, {'name': 'baby'}, 444], 7: [1, {'name': 'baby'}, 444]}
+
+# 【注意】大坑，居然将值全改了
+```
+
+### 字典打印 键/值：
+```ruby
+
+info = {
+    "person1":"wangzy",
+    "person2":"baby",
+    "person3":"shen"
+}
+
+# 打印键：
+print(info.keys())
+
+# 输出：
+dict_keys(['person1', 'person2', 'person3'])
+
+# 打印值：
+print(info.values())
+
+# 输出：
+dict_values(['shen', 'baby', 'wangzy'])
+
+```
+
+### 字典循环：
+
+```ruby
+info = {
+    "person1":"wangzy",
+    "person2":"baby",
+    "person3":"shen"
+}
+
+# 打印key
+for i in info:
+    print(i)
     
 # 输出：
-1
-3
-5
-7
-9
-【说明】（1,10,2）是每隔2个取一个值
+person3
+person2
+person1
+
+
+# 打印value：
+
+for i in info:
+    print(info[i])
+    
+# 输出：
+shen
+baby
+wangzy
+
+# 打印key：value
+# 方式1：这种方式比方式2效率高
+for i in info:
+    print(i,info[i])
+    
+# 方式2：
+for k,v in info.items():
+    print(k,v)
 ```
 
 - pyc解释：
