@@ -1,7 +1,7 @@
 ## CentOS7搭建SVN服务器
 
-SVN服务端软件下载
-SVN客户端软件下载
+[SVN服务端软件下载](http://subversion.apache.org/packages.html)     
+[SVN客户端软件下载](https://tortoisesvn.net/downloads.html)
 
 ### 1.安装SVN服务端：
 ```ruby
@@ -80,6 +80,6 @@ tcp        0      0 0.0.0.0:3690            0.0.0.0:*               LISTEN      
 ```
 
 ### 2.使用客户端连接：
-打开TortoiseSVN Repository Browser工具
-在URL中输入：
-svn://192.168.11.229回车，提示输入用户名和口令
+打开TortoiseSVN Repository Browser工具      
+在URL中输入：       
+svn://192.168.11.229回车，提示输入用户名和口令    
