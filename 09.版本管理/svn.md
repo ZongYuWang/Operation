@@ -105,11 +105,11 @@ Committed revision 1.
 
 ```
 ### 2.使用客户端连接：
-`安装完TortoiseSVN之后需要重启电脑`
-桌面右键TortoiseSVN checkout工具     
-在URL中输入：       
-svn://192.168.11.229
+`安装完TortoiseSVN之后需要重启电脑`    
+桌面右键TortoiseSVN checkout工具      
+在URL中输入：     
+svn://172.30.105.106/project     
 ![](https://github.com/ZongYuWang/image/blob/master/svn1.png)
-
-提示输入用户名和口令   
+` Checkout directory可以自己随意定义`
+提示输入用户名和口令       
 ![](https://github.com/ZongYuWang/image/blob/master/svn2.png)
