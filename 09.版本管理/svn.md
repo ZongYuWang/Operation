@@ -1,11 +1,18 @@
 ## CentOS7搭建SVN服务器
 
 [SVN服务端软件下载](http://subversion.apache.org/packages.html)     
-[SVN客户端软件下载](https://tortoisesvn.net/downloads.html)
+[SVN客户端软件下载(包含汉化包)](https://tortoisesvn.net/downloads.html)
 
 ### 1.安装SVN服务端：
+#### 1.1 安装服务端软件并查看版本：
 ```ruby
 [root@CentOS7 ~]# yum install subversion -y
+
+```
+```ruby
+[root@CentOS7 ~]# svnserve --version
+svnserve, version 1.7.14 (r1542130)
+   compiled Aug 23 2017, 20:43:38
 
 ```
 
@@ -67,19 +74,42 @@ user = user2
 ```
 #### 1.7.启动svn服务
 ```ruby
-[root@CentOS7 ~]# svnserve -d -r /svn/project/
+[root@CentOS7 ~]# # svnserve -d -r /svn
 
-[root@CentOS7 ~]# ps -ef | grep svn
-root      32416      1  0 00:07 ?        00:00:00 svnserve -d -r /svn/project/
-root      32418  32279  0 00:07 pts/0    00:00:00 grep --color=auto svn
+[root@CentOS7 ~]# # ps -ef | grep svn
+root       1570      1  0 21:40 ?        00:00:00 svnserve -d -r /svn
+root       1572   1399  0 21:40 pts/0    00:00:00 grep --color=auto svn
+
 
 
 [root@CentOS7 ~]# netstat -tlnp | grep svn
 tcp        0      0 0.0.0.0:3690            0.0.0.0:*               LISTEN      32416/svnserve 
 
 ```
+#### 1.8 本地测试：
+```ruby
+[root@CentOS7 ~]#mkdir -p /home/www/
+[root@CentOS7 www]# svn co svn://localhost/project
+Checked out revision 0.   #出现这个表示成功
 
+/home/www下会自动生成一个project的目录：
+[root@CentOS7 project]# touch index.php 
+[root@CentOS7 project]# svn add index.php
+A         index.php
+
+[root@CentOS7 project]# svn commit index.php -m "提交测试文件"
+Adding         index.php
+Transmitting file data .
+Committed revision 1.
+
+
+```
 ### 2.使用客户端连接：
-打开TortoiseSVN Repository Browser工具      
+`安装完TortoiseSVN之后需要重启电脑`
+桌面右键TortoiseSVN checkout工具     
 在URL中输入：       
-svn://192.168.11.229回车，提示输入用户名和口令    
+svn://192.168.11.229
+![](https://github.com/ZongYuWang/image/blob/master/svn1.png)
+
+提示输入用户名和口令   
+![](https://github.com/ZongYuWang/image/blob/master/svn2.png)
