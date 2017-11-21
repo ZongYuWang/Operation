@@ -109,7 +109,7 @@ Committed revision 1.
 桌面右键TortoiseSVN checkout工具      
 在URL中输入：     
 svn://172.30.105.106/project     
-![](https://github.com/ZongYuWang/image/blob/master/svn1.png)
-` Checkout directory可以自己随意定义`
-提示输入用户名和口令       
-![](https://github.com/ZongYuWang/image/blob/master/svn2.png)
+![](https://github.com/ZongYuWang/image/blob/master/svn1.png)      
+` Checkout directory可以自己随意定义`       
+提示输入用户名和口令         
+![](https://github.com/ZongYuWang/image/blob/master/svn2.png)     
