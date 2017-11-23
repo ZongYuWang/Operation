@@ -30,7 +30,7 @@
 
 
 #### 2.1、安装：
-[git-windows下载](https://git-for-windows.github.io/)
+[git-windows下载](https://git-for-windows.github.io/)      
 `Git for Windows从2.8.0版本开始，默认添加环境变量，所以环境变量部分就不用再手动配置了`
 
 #### 2.2、运行 git init 来初始化仓库
