@@ -6,8 +6,8 @@
 可是很多情况下，这种修改是不可逆的。你修改完之后，无法回到你修改前的样子。为了避免这种情况，有的人会把新版本的内容保存到一个新的文件里面
 由于 Git 更多地用于代码管理，举个程序员的例子。比如以下是计算机专业学生的作业：
 
+![](https://github.com/ZongYuWang/image/blob/master/Git1.png)    
 
-图片
 这样存储多个文件夹，可能会造成混乱。你可能想保存以前写的代码，因为它们可能在以后会用到。但是更多的时候是，你不知道各个文件夹都做了什么修改。
 这时候你需要一款软件帮你管理版本，它就是Git。
 
@@ -29,12 +29,11 @@
 |版本回退|	reset --hard 版本号	|回退到指定版本号的版本，该版本之后的修改都被删除。同时也是通过这个命令回到最新版本。需要reflog配合
 
 
-
-### 4、安装：
+#### 2.1、安装：
 https://git-for-windows.github.io/
 `Git for Windows从2.8.0版本开始，默认添加环境变量，所以环境变量部分就不用再手动配置了`
 
-### 5、运行 git init 来初始化仓库
+#### 2.2、运行 git init 来初始化仓库
 ```ruby
 
 Administrator@wanzy-PC MINGW64 /d (master)
@@ -45,11 +44,11 @@ $ git init
 Initialized empty Git repository in D:/Git_Project/.git/
 
 ```
-图
+![](https://github.com/ZongYuWang/image/blob/master/Git3.png) 
 
-### 6、文件的添加和提交
-在这个文件夹里面创建了一个 demo1.txt 的文件(里面的内容是:世界，你好！)
-使用 git status 来查看有什么变化：
+#### 2.3、文件的添加和提交
+在这个文件夹里面创建了一个 demo1.txt 的文件(里面的内容是:世界，你好！)    
+- 使用 git status 来查看有什么变化：
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git status
@@ -66,7 +65,7 @@ nothing added to commit but untracked files present (use "git add" to track)
 
 # 说明：有一个还未追踪的文件，并提示我可以使用 git add <file>... 把它加进去
 ```
-使用git add -A命令：
+- 使用git add -A命令：
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git add -A
@@ -85,7 +84,7 @@ Changes to be committed:
 
 # 说明：说明add成功。再看看它的提示 Changes to be committed ，也就是说现在可以执行commit了
 ```
-执行git commit -m "说明信息"将文件提交到repository里。提交信息用英文的双引号括起来：
+- 执行git commit -m "说明信息"将文件提交到repository里。提交信息用英文的双引号括起来：
 ```ruby
 
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
@@ -95,7 +94,7 @@ $ git commit -m "upload20171123V1"
  create mode 100644 demo1.txt
 
 ```
-运行git log就可以看到提交的记录了:
+- 运行git log就可以看到提交的记录了:
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git log
@@ -107,7 +106,7 @@ Date:   Thu Nov 23 15:34:45 2017 +0800
 
 ```
 `为什么要有一个add，直接commit不就行了？这是因为stage有很多用处，具体可以去查找相关资料`
-### 7、文件的修改：
+#### 2.4、文件的修改：
 接着我修改文件内容,内容修改为（世界，大家好！）,使用git status看看有什么变化：
 
 ```ruby
@@ -124,7 +123,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 # 说明：比较一下就会看到，之前的是添加新文件，当时文件还没被追踪（untracked），而这次是更改已经追踪（tracked）的文件
 ```
-通过git看看文件做了哪些变化，执行 git diff ：
+- 通过git看看文件做了哪些变化，执行 git diff ：
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git diff
@@ -143,7 +142,7 @@ index e95eda7..e08adec 100644
 # 因此，在git看来，我们是删除了原来那一行，并添加了新的两行。这在文件内容特别多的时候效果比较明显
 # 如果你用 windows 创建 txt 文件，并用自带文本编辑器来编辑文本，得到的编码是 GBK 。而 Git 读取文件时，使用 UTF-8 无 ROM 编码。因此会出现中文无法正常显示的情况
 ```
-假如我现在想撤销这些更改，执行git checkout -- .：
+- 假如我现在想撤销这些更改，执行git checkout -- .：
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git checkout -- .
@@ -183,7 +182,7 @@ Date:   Thu Nov 23 15:34:45 2017 +0800
     upload20171123V1
 
 ```
-### 8、版本回退:
+#### 2.5、版本回退:
 还是以上面提交的文件为例(里面的内容是:世界，大家好！)现在试着将文件回退到第一个commit时的状态
 
 从刚才的 git log查看：
@@ -204,7 +203,7 @@ Date:   Thu Nov 23 15:34:45 2017 +0800
 
 ```
 `看到以 commit 开头的，后面接着一串字符。这一串字符是16进制的数，是一串哈希值。叫它版本号就行了`
-开始回退，执行git reset --hard c9edd8a（取版本号前7位就可以了）：
+- 开始回退，执行git reset --hard c9edd8a（取版本号前7位就可以了）：
 
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
@@ -227,7 +226,7 @@ Date:   Thu Nov 23 15:34:45 2017 +0800
     upload20171123V1
 
 ```
-再次回到之前的最新版：
+- 再次回到之前的最新版：
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git reflog
@@ -240,7 +239,7 @@ c9edd8a (HEAD -> master) HEAD@{2}: commit (initial): upload20171123V1
 第一行表示当前HEAD所在的版本号是c9edd8a ，而之所以在这个版本号，是由于我们执行了reset命令。
 看第二行，它告诉我们，这个HEAD所在的版本号是1a71f27 ，这个版本号是在执行commit之后形成的。
 
-此时我再用一次reset，将HEAD指向 1a71f27 ， 同时查看log ：
+- 此时我再用一次reset，将HEAD指向 1a71f27 ， 同时查看log ：
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git reset --hard 1a71f27
@@ -265,7 +264,7 @@ Date:   Thu Nov 23 15:34:45 2017 +0800
 
 ```
 
-### 9、清除未追踪的文件
+#### 2.6、清除未追踪的文件
 首先创建一个文件：test1
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
@@ -279,7 +278,7 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 
 ```
-使用 git clean -xf ：
+- 使用 git clean -xf ：
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git clean -xf
@@ -301,16 +300,15 @@ Removing test1.txt
 |提交到远程仓库	|push	|将当前分支增加的commit提交到远程仓库
 |从远程仓库同步	|pull	|在本地版本低于远程仓库版本的时候，获取远程仓库的commit
 
-
-图片
+![](https://github.com/ZongYuWang/image/blob/master/Git2.png) 
 
 - workspace 即工作区，逻辑上是本地计算机，还没添加到repository的状态；
 - staging 即版本库中的stage，是暂存区。修改已经添加进repository，但还没有作为commit提交，类似于缓存；
 - Local repository 即版本库中master那个地方。到这一步才算是成功生成一个新版本；
 - Remote repository 则是远程仓库。用来将本地仓库上传到网络，可以用于备份、共享、合作。本文将使用Github作为远程仓库的例子。
 
-
-- 本地配置用户名和邮箱（如果已经设置好，跳过该步）：
+#### 3.1到Github注册账号  
+#### 3.2本地配置用户名和邮箱（如果已经设置好，跳过该步）：
 ```ruby
 
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
@@ -333,7 +331,7 @@ $ git config --global user.email "691793599@qq.com"
 [core]
 	quotepath = false
 ```
-- 生成ssh key：
+#### 3.3 生成ssh key：
 运行 ssh-keygen -t rsa -C "你的邮箱" ，它会有三次等待你输入，直接回车即可
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
@@ -362,9 +360,10 @@ The key's randomart image is:
 
 ```
 - 到上图提示的路径里去打开文件id_rsa.pub并复制生成的ssh key复制到剪贴板
-- 打开Github，进入Settings，点击左边的 SSH and GPG keys ，点击new SSH key，将ssh key粘贴到右边的Key里面。Title随便命名即可，最后点击下面的 Add SSH key 就添加成功了
+#### 3.4 打开Github，进入Settings
+点击左边的 SSH and GPG keys ，点击new SSH key，将ssh key粘贴到右边的Key里面。Title随便命名即可，最后点击下面的 Add SSH key 就添加成功了
 
-测试：
+#### 3.5 测试：
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ ssh -T git@github.com
@@ -378,12 +377,11 @@ Hi wangzy711! You've successfully authenticated, but GitHub does not provide she
 # 对于 coding 的 “码市” ，执行 ssh -T git@git.coding.net
 ```
 
-创建远程仓库并与本地关联：
-创建远程仓库：
+### 4、创建远程仓库并与本地关联：
+#### 4.1 创建远程仓库：
 首先是在右上角+号，选择New repository创建界面  -> 接着输入远程仓库名 —> 点击 Create repository 就创建好了（其他选项可以暂时不管）
 
-将远程仓库和本地仓库关联起来
-
+#### 4.2 将远程仓库和本地仓库关联起来
 先到Github上复制远程仓库的SSH地址：
 ```ruby
 git@github.com:wangzy711/gitlearning.git
@@ -414,7 +412,6 @@ Branch 'master' set up to track remote branch 'master' from 'origin'.
 
 ```
 关联已经完成！
-
 以后想在commit后同步到Github上，只要直接执行 git push 就可以
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
