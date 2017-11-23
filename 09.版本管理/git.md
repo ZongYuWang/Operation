@@ -212,7 +212,7 @@ HEAD is now at c9edd8a upload20171123V1
 
 # 再看文件内容，变为"世界，你好"变为了第一种状态
 ```
-- 文件的时间问题
+- 文件的时间问题 :         
 由于文件的修改日期是由windows修改的，因为它检测到这个文件被修改了。而我们刚才从最新版本回退到现在这个版本，就像是我们手动修改了文件内容一样，事实上是由git来完成的
 
 再看一下git log:
@@ -234,10 +234,10 @@ c9edd8a (HEAD -> master) HEAD@{0}: reset: moving to c9edd8a
 1a71f27 HEAD@{1}: commit: 将[你]改为[大家]
 c9edd8a (HEAD -> master) HEAD@{2}: commit (initial): upload20171123V1
 
+# 可以看到HEAD的变化情况;     
+# 第一行表示当前HEAD所在的版本号是c9edd8a ，而之所以在这个版本号，是由于我们执行了reset命令。
+# 看第二行，它告诉我们，这个HEAD所在的版本号是1a71f27 ，这个版本号是在执行commit之后形成的。
 ```
-可以看到HEAD的变化情况。
-第一行表示当前HEAD所在的版本号是c9edd8a ，而之所以在这个版本号，是由于我们执行了reset命令。
-看第二行，它告诉我们，这个HEAD所在的版本号是1a71f27 ，这个版本号是在执行commit之后形成的。
 
 - 此时我再用一次reset，将HEAD指向 1a71f27 ， 同时查看log ：
 ```ruby
