@@ -503,6 +503,32 @@ Swap:  2031612k total,        0k used,  2031612k free,    58468k cached
      4 root      20   0     0    0    0 S  0.0  0.0   0:00.00 ksoftirqd
 
 ```
+#### 总结：
+- 服务端：
+```ruby
+server = socket.socket(AF.INET,sock.SOCK_STREAM)
+server.bind(localhost,9999)
+server.listen()
+while True:
+    conn,addr = server.accept()  # 阻塞
+    while True:
+        print("new conn",addr)
+        data = conn.recv(1024) #8192 recv默认是阻塞的
+        if not data:
+            break  # 客户端已断开，conn.recv收到的就都是空数据
+        print(data)
+        conn.sned(data.upper())
+```
+- 客户端：
+```ruby
+client = socket.socket()
+client.connect(serverip,9999)
+client.send(data)
+client.sned(data)
+client.recv(date)
+```
+
+
 ### 断言
 ```ruby
 choice = input("PLZ inpuet>>: ")
