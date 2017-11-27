@@ -503,3 +503,25 @@ Swap:  2031612k total,        0k used,  2031612k free,    58468k cached
      4 root      20   0     0    0    0 S  0.0  0.0   0:00.00 ksoftirqd
 
 ```
+### 断言
+```ruby
+choice = input("PLZ inpuet>>: ")
+assert type(choice) is str
+print("True")
+
+# 运行：
+PLZ inpuet>>: 123  # 键盘输入就是str类型
+True
+
+choice = input("PLZ inpuet>>: ")
+assert type(choice) is int
+print("True")
+
+# 运行：
+PLZ inpuet>>: 123   # 只有断言对了，才会向下进行
+Traceback (most recent call last):
+  File "E:/PycharmProjects/untitled/study/day7/动态加载.py", line 14, in <module>
+    assert type(choice) is int
+AssertionError
+# 断言错了就不再继续往下执行
+```
