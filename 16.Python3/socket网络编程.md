@@ -551,3 +551,64 @@ Traceback (most recent call last):
 AssertionError
 # 断言错了就不再继续往下执行
 ```
+
+#### 实现简单的SSH工具
+
+-socket-ssh-server：
+```ruby
+import socket
+import os
+server = socket.socket()
+server.bind(('localhost',9999))
+server.listen(5)
+
+while True:
+    conn,addr = server.accept()
+    print("new conn:",addr)
+    while True:
+        print("等待指令")
+        data = conn.recv(1024)
+        if not data:
+            print("客户端已经断开")
+            break
+        print("执行指令：",data)
+        cmd_res = os.popen(data.decode()).read()  # 接收字符串，执行结果也是字符串
+        print("before send",len(cmd_res))
+        if len(cmd_res) == 0:
+            cmd_res = "cmd has no output..."
+
+        conn.send(str(len(cmd_res.encode())).encode("utf-8"))
+        # 先发送数据的大小给客户端，因为设置了1024，客户端不可能一下全接收，设置成8192也行，但是万一数据超过8192呢，让客户端循环遍历整个大小
+        conn.send(cmd_res.encode("utf-8"))
+        print("send done")
+server.close()
+```
+- socket-ssh-client:
+```ruby
+import socket
+
+client = socket.socket()
+client.connect(('localhost',9999))
+
+while True:
+    cmd = input(">>：").strip()
+    if len(cmd) == 0: continue
+    client.send(cmd.encode("utf-8"))
+
+    cmd_res_size = client.recv(1024) # 接收命令结果的长度
+    print("命令结果大小：",cmd_res_size)
+    received_size = 0
+    received_data = b''
+    while received_size < int(cmd_res_size.decode()):
+        data = client.recv(1024)
+        received_size += len(data) # 每次收到的有可能小于1024，不一定每次都是1024，所以必须用len判断
+        #print(data.decode())
+        received_data += data
+    else:
+        print("cmd res receive done....",received_size)
+        print(received_data.decode())
+        # cmd_res = client.recv(1024)
+        # print(cmd_res.decode())
+
+client.close()
+```
