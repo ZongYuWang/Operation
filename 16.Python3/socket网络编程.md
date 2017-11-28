@@ -559,7 +559,7 @@ AssertionError
 import socket
 import os
 server = socket.socket()
-server.bind(('localhost',9999))
+server.bind(('localhost',9999)) #如果是windows连接linux-server，需要把localhost修改为0.0.0.0
 server.listen(5)
 
 while True:
@@ -588,7 +588,7 @@ server.close()
 import socket
 
 client = socket.socket()
-client.connect(('localhost',9999))
+client.connect(('localhost',9999)) # 如果是windows连接linux-server，localhost修改为windows本机的IP地址
 
 while True:
     cmd = input(">>：").strip()
@@ -611,4 +611,51 @@ while True:
         # print(cmd_res.decode())
 
 client.close()
+```
+`问题来了：上述代码会存在socket粘包问题,为什么会出现粘包问题呢，是因为两次的send同时进行了`
+
+方式1(这种方式太low了)：
+```ruby
+#socket-ssh-server修改代码：
+
+import time
+......
+conn.send(str(len(cmd_res.encode())).encode("utf-8"))
+        # 先发送数据的大小给客户端，因为设置了1024，客户端不可能一下全接收，设置成8192也行，但是万一数据超过8192呢，让客户端循环遍历整个大小
+        time.sleep(0.5)  # 两次send中间加了一个0.5秒的时间间隔
+        conn.send(cmd_res.encode("utf-8"))
+......
+```
+方式2：
+```ruby
+#socket-ssh-server修改代码：
+
+......
+conn.send(str(len(cmd_res.encode())).encode("utf-8"))
+        # 先发送数据的大小给客户端，因为设置了1024，客户端不可能一下全接收，设置成8192也行，但是万一数据超过8192呢，让客户端循环遍历整个大小
+        client_ack = conn.recv(1024) # wait client to confirm
+        print("ack from client:",client_ack)
+        conn.send(cmd_res.encode("utf-8"))
+        print("send done")
+......
+
+
+#socket-ssh-client修改代码：
+......
+ cmd_res_size = client.recv(1024) # 接收命令结果的长度
+    print("命令结果大小：",cmd_res_size)
+    client.send("准备好接受了，loser可以发了".encode("utf-8"))
+    received_size = 0
+    received_data = b''
+......
+```
+
+中文的长度问题：
+```ruby
+Python 3.4.3 (v3.4.3:9b73f1c3e601, Feb 24 2015, 22:43:06) [MSC v.1600 32 bit (Intel)] on win32
+>>> a = "神"
+>>> len(a)
+1
+>>> len(a.encode())  # 转码之后变为3
+3
 ```
