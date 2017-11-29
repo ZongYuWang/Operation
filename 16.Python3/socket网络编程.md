@@ -659,3 +659,232 @@ Python 3.4.3 (v3.4.3:9b73f1c3e601, Feb 24 2015, 22:43:06) [MSC v.1600 32 bit (In
 >>> len(a.encode())  # 转码之后变为3
 3
 ```
+
+#### FTP使用：
+- socket-ftp-server:
+```ruby
+import socket,os,time
+import hashlib
+
+server = socket.socket()
+server.bind(('0.0.0.0',9999))
+server.listen(5)
+
+while True:
+    conn,addr = server.accept()
+    print("new conn:",addr)
+    while True:
+        print("等待指令")
+        data = conn.recv(1024)
+        if not data:
+            print("客户端已经断开")
+            break
+
+        cmd,filename = data.decode().split()
+        print(filename)
+
+        if os.path.isfile(filename):
+            f = open(filename,"rb")
+            m = hashlib.md5()
+            file_size = os.stat(filename).st_size
+            conn.send( str(file_size).encode() ) # sedn file size
+            conn.recv(1024) # wait for ack
+
+            for line in f:
+                m.update(line)
+                conn.send(line)
+            #print("file md5",m.hexdigest())
+            f.close()
+        print("send done")
+server.close()
+
+```
+- socket-ftp-client:
+```ruby
+import socket
+
+client = socket.socket()
+client.connect(('localhost',9999))
+
+while True:
+    cmd = input(">>：").strip()
+    if len(cmd) == 0: continue
+    if cmd.startswith("get"):
+        client.send(cmd.encode())
+        server_response = client.recv(1024)
+        print("server response:",server_response)
+        client.send(b"ready to recv file")
+        file_total_size = int(server_response.decode())
+        received_size = 0
+        filename = cmd.split()[1]
+        f = open(filename + ".new","wb")
+        while received_size < file_total_size:
+            data = client.recv(2014)
+            received_size += len(data)
+            f.write(data)
+            #print(file_total_size,received_size)
+        else:
+            print("file recv done",received_size,file_total_size)
+            f.close()
+
+
+client.close()
+
+```
+
+
+运行：
+```ruby
+# socket-ftp-server：
+[root@localhost ~]# python socket_ftp_server.py 
+new conn: ('127.0.0.1', 46858)
+等待指令
+filename.txt
+send done
+等待指令
+
+# socket-ftp-client：
+[root@localhost ~]# python socket_ftp_client.py 
+>>：get filename.txt  # 客户端上传文件
+server response: b'24305842'
+file recv done 24305842 24305842
+>>：
+
+```
+
+增加MD5验证功能：
+- socket-ftp-server:
+```ruby
+import hashlib
+import socket,os,time
+import hashlib
+
+server = socket.socket()
+server.bind(('0.0.0.0',9999))
+server.listen(5)
+
+while True:
+    conn,addr = server.accept()
+    print("new conn:",addr)
+    while True:
+        print("等待指令")
+        data = conn.recv(1024)
+        if not data:
+            print("客户端已经断开")
+            break
+
+        cmd,filename = data.decode().split()
+        print(filename)
+
+        if os.path.isfile(filename):
+            f = open(filename,"rb")
+            m = hashlib.md5()
+            file_size = os.stat(filename).st_size
+            conn.send( str(file_size).encode() ) # sedn file size
+            conn.recv(1024) # wait for ack
+
+            for line in f:
+                m.update(line)
+                conn.send(line)
+            print("file md5",m.hexdigest())
+            f.close()
+            conn.send(m.hexdigest().encode()) # send md5
+                
+```
+- socket-ftp-client:
+```ruby
+import socket
+import hashlib
+
+client = socket.socket()
+client.connect(('localhost',9999))
+
+while True:
+    cmd = input(">>：").strip()
+    if len(cmd) == 0: continue
+    if cmd.startswith("get"):
+        client.send(cmd.encode())
+        server_response = client.recv(1024)
+        print("server response:",server_response)
+        client.send(b"ready to recv file")
+        file_total_size = int(server_response.decode())
+        received_size = 0
+        filename = cmd.split()[1]
+        f = open(filename + ".new","wb")
+        m = hashlib.md5()
+        while received_size < file_total_size:
+            data = client.recv(1024)
+            received_size += len(data)
+            m.update(data)
+            f.write(data)
+            #print(file_total_size,received_size)
+        else:
+            new_file_md5 = m.hexdigest()
+            print("file recv done",received_size,file_total_size)
+            f.close()
+        server_file
+```
+但是这么做会有粘包问题，运行一下
+```ruby
+# socket-ftp-client
+[root@localhost ~]# python socket_ftp_client.py 
+>>：get socket_server.py
+server response: b'321'
+file recv done 353 321
+# 客户端卡在这了，应该输出MD5验证，出现了粘包问题
+
+# socket-ftp-server
+[root@localhost ~]# python socket_ftp_server.py 
+new conn: ('127.0.0.1', 46874)
+等待指令
+socket_server.py
+file md5 23388392e227016bc916f882553aebf7
+send done
+等待指令
+```
+`解决粘包问题 socket-ftp-client代码：`
+```ruby
+import socket
+import hashlib
+
+client = socket.socket()
+
+client.connect(('localhost', 9999))
+
+while True:
+    cmd = input(">>:").strip()
+    if len(cmd) == 0: continue
+    if cmd.startswith("get"):
+        client.send(cmd.encode())
+        server_response = client.recv(1024)
+        print("servr response:", server_response)
+        client.send(b"ready to recv file")
+        file_total_size = int(server_response.decode())
+        received_size = 0
+        filename = cmd.split()[1]
+        f = open(filename + ".new", "wb")
+        m = hashlib.md5()
+
+        while received_size < file_total_size:
+            if file_total_size - received_size > 1024:  # 要收不止一次
+                size = 1024
+            else:  # 最后一次了，剩多少收多少
+                size = file_total_size - received_size
+                print("last receive:", size)
+
+            data = client.recv(size)
+            received_size += len(data)
+            m.update(data)
+            f.write(data)
+            # print(file_total_size,received_size)
+        else:
+            new_file_md5 = m.hexdigest()
+            print("file recv done", received_size, file_total_size)
+            f.close()
+        server_file_md5 = client.recv(1024)
+        print("server file md5:", server_file_md5)
+        print("client file md5:", new_file_md5)
+
+client.close()
+
+```
