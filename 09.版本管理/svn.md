@@ -47,6 +47,7 @@ realm = My Test Repository         #这是个提示信息
 
 ```
 #### 1.5.添加两个访问用户及口令:
+- 方式1：明文认证：
 ```ruby
 [root@CentOS7 ~]# vim /svn/project/conf/passwd 
 [users]
@@ -56,6 +57,14 @@ user2 = 123qwe
 
 # 对用户配置文件的修改立即生效，不必重启svn服务
 ```
+- 方式2：密文认证(待验证-未使用)
+```ruby
+[root@tn-VM205-syt-03 svnn]# htpasswd  /svnn/passwd  wangzetong
+New password: 
+Re-type new password: 
+Adding password for user wangzetong
+```
+
 #### 1.6.配置新用户的授权文件
 ```ruby
 [root@CentOS7 ~]# vim /svn/project/conf/authz 
