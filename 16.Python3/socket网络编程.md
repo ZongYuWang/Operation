@@ -1,6 +1,79 @@
 ## Socket网络编程
 
-### 使用Socket模拟接打电话
+### 使用Socket实现聊天机器人
+`聊天机器人发送与接收(固定发一句，收一句)`
+- socket客户端代码：
+```ruby
+import socket
+
+c1 = socket.socket() # 创建一个对象
+
+c1.connect(("127.0.0.1",9999))  # 表示连接那个服务端，写服务端的IP地址和服务器允许连接的端口
+#c1.recv(1024) # 表示客户端“最多”接收1024字节，超过1024接收不了，剩下的就下次接收
+result_bytes = c1.recv(1024)  # 发送的是字节类型，那么收到的也是字节类型
+# recv也会阻塞,client1连接服务端，按理说服务端应该立即返还给我，但是如果服务端没返还，recv将一直等待
+result_str = str(result_bytes,encoding="utf-8") # 将字节转换成字符串
+print(result_str)
+while True:
+    inp = input("请输入要发送的内容>>>：")
+    if inp == "q": # 如果输入了q，就只发送就行了，不用接收了
+        c1.sendall(bytes(inp,encoding="utf-8")) # python2中可以发送字符串或者是字节，但是在python3中只能发送字节，而且只能字符串使用encoding转码，bytes不能转码
+        break
+    else: # 如果输入的不是q，那么就既要发送，又要接收
+        c1.sendall(bytes(inp,encoding="utf-8"))
+        result = str(c1.recv(1024),encoding="utf-8")
+        print(result)
+c1.close() # 连接完就关闭
+
+```
+- socket服务端代码：
+```ruby
+import socket
+
+s1 = socket.socket()  # 创建一个对象
+s1.bind(("127.0.0.1",9999,))  # 绑定自己的IP和端口，IP和端口是一个元组
+s1.listen(5) # 表示最多允许5个客户端连接(也就是最大的排队数)
+
+print("before")
+#sk.accept() # 接收客户端的请求，accept阻塞
+print("after")
+
+# ------------- 代码写到这，before会执行，但是after不会执行，accept会等待客户端连接------------------
+
+while True: # 不能让服务端连接一次就断开，需要让服务端不断接收连接，所以加一个while循环
+    conn,address = s1.accept() # conn相当于其中一个client1和我之间连接的线，address就相当于client1的IP地址
+    conn.sendall(bytes("欢迎致电babyshen",encoding="utf-8")) #通过conn发送消息，在python3中不能直接发送字符串，只能发送字节,这发送相应的客户端就有一个接收recv
+    while True: # 针对一个客户端循环接收
+        result_bytes = conn.recv(1024)
+        result_str = str(result_bytes,encoding="utf-8")
+        if result_str == "q": # 这块是为了客户端退出，当收到一个q，就break跳出当前客户端的循环
+            break
+        conn.sendall(bytes(result_str+"好",encoding="utf-8"))
+    print(conn,address)
+    
+```
+`通过上面得知conn就是客户端连过来而在服务器端为其生成的一个连接实例 `
+`运行:`
+```ruby
+# 运行客户端
+......
+
+# 运行客户端
+欢迎致电babyshen
+请输入要发送的内容>>>：我
+我好
+请输入要发送的内容>>>：你
+你好
+请输入要发送的内容>>>：他
+他好
+请输入要发送的内容>>>：
+```
+
+
+
+
+
+
 - 电话发送与接收(固定发一句，收一句)
 socket_client代码：
 ```ruby
@@ -9,7 +82,7 @@ import socket
 client = socket.socket() # 声明socket类型，同时生成socket连接对象
 client.connect(('localhost',6969))
 
-client.send(b"Hello World") # python2中可以发送字符串或者是字节，但是在python3中只能发送字节
+client.send(b"Hello World") 
 data = client.recv(1024) # 客户端接收1024字节数据=1kb
 print("recv:",data)
 
@@ -20,7 +93,7 @@ socket_server代码：
 import socket
 server = socket.socket()
 server.bind(('localhost',6969))
-server.listen(5)                   # 表示最多可以5个客户端挂起的连接(也就是最大的排队数)
+server.listen(5)                   
 
 print("我要开始等待电话了")
 conn,addr = server.accept()
@@ -43,7 +116,7 @@ Traceback (most recent call last):
     data =server.recv(1024)
 OSError: [WinError 10057] 由于套接字没有连接并且(当使用一个 sendto 调用发送数据报套接字时)没有提供地址，发送或接收数据的请求没有被接受。
 ```
-`通过上面得知conn就是客户端连过来而在服务器端为其生成的一个连接实例 `
+
 
 socket_server修改代码如下：
 ```ruby
