@@ -69,8 +69,68 @@ while True: # 不能让服务端连接一次就断开，需要让服务端不断
 请输入要发送的内容>>>：
 ```
 
+### 使用Socket实现FTP(MD5)
+- socket客户端代码：
+```ruby
+import socket
+import os
 
+c1 = socket.socket()
 
+c1.connect(("127.0.0.1",9999))
+result_bytes = c1.recv(1024)
+result_str = str(result_bytes,encoding="utf-8")  # encoding="utf-8"必须是字符串才可用
+print(result_str)
+
+file_size = os.stat('f.png').st_size  # 获取文件大小,单位字节
+c1.sendall(bytes(str(file_size),encoding="utf-8"))  # 先发送文件大小
+
+# 解决粘包问题(上面发送了一个文件大小，等待服务端给回复一个确认信息之后，再发送文件内容)
+c1.recv(1024)
+
+# 发送文件
+with open('f.png','rb') as f:# 直接以rb的方式打开，如果以字符串的形式打开还要转换成bytes形式
+    for line in f:  # 一行一行的读取
+        c1.sendall(line)
+
+c1.close()
+
+```
+- socket服务端代码：
+```ruby
+import socket
+
+s1 = socket.socket()
+s1.bind(("127.0.0.1",9999,))
+s1.listen(5)
+# print("before")
+# print("after")
+while True:
+    conn,address = s1.accept()
+    conn.sendall(bytes("欢迎登陆FTP系统",encoding="utf-8"))
+     # 先接收文件大小，然后再开始接收
+    size = str(conn.recv(1024),encoding="utf-8") # 先拿到文件的大小
+    print(size)
+
+    # 解决粘包问题（客户端发送了一个文件大小的数据包，客户端现在等着服务端给回复一个确认信息之后才会发送文件数据包）
+    conn.sendall(bytes("已经接收到文件大小数据包，往下继续吧",encoding="utf-8"))
+
+    total_size = int(size) # 文件总大小
+    print(total_size)
+    has_recv = 0 # 默认接收到了0字节
+    f = open('new.png','wb') # 在服务端新打开一个文件，将客户端一行一行上传来的数据最后写入到这个文件中
+    # 接收文件内容，直到获取完毕
+    while True:  # 一直接收客户端上传来的数据
+        if total_size == has_recv:
+            break
+        data = conn.recv(1024) # 最多接收1024自己
+        f.write(data)
+        # 但是怎么判断全部接收完呢？客户端源源不断的发，服务端不知道什么时候接收终止应该提前发送一个文件的大小
+        has_recv += len(data) # 已经接收到的 要加上每次循环已经收到的
+        # 什么时候接收终止呢？直到total_size = has_recv
+    f.close()
+
+```
 
 
 
