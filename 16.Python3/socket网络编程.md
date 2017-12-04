@@ -246,7 +246,7 @@ while True:
                 
 ```
 
-socket客户端代码：
+- socket客户端代码：
 ```ruby
 import socket
 import hashlib
@@ -294,7 +294,7 @@ client.close()
 ```
 #### 使用socket实现简单的SSH工具
 
--socket服务端代码：
+- socket服务端代码：
 ```ruby
 import socket
 import os
@@ -391,12 +391,12 @@ conn.send(str(len(cmd_res.encode())).encode("utf-8"))
 ```
 
 ### socketserver：
-socketserver是对socket的再封装，使socket更加的简单
-并发处理多个客户端请求
-使用：
-    ① 创建类，必须继承
-    ② handle方法
-    ③ server_forever
+socketserver是对socket的再封装，使socket更加的简单      
+并发处理多个客户端请求       
+使用：        
+    ① 创建类，必须继承        
+    ② handle方法        
+    ③ server_forever       
     
 ```ruby
 import socketserver
@@ -545,11 +545,11 @@ r_list,w_list,e_list = select.select(inputs,[sk1,sk2],[],1)
 后来有了poll，不再使用select，只是对个数没限制了，底层也是使用for循环
 epoll革新了poll，底层不再使用for循环，底层使用了异步的方式，谁有变化谁告诉我，不再一个一个的去问
 
-  for sk in r_list:
-        # 每一个连接对象
-        conn,address = sk.accept()
-        conn.sendall(bytes('hello',encoding="utf-8"))
-        conn.close()
+for sk in r_list:
+     # 每一个连接对象
+     conn,address = sk.accept()
+     conn.sendall(bytes('hello',encoding="utf-8"))
+     conn.close()
 ```
 
 
