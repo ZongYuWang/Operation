@@ -491,8 +491,10 @@ while True:
     # [sk1,sk2]select内部自动监听sk1,sk2，sk3三个对象，一旦某个句柄发生变化
     # 如果有人连接sk1；
     # r_list = [sk1,sk2,sk3]
-    r_list,w_list,e_list = select.select(inputs,[sk1,sk2],[],1)
+    r_list,w_list,e_list = select.select(inputs,inputs,inputs,1)
     # 这行后面的1就是等待1秒，如果一直没人来连接，inputs就是空，不会向下进行，因为一直while True，如果在0.5秒的时候来连接了，就会向下进行执行print
+    # 第三个inputs表示哪个发生错误(sk1,sk2,sk3)就会放到e_list中
+    # w_list对应的第二个inputs，假如第二个inputs传递的是[sk1,sk2],那么w_list永远是sk1,sk2
     print(r_list)
 
     for sk in r_list:
@@ -541,7 +543,7 @@ obj.close()
 ### poll和epoll
 ```ruby
 r_list,w_list,e_list = select.select(inputs,[sk1,sk2],[],1)
-# [sk1,sk2]这个是有个数限制的
+# select后面的这个[sk1,sk2]这个是有个数限制的，最多是1024个
 后来有了poll，不再使用select，只是对个数没限制了，底层也是使用for循环
 epoll革新了poll，底层不再使用for循环，底层使用了异步的方式，谁有变化谁告诉我，不再一个一个的去问
 
