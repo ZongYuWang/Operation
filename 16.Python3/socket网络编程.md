@@ -1,7 +1,8 @@
 ## Socket网络编程
 
 ### 使用Socket实现聊天机器人
-`聊天机器人发送与接收(固定发一句，收一句)`
+`聊天机器人发送与接收(固定发一句，收一句)`     
+
 ![](https://github.com/ZongYuWang/image/blob/master/python-socket1.png)
 
 - socket客户端代码：
@@ -190,20 +191,21 @@ while True:
 欢迎登陆FTP系统
 file MD5(before send): 8369c9f8daa15463f41332c1a5827b95
 8369c9f8daa15463f41332c1a5827b95
-```
-![](https://github.com/ZongYuWang/image/blob/master/python-socket2.png)
+```   
+
+![](https://github.com/ZongYuWang/image/blob/master/python-socket2.png)   
 `粘包是由于两个send同时发送数据，上面发送的数据和文件每行内容发送都存储在缓冲区中，而在发送中，一起发送了出去，为解决这个问题，先在之前发送一个文件大小，再等待回复之后在发送文件内容`
 
 #### 使用socket实现FTP-下载功能(增加MD5验证功能)：
 
-① 读取文件名
-② 检测文件是否存在
-③ 打开文件
-④ 检测文件大小
-⑤ 发送文件大小给客户端
-⑥ 等客户确认
-⑦ 开始边读边发数据
-⑧ 发送MD5
+① 读取文件名     
+② 检测文件是否存在       
+③ 打开文件       
+④ 检测文件大小       
+⑤ 发送文件大小给客户端       
+⑥ 等客户确认       
+⑦ 开始边读边发数据       
+⑧ 发送MD5      
 
 - socket服务端代码:
 ```ruby
@@ -388,82 +390,6 @@ conn.send(str(len(cmd_res.encode())).encode("utf-8"))
 ......
 ```
 
-
-
-
-- 电话发送与接收(固定发一句，收一句)
-socket_client代码：
-```ruby
-import socket
-
-client = socket.socket() # 声明socket类型，同时生成socket连接对象
-client.connect(('localhost',6969))
-
-client.send(b"Hello World") 
-data = client.recv(1024) # 客户端接收1024字节数据=1kb
-print("recv:",data)
-
-client.close()
-```
-socket_server代码：
-```ruby
-import socket
-server = socket.socket()
-server.bind(('localhost',6969))
-server.listen(5)                   
-
-print("我要开始等待电话了")
-conn,addr = server.accept()
-print(conn,addr)
-print("电话来了！")
-
-data =server.recv(1024)
-print("recv:",data)
-server.send(data.upper())
-
-server.close()
-
-
-# 报错如下：
-我要开始等待电话了
-<socket.socket fd=344, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 6969), raddr=('127.0.0.1', 56153)> ('127.0.0.1', 56153)
-电话来了！
-Traceback (most recent call last):
-  File "E:/PycharmProjects/untitled/study/day7/socket_server.py", line 15, in <module>
-    data =server.recv(1024)
-OSError: [WinError 10057] 由于套接字没有连接并且(当使用一个 sendto 调用发送数据报套接字时)没有提供地址，发送或接收数据的请求没有被接受。
-```
-
-
-socket_server修改代码如下：
-```ruby
-import socket
-server = socket.socket()
-server.bind(('localhost',6969))
-server.listen(5)
-
-print("我要开始等待电话了")
-conn,addr = server.accept()
-print(conn,addr)
-print("电话来了！")
-
-data =conn.recv(1024)
-print("recv:",data)
-conn.send(data.upper())
-
-server.close()
-
-# 服务端输出：
-我要开始等待电话了
-<socket.socket fd=344, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 6969), raddr=('127.0.0.1', 59516)> ('127.0.0.1', 59516)
-电话来了！
-recv: b'Hello World'
-
-
-# 客户端输出：
-recv: b'HELLO WORLD'
-
-```
 ### socketserver：
 socketserver是对socket的再封装，使socket更加的简单
 并发处理多个客户端请求
