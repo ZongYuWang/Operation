@@ -2,6 +2,8 @@
 
 ### 使用Socket实现聊天机器人
 `聊天机器人发送与接收(固定发一句，收一句)`
+![](https://github.com/ZongYuWang/image/blob/master/python-socket1.png)
+
 - socket客户端代码：
 ```ruby
 import socket
@@ -22,7 +24,7 @@ while True:
         break
     else: # 如果输入的不是q，那么就既要发送，又要接收
         c1.sendall(bytes(inp,encoding="utf-8"))
-        result = str(c1.recv(1024),encoding="utf-8")
+        result = str(c1.recv(1024),encoding="utf-8") # encoding="utf-8"必须是字符串才可用
         print(result)
 c1.close() # 连接完就关闭
 
@@ -69,6 +71,7 @@ while True: # 不能让服务端连接一次就断开，需要让服务端不断
 他好
 请输入要发送的内容>>>：
 ```
+
 
 #### 使用Socket实现FTP-上传功能(MD5)
 
@@ -188,8 +191,8 @@ while True:
 file MD5(before send): 8369c9f8daa15463f41332c1a5827b95
 8369c9f8daa15463f41332c1a5827b95
 ```
-
-
+![](https://github.com/ZongYuWang/image/blob/master/python-socket2.png)
+`粘包是由于两个send同时发送数据，上面发送的数据和文件每行内容发送都存储在缓冲区中，而在发送中，一起发送了出去，为解决这个问题，先在之前发送一个文件大小，再等待回复之后在发送文件内容`
 
 #### 使用socket实现FTP-下载功能(增加MD5验证功能)：
 
@@ -463,6 +466,12 @@ recv: b'HELLO WORLD'
 ```
 ### socketserver：
 socketserver是对socket的再封装，使socket更加的简单
+并发处理多个客户端请求
+使用：
+    ① 创建类，必须继承
+    ② handle方法
+    ③ server_forever
+    
 ```ruby
 import socketserver
 
@@ -470,22 +479,161 @@ class MyServer(socketserver.BaseRequestHandler)
 # 类中必须继承socketserver.BaseRequestHandler
 ```
 
+- socketserver服务端代码：
+```ruby
+import socketserver
+
+class MyServer(socketserver.BaseRequestHandler):
+
+    def handle(self):
+            print(self.request,self.client_address,self.server)
+            conn = self.request
+            conn.sendall(bytes("欢迎致电10086",encoding="utf-8"))
+            while True:
+                ret_bytes = conn.recv(1024)
+                ret_str = str(ret_bytes,encoding="utf-8")
+                if ret_str == 'q':
+                    break
+                conn.sendall(bytes(ret_str+"好",encoding="utf-8"))
+
+'''
+# BaseRequestHandler源码
+def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True):
+        """Constructor.  May be extended, do not override."""
+        BaseServer.__init__(self, server_address, RequestHandlerClass)
+        self.socket = socket.socket(self.address_family,
+                                    self.socket_type)
+'''
+
+
+if __name__ == '__main__':
+    server = socketserver.ThreadingTCPServer(('127.0.0.1',9999),MyServer)
+    server.serve_forever()  # 相当于while循环，不断的等待用户连接
+
+
+# print(self.request,self.client_address,self.server)信息如下：
+<socket.socket fd=324, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 9999), raddr=('127.0.0.1', 55702)> ('127.0.0.1', 55702) <socketserver.ThreadingTCPServer object at 0x01EEF870>
+```
+- socketserver客户端代码(支持多客户端连接)：
+```ruby
+import socket
+
+ip_port = ('127.0.0.1',9999)
+sk = socket.socket()
+sk.connect(ip_port)
+sk.settimeout(5)
+
+while True:
+    data_bytes = sk.recv(1024)
+    data_str = str(data_bytes,encoding="utf-8")
+    print(data_str)
+    inp = input('please input:')
+    sk.sendall(bytes(inp,encoding="utf-8"))
+
+    if inp == "q":
+        break
+
+sk.close()
+
+```
+
+
+### IO多路复用
+可以监听多个文件描述符(文件句柄)，一旦文件句柄发生变化，即可感知
+文件描述符(socket对象)
+
+- socket服务端代码：
+```ruby
+import socket
+import select
+
+sk1 = socket.socket()
+sk1.bind(('127.0.0.1',8001))
+sk1.listen(5)
+
+sk2 = socket.socket()
+sk2.bind(('127.0.0.1',8002))
+sk2.listen(5)
+
+sk3 = socket.socket()
+sk3.bind(('127.0.0.1',8003))
+sk3.listen(5)
+
+inputs = [sk1,sk2,sk3]
+
+while True:
+    # [sk1,sk2]select内部自动监听sk1,sk2，sk3三个对象，一旦某个句柄发生变化
+    # 如果有人连接sk1；
+    # r_list = [sk1,sk2,sk3]
+    r_list,w_list,e_list = select.select(inputs,[sk1,sk2],[],1)
+    # 这行后面的1就是等待1秒，如果一直没人来连接，inputs就是空，不会向下进行，因为一直while True，如果在0.5秒的时候来连接了，就会向下进行执行print
+    print(r_list)
+
+    for sk in r_list:
+        # 每一个连接对象
+        conn,address = sk.accept()
+        conn.sendall(bytes('hello',encoding="utf-8"))
+        conn.close()
+
+```
+- socket客户端1代码：
+```ruby
+import socket
+
+obj = socket.socket()
+obj.connect(('127.0.0.1',8001))
+
+content =  str(obj.recv(1024),encoding="utf-8")
+print(content)
+
+obj.close()
+
+```
+- socket客户端2代码：
+```ruby
+import socket
+
+obj = socket.socket()
+obj.connect(('127.0.0.1',8002))
+
+content =  str(obj.recv(1024),encoding="utf-8")
+print(content)
+
+obj.close()
+```
+`运行:`
+```ruby
+[]
+[<socket.socket fd=272, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001)>]
+[]
+[]
+[]
+[<socket.socket fd=280, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8002)>]
+[]
+
+```
+### poll和epoll
+```ruby
+r_list,w_list,e_list = select.select(inputs,[sk1,sk2],[],1)
+# [sk1,sk2]这个是有个数限制的
+后来有了poll，不再使用select，只是对个数没限制了，底层也是使用for循环
+epoll革新了poll，底层不再使用for循环，底层使用了异步的方式，谁有变化谁告诉我，不再一个一个的去问
+
+  for sk in r_list:
+        # 每一个连接对象
+        conn,address = sk.accept()
+        conn.sendall(bytes('hello',encoding="utf-8"))
+        conn.close()
+```
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+### send和sendall区别：
+```ruby
+conn.sendall()
+conn.send("this is a test send")
+# 发送这一串(this is a test send)的时候，可能都会发过去，也可能只发送一部分，sendall就是循环的send，全部发送出去
+```
 
 ### 断言
 ```ruby
