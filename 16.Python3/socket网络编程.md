@@ -46,6 +46,7 @@ print("after")
 
 while True: # 不能让服务端连接一次就断开，需要让服务端不断接收连接，所以加一个while循环
     conn,address = s1.accept() # conn相当于其中一个client1和我之间连接的线，address就相当于client1的IP地址
+    print("conn_address内容：",conn,address)
     conn.sendall(bytes("欢迎致电babyshen",encoding="utf-8")) #通过conn发送消息，在python3中不能直接发送字符串，只能发送字节,这发送相应的客户端就有一个接收recv
     while True: # 针对一个客户端循环接收
         result_bytes = conn.recv(1024)
@@ -59,7 +60,12 @@ while True: # 不能让服务端连接一次就断开，需要让服务端不断
 `通过上面得知conn就是客户端连过来而在服务器端为其生成的一个连接实例 `
 `运行:`
 ```ruby
-# 运行客户端
+# 运行服务端
+conn_address内容： <socket.socket fd=308, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 9999), raddr=('127.0.0.1', 59365)> ('127.0.0.1', 59365)
+
+#通过输出可知：
+conn的内容是： <socket.socket fd=308, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 9999), raddr=('127.0.0.1', 59365)>
+address的内容是：('127.0.0.1', 59365)
 ......
 
 # 运行客户端
@@ -540,6 +546,287 @@ obj.close()
 []
 
 ```
+
+#### 使用(IO多路复用)select实现多客户端连接
+`实现了多客户端的接收，但是还是一个个的处理，实际上是虚假的多客户端连接`
+
+select中第一个参数(r_list)详解：
+
+- socket服务端代码：
+```ruby
+import socket
+import select
+
+sk1 = socket.socket()
+sk1.bind(('127.0.0.1',8001))
+sk1.listen(5)
+
+inputs = [sk1]
+print("还没有用户连接inputs的内容：",inputs)
+while True:
+    r_list,w_list,e_list = select.select(inputs,[],inputs,1)
+    # 最开始没人来连接的时候，r_list = [sk1]
+    # client1来连接之后，inputs的内容就是[sk1,client1]
+    print("正在监听的socket对象%d" %len(inputs))
+    #inputs = ["sk1","client1"]
+    #print(len(inputs))
+    print(r_list)
+    for sk1_or_conn in r_list:
+        # 每一个连接对象
+        if sk1_or_conn == sk1:   # 表示有新的用户来连接
+            conn,address = sk1_or_conn.accept()
+            inputs.append(conn)  # 这个时候inputs的内容是[sk1,c1]
+            print("新客户端连接之后-inputs内容：",inputs)
+        else:  # 有老用户发消息了
+            data_bytes = sk1_or_conn.recv(1024)
+            data_str = str(data_bytes,encoding="utf-8")
+            sk1_or_conn.sendall(bytes(data_str+"好",encoding="utf-8"))
+            
+```
+- socket客户端代码：
+```ruby
+import socket
+
+obj = socket.socket()
+obj.connect(('127.0.0.1',8001))
+
+while True:
+    inp = input("请输入要发送的内容>>>：")
+    obj.sendall(bytes(inp,encoding="utf-8"))
+    content =  str(obj.recv(1024),encoding="utf-8")
+    print(content)
+
+obj.close()
+
+```
+`服务端运行：`
+```ruby
+还没有用户连接inputs的内容： [<socket.socket fd=272, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001)>]
+正在监听的socket对象1
+[]
+正在监听的socket对象1
+[]
+正在监听的socket对象1
+[<socket.socket fd=272, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001)>]
+新客户端连接之后-inputs内容： [<socket.socket fd=272, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001)>, <socket.socket fd=280, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001), raddr=('127.0.0.1', 59998)>]
+正在监听的socket对象2
+[]
+正在监听的socket对象2
+[]
+正在监听的socket对象2
+[<socket.socket fd=280, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001), raddr=('127.0.0.1', 59998)>]
+# 上面是客户端发送了一条信息
+正在监听的socket对象2
+[]
+正在监听的socket对象2
+[]
+正在监听的socket对象2
+[<socket.socket fd=280, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001), raddr=('127.0.0.1', 59998)>]
+Traceback (most recent call last):
+  File "E:/PycharmProjects/untitled/study/day8/IO多路复用/s1_加强版.py", line 31, in <module>
+    data_bytes = sk1_or_conn.recv(1024)
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+
+# 这是python3新的功能，当客户端终止连接之后，服务端最后报错，所以使用try一下
+```
+
+- socket服务端代码修改(看输出信息)：
+```ruby
+import socket
+import select
+
+sk1 = socket.socket()
+sk1.bind(('127.0.0.1',8001))
+sk1.listen(5)
+
+inputs = [sk1]
+print("还没有用户连接inputs的内容：",inputs)
+while True:
+    r_list,w_list,e_list = select.select(inputs,[],inputs,1)
+    # 最开始没人来连接的时候，r_list = [sk1]
+    # client1来连接之后，inputs的内容就是[sk1,client1]
+    print("正在监听的socket对象%d" %len(inputs))
+    #inputs = ["sk1","client1"]
+    #print(len(inputs))
+    print(r_list)
+    for sk1_or_conn in r_list:
+        # 每一个连接对象
+        if sk1_or_conn == sk1:
+            # 表示有新的用户来连接
+            conn,address = sk1_or_conn.accept()
+            inputs.append(conn)  # 这个时候inputs的内容是[sk1,c1]
+            print("新客户端连接之后-inputs内容：",inputs)
+            print("sk1_or_conn内容：",sk1_or_conn)
+        else:
+            # 有老用户发消息了
+            try:
+                data_bytes = sk1_or_conn.recv(1024)
+                data_str = str(data_bytes,encoding="utf-8")
+                sk1_or_conn.sendall(bytes(data_str+"好",encoding="utf-8"))
+
+            except Exception as ex:
+                # 用户终止连接
+                inputs.remove(sk1_or_conn)
+                print("客户端断开之后sk1_or_conn内容：",sk1_or_conn)
+```
+`服务端输出：`
+```ruby
+还没有用户连接inputs的内容： [<socket.socket fd=280, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001)>]
+正在监听的socket对象1
+[]
+正在监听的socket对象1
+[]
+正在监听的socket对象1
+[<socket.socket fd=280, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001)>]
+新客户端连接之后-inputs内容： [<socket.socket fd=280, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001)>, <socket.socket fd=308, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001), raddr=('127.0.0.1', 60714)>]
+sk1_or_conn内容： <socket.socket fd=280, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001)>
+正在监听的socket对象2
+[]
+正在监听的socket对象2
+[]
+正在监听的socket对象2
+[<socket.socket fd=308, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001), raddr=('127.0.0.1', 60714)>]
+正在监听的socket对象2
+[]
+正在监听的socket对象2
+[]
+正在监听的socket对象2
+[<socket.socket fd=308, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001), raddr=('127.0.0.1', 60714)>]
+客户端断开之后sk1_or_conn内容： <socket.socket fd=308, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 8001), raddr=('127.0.0.1', 60714)>
+正在监听的socket对象1
+[]
+正在监听的socket对象1
+[]
+正在监听的socket对象1
+[]
+正在监听的socket对象1
+```
+
+socket中第二个参数(w_list)详解（目的是实现读写分离）：
+
+- socket服务端代码：
+
+```ruby
+import socket
+import select
+
+sk1 = socket.socket()
+sk1.bind(('127.0.0.1',8001))
+sk1.listen(5)
+
+inputs = [sk1]
+print("还没有用户连接inputs的内容：",inputs)
+
+outputs = []
+
+
+while True:
+    r_list,w_list,e_list = select.select(inputs,outputs,inputs,1)
+    # 最开始没人来连接的时候，r_list = [sk1]
+    # client1来连接之后，inputs的内容就是[sk1,client1]
+    print("正在监听的socket对象%d" %len(inputs))
+    #inputs = ["sk1","client1"]
+    #print(len(inputs))
+    print(r_list)
+    for sk1_or_conn in r_list:
+        # 每一个连接对象
+        if sk1_or_conn == sk1:
+            # 表示有新的用户来连接
+            conn,address = sk1_or_conn.accept()
+            inputs.append(conn)  # 这个时候inputs的内容是[sk1,c1]
+            print("新客户端连接之后-inputs内容：",inputs)
+            print("sk1_or_conn内容：",sk1_or_conn)
+        else:
+            # 有老用户发消息了
+            try:
+                data_bytes = sk1_or_conn.recv(1024)
+
+            except Exception as ex:
+                inputs.remove(sk1_or_conn) # 中断之后就要移出掉，以后不再跟这个联系
+                print("客户端断开之后sk1_or_conn内容：",sk1_or_conn)
+
+            else:
+                # 用户正常发送数据
+                #  data_str = str(data_bytes,encoding="utf-8")
+                #  sk1_or_conn.sendall(bytes(data_str+"好",encoding="utf-8"))
+                outputs.append(sk1_or_conn)  # 也就是谁给我发送过消息，我就存在w_list中
+                # w_list中仅仅保存了谁给我发过消息,但是还没给客户回呢，下面给是回复
+                print("outputs内容：",outputs)
+
+    for conn in w_list:
+        conn.sendall(bytes('hello',encoding="utf-8"))
+        outputs.remove(conn)
+
+    for sk in e_list:
+        inputs.remove(sk)
+```
+`但是上面的代码存在一个问题，无论客户端发什么都回复一个hello，没获取到客户端发送的内容`
+
+- socket服务端代码修改：
+```ruby
+# 通过建立一个空字典，将客户端发送的内容存在字典中
+
+import socket
+import select
+
+sk1 = socket.socket()
+sk1.bind(('127.0.0.1',8001))
+sk1.listen(5)
+
+inputs = [sk1]
+print("还没有用户连接inputs的内容：",inputs)
+
+outputs = []
+message_dict = {} # 定义一个空字典，也就是将用户发送的信息存在字典里
+
+while True:
+    r_list,w_list,e_list = select.select(inputs,outputs,inputs,1)
+    # 最开始没人来连接的时候，r_list = [sk1]
+    # client1来连接之后，inputs的内容就是[sk1,client1]
+    print("正在监听的socket对象%d" %len(inputs))
+    #inputs = ["sk1","client1"]
+    #print(len(inputs))
+    print(r_list)
+    for sk1_or_conn in r_list:
+        # 每一个连接对象
+        if sk1_or_conn == sk1:
+            # 表示有新的用户来连接
+            conn,address = sk1_or_conn.accept()
+            inputs.append(conn)  # 这个时候inputs的内容是[sk1,c1]
+            print("新客户端连接之后-inputs内容：",inputs)
+            print("sk1_or_conn内容：",sk1_or_conn)
+            message_dict[conn] = [] # 字典的key是conn，也就是其中的某个客户端，value是空列表
+            # 第二个客户端来连接{"client1":[],"client2":[]}
+        else:
+            # 有老用户发消息了
+            try:
+                data_bytes = sk1_or_conn.recv(1024)
+
+            except Exception as ex:
+                inputs.remove(sk1_or_conn) # 中断之后就要移出掉，以后不再跟这个联系
+                print("客户端断开之后sk1_or_conn内容：",sk1_or_conn)
+
+            else:
+                # 用户正常发送数据
+                data_str = str(data_bytes,encoding="utf-8")
+                message_dict[sk1_or_conn].append(data_str) # 将发的消息存在了字典中{"client1":[data_str],"client2":[]}
+                #  sk1_or_conn.sendall(bytes(data_str+"好",encoding="utf-8"))
+                outputs.append(sk1_or_conn)  # 也就是谁给我发送过消息，我就存在w_list中
+                # w_list中仅仅保存了谁给我发过消息,但是还没给客户回呢，下面给是回复
+                print("outputs内容：",outputs)
+
+    for conn in w_list:
+        recv_str = message_dict[conn][0]
+        # 拿完数据之后应该再删除掉之前的，等待下次再接收信息{"client1":[你]}，把这个"你"需要删除了，再接收"他"，要不然就成{"client1":[你][他]}
+        conn.sendall(bytes(recv_str+'好',encoding="utf-8"))
+        outputs.remove(conn)
+
+    for sk in e_list:
+        inputs.remove(sk)
+```
+
+
+
 ### poll和epoll
 ```ruby
 r_list,w_list,e_list = select.select(inputs,[sk1,sk2],[],1)
