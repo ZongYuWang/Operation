@@ -53,3 +53,112 @@ import paramiko
 
 # 运行
 ```
+
+### SSHClient:
+
+- 基于用户名密码连接：
+```ruby
+import paramiko
+
+# 创建SSH对象
+ssh = paramiko.SSHClient()
+# 允许连接不在know_hosts文件中的主机
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+# 连接服务器
+ssh.connect(hostname='172.30.105.115', port=22, username='root', password='wangzongyu')
+
+# 执行命令
+stdin, stdout, stderr = ssh.exec_command('df')
+# 获取命令结果
+result = stdout.read()
+print(result.decode())
+
+# 关闭连接
+ssh.close()
+```
+
+
+- 基于公钥密钥连接：
+
+`SSH秘钥认证：`
+```ruby
+# 将本机(172.30.105.115)的公钥(私钥不能传给别人)发给需要连接的主机(172.30.105.112)：
+
+[root@localhost ~]# ssh-copy-id "-p2222 baby@172.30.105.112"
+The authenticity of host '[172.30.105.112]:2222 ([172.30.105.112]:2222)' can't be established.
+RSA key fingerprint is 79:48:d2:8c:ff:19:f9:e5:a2:f5:d6:84:07:17:4c:bd.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '[172.30.105.112]:2222' (RSA) to the list of known hosts.
+baby@172.30.105.112's password: 
+Now try logging into the machine, with "ssh '-p2222 baby@172.30.105.112'", and check in:
+
+  .ssh/authorized_keys
+
+to make sure we haven't added extra keys that you weren't expecting.
+
+# 使用ssh-copy-id这个命令是为了手动拷贝不能保证一行，这样拷贝能保证公钥在远程主机的这个文件中.ssh/authorized_keys保证是一行
+
+[root@localhost ~]# ssh -p2222 baby@172.30.105.112
+
+```
+
+```ruby
+import paramiko
+
+private_key = paramiko.RSAKey.from_private_key_file('id_rsa_105-115')
+
+# 创建SSH对象
+ssh = paramiko.SSHClient()
+# 允许连接不在know_hosts文件中的主机
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+# 连接服务器
+ssh.connect(hostname='172.30.105.112', port=2222, username='baby', pkey=private_key)
+
+# 执行命令
+stdin, stdout, stderr = ssh.exec_command('df')
+# 获取命令结果
+result = stdout.read()
+print(result.decode())
+
+# 关闭连接
+ssh.close()
+```
+
+### SFTPClient:
+
+- 基于用户名密码上传下载:
+
+```ruby
+import paramiko
+
+transport = paramiko.Transport(('172.30.105.112',2222))
+transport.connect(username='baby',password='wangzongyu')
+
+sftp = paramiko.SFTPClient.from_transport(transport)
+# 将location.py 上传至服务器 /tmp/test.py
+sftp.put('D:\Python27\LICENSE.txt', '/tmp/license_test.py')
+
+#将remove_path 下载到本地 local_path
+sftp.get('/tmp/snmpd.conf.bak', 'E:\result')
+
+transport.close()
+```
+
+
+- 基于公钥密钥上传下载:
+```ruby
+import paramiko
+ 
+private_key = paramiko.RSAKey.from_private_key_file('id_rsa_105-115')
+ 
+transport = paramiko.Transport(('172.30.105.112', 2222))
+transport.connect(username='baby', pkey=private_key )
+ 
+sftp = paramiko.SFTPClient.from_transport(transport)
+# 将location.py 上传至服务器 /tmp/test.py
+sftp.put('/tmp/location.py', '/tmp/test.py')
+# 将remove_path 下载到本地 local_path
+sftp.get('remove_path', 'local_path')
+ 
+transport.close()
+```
