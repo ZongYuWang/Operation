@@ -38,7 +38,8 @@ pid file = /var/run/rsyncd.pid   #进程号文件
 lock file = /var/run/rsync.lock  #日志文件
 log file = /var/log/rsyncd.log  #日志文件
 
-[inotify_rsync_data]  #模块名称随便起名（后面推送端需要用到这个名称），如果该服务器需要同步多个目录，则需要另写多个模块
+[inotify_rsync_data]  
+#模块名称随便起名（后面推送端需要用到这个名称），如果该服务器需要同步多个目录，则需要另写多个模块
 path = /inotify_rsync_data  #需要同步的目录
 ignore errors  #表示出现错误忽略错误
 read only = false  #表示网络权限可写(本地控制真正可写)
@@ -57,14 +58,14 @@ auth users = wangzongyu   #虚拟用户
 secrets file = /etc/rsync112_165.password    #虚拟用户的密码文件                   
 
 ```
-`【说明】不同的机器同步修改 /etc/rsync.password的名称 （ /etc/rsync112.password）`
+`不同的机器同步修改 /etc/rsync.password的名称 （ /etc/rsync112.password）`
 
 #### 2.3 配置rsync密码文件：
 ```ruby
 [root@localhost ~]# echo "wangzongyu:tradeease" >/etc/rsync112_165.password
-#【说明】这个名称要跟上面的配置文件中的配置文件名称一致 （/etc/rsync112_165.password）
+#这个名称要跟上面的配置文件中的配置文件名称一致 （/etc/rsync112_165.password）
 [root@localhost ~]# cat /etc/rsync112_165.password
-#【说明】wangzongyu为虚拟用户，tradeease是虚拟用户的密码
+#wangzongyu为虚拟用户，tradeease是虚拟用户的密码
 [root@localhost ~]# chmod 600 /etc/rsync112_165.password
 ```
 #### 2.4 启动rsync服务：
@@ -86,14 +87,14 @@ tcp        0      0 :::873                      :::*                        LIST
 [root@localhost ~]# yum install -y rsync gcc vim 
 [root@localhost ~]# echo "tradeease" >/etc/rsync112_165.password  # 这里只要写密码即可
 # cat /etc/rsync112_165.password
-【说明】不同的机器同步修改 /etc/rsync.password的文件名称
+# 不同的机器同步修改 /etc/rsync.password的文件名称
 
 [root@localhost ~]# chmod 600 /etc/rsync112_165.password
 [root@localhost ~]# mkdir /inotify_rsync_data
 [root@localhost ~]# cd /inotify_rsync_data/
 [root@localhost inotify_rsync_data]# echo "hello">test.txt
 [root@localhost inotify_rsync_data]# rsync -avz test.txt wangzongyu@172.30.105.112::inotify_rsync_data --password-file=/etc/rsync112_165.password
-【说明】:inotify_rsync_data是接收端的/etc/rsyncd.conf的配置文件中的[inotify_rsync_data]
+# inotify_rsync_data是接收端的/etc/rsyncd.conf的配置文件中的[inotify_rsync_data]
 
 [root@localhost ~]# ll /proc/sys/fs/inotify/  #有下面的三个文件表示支持inotify
 total 0
@@ -142,8 +143,7 @@ echo "${files} was rsynced" >>${rsync_log} 2>&1
 done
 done
 
-
-【说明】要修改脚本中的rsync_passfile=/etc/rsync.password中的rsync.password的文件名称名称
+#要修改脚本中的rsync_passfile=/etc/rsync.password中的rsync.password的文件名称名称
 
 ```
 
