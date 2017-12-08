@@ -202,16 +202,16 @@ root      74022  68301  0 14:39 pts/2    00:00:00 grep inotify
 # ./bin/inotifywait --help
 ```
 | 参数  |  英文解释  | 中文解释  |
-|-------|-----------|----------|
-|-r|--recursive  | Watch directories recursively| 递归查询目录
-|-q|--quiet  |    Print less (only print events)|打印监控事件的信息
+|-------------|--------------|-------------|
+|-r     |--recursive  | Watch directories recursively| 递归查询目录
+|-q     |--quiet  |    Print less (only print events)|打印监控事件的信息
 |-m|--monitor |  Keep listening for events forever |Without this option, inotifywait will exit after one  event is received |始终保持事件监听状态
-|--excludei  | Like --exclude but case insensitive |排除文件或目录时，不区分大小写。
-|--timefmt |strftime-compatible format string for use with %T in --format string |指定时间输出的格式
-|--format  | Print using a specified printf-like format string; read the man page for more details |打印使用指定的输出类似格式字符串
+|--excludei    | Like --exclude but case insensitive |排除文件或目录时，不区分大小写。
+|--timefmt     |strftime-compatible format string for use with %T in --format string |指定时间输出的格式
+|--format      | Print using a specified printf-like format string; read the man page for more details |打印使用指定的输出类似格式字符串
 |-e|--event [ -e|--event ... ] |Listen for specific event(s).  If omitted, all events are  listened for |通过此参数可以指定需要监控的事件
 
-|Events|中文解释|英文解释|
+|Events|英文解释|中文解释|
 |------|-------|-------|
 |access    |       file or directory contents were read      |文件或目录被读取
 |modify     |      file or directory contents were written    |文件或目录内容被修改
