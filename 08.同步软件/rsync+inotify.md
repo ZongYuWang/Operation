@@ -200,7 +200,7 @@ root      74022  68301  0 14:39 pts/2    00:00:00 grep inotify
 ```ruby
 # cd /usr/local/inotify-3.14/
 # ./bin/inotifywait --help
-
+```
 | 参数  |  英文解释  | 中文解释  |
 |-------|-----------|----------|
 |-r|--recursive  | Watch directories recursively| 递归查询目录
@@ -222,4 +222,3 @@ move       |     file or directory moved to or from watched directory    |文件
 create     |      file or directory created within watched directory     |文件或目录被创建在当前目录
 delete     |      file or directory deleted within watched directory     |文件或目录被删除
 unmount    |     file system containing file or directory unmounted  |文件系统被卸载
-```
