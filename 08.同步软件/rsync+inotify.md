@@ -213,12 +213,12 @@ root      74022  68301  0 14:39 pts/2    00:00:00 grep inotify
 
 如下所示Events：
 |access    |       file or directory contents were read      |文件或目录被读取
-modify     |      file or directory contents were written    |文件或目录内容被修改
-attrib    |       file or directory attributes changed      |文件或目录属性被改变
-close            file or directory closed, regardless of read/write mode    |文件或目录封闭，无论读/写模式
-open       |     file or directory opened                    |文件或目录被打开
-moved_to   |     file or directory moved to watched directory    |文件或目录被移动至另外一个目录
-move       |     file or directory moved to or from watched directory    |文件或目录被移动另一个目录或从另一个目录移动至当前目录
-create     |      file or directory created within watched directory     |文件或目录被创建在当前目录
-delete     |      file or directory deleted within watched directory     |文件或目录被删除
-unmount    |     file system containing file or directory unmounted  |文件系统被卸载
+|modify     |      file or directory contents were written    |文件或目录内容被修改
+|attrib    |       file or directory attributes changed      |文件或目录属性被改变
+|close            file or directory closed, regardless of read/write mode    |文件或目录封闭，无论读/写模式
+|open       |     file or directory opened                    |文件或目录被打开
+|moved_to   |     file or directory moved to watched directory    |文件或目录被移动至另外一个目录
+|move       |     file or directory moved to or from watched directory    |文件或目录被移动另一个目录或从另一个目录移动至当前目录
+|create     |      file or directory created within watched directory     |文件或目录被创建在当前目录
+|delete     |      file or directory deleted within watched directory     |文件或目录被删除
+|unmount    |     file system containing file or directory unmounted  |文件系统被卸载
