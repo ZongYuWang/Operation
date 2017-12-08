@@ -12,6 +12,7 @@
 [root@localhost ~]# service iptables restart     
 ```
 ### 2、rsync安装：
+`rsync有断点续传功能`
 #### 2.1 在客户端（接收端）安装rsync软件包：
 ```ruby
 
