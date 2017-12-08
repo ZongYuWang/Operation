@@ -211,7 +211,7 @@ root      74022  68301  0 14:39 pts/2    00:00:00 grep inotify
 |--format  | Print using a specified printf-like format string; read the man page for more details |打印使用指定的输出类似格式字符串
 |-e|--event [ -e|--event ... ] |Listen for specific event(s).  If omitted, all events are  listened for |通过此参数可以指定需要监控的事件
 
-|如下所示Events：
+如下所示Events：
 |access    |       file or directory contents were read      |文件或目录被读取
 modify     |      file or directory contents were written    |文件或目录内容被修改
 attrib    |       file or directory attributes changed      |文件或目录属性被改变
