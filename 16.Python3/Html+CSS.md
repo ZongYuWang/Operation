@@ -386,6 +386,26 @@ checked="checked"表示该项是默认值
     <img src="image.png" style="height: 200px;width: 200px;">
 </body>
 ```
+`图片在IE浏览器中打开会默认加上了蓝色边框，字体也会变为蓝色，设置一个border 0即可`
+```html
+默认img标签，有一个1px的边框
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        img{
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="http://www.baidu.com"></a>
+    <a href="http://www.baidu.com">
+        <img src="1.JPG" style="width: 500px;height: 200px">
+    </a>
+</body>
+```
 ```html
 点击图片可以跳转到百度：
 <body>
@@ -590,6 +610,27 @@ class可以重复
     <div class="c1">wang</div>
     <span class="c1">zong</span>
     <div class="c1">yu</div>
+</body>
+
+css重用：
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .c{
+            共有
+        }
+        .c1{
+            独有
+        }
+        .c2{
+            独有
+        }
+    </style>
+</head>
+<body>
+    <div class="c c1"></div>
+    <div class="c c2"></div>
 </body>
 ```
 
@@ -837,6 +878,30 @@ font-weight 			字体加粗
         text-align: center;
         line-height: 48px;">WangZY</div>
 </body>
+
+```
+`防止页面随着浏览器大小变化页面变形：`
+`在外面设置一个绝对的宽度  在里面内容使用百分比  就不会随着页面的变化 排版有变化了`
+```html
+<body>
+    <div class="pg-header">
+        <div style="width: 980px">
+            头部数据
+        </div>
+    </div>
+
+    <div class="pg-body">
+        <div style="width: 980px">
+            中间内容
+        </div>
+    </div>
+
+    <div class="pg-footer">
+        <div style="width: 980px">
+            底部菜单
+        </div>
+    </div>
+</body>
 ```
 
 ### 6、float:
@@ -916,3 +981,408 @@ display: inline-block;
 </body>
 ```
 ### 8、padding  margin(0,auto)
+
+#### 8.1 margin(外边距)
+```ruby
+margin-top:30px 距上30像素
+
+margin(0,auto)
+margin-top:0px;
+margin-right:auto;
+margin-bottom:0px;
+margin-left:auto;
+
+```
+```html
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .pg-header{
+            height: 38px;
+            background-color: #dddddd;
+            line-height: 38px;  
+        }
+    </style>
+</head>
+<body style="margin: 0 auto;">
+    <div class="pg-header">
+        <div style="width: 980px;margin: 0 auto">
+            <div style="float: left">收藏本站</div>
+            <div style="float: right">
+            <a>登陆</a>
+            <a>注册</a>
+        </div>
+        <div style="clear: both"></div>   
+        </div>
+    </div>
+</body>
+```
+#### 8.2 padding(内边距)
+
+### 9、position
+#### 9.1 fiexd(固定在页面的某个位置)
+返回顶部按钮：
+```html
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+
+        .icon{
+            width: 65px;
+            height: 50px;
+            background-color: black;
+            color: white;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div onclick="GoTop();" class="icon">返回顶部</div>
+    <div style="height:5000px;background-color: #dddddd"></div>
+
+    <script>
+        function GoTop(){
+            document.body.scrollTop = 0;
+        }
+    </script>
+
+</body>
+```
+顶部标题栏：
+```html
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .pg-header{
+            height: 48px;
+            background-color: black;
+            color: white;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+        }
+
+        .pg-body{
+            background-color: #dddddd;
+            height: 5000px;
+            margin-top: 48px;  #为了标题栏不会把正文的文字覆盖，与顶部留出标题栏的大小
+        }
+    </style>
+</head>
+<body>
+    <div class="pg-header">头部</div>
+    <div class="pg-body">内容</div>
+</body>
+```
+
+#### 9.2 relative+absolute
+```html
+<div style='position:relative;'>
+     <div style='position:absolute;top:0;left:0;'></div>
+</div>
+```
+在框中写一个按钮：
+```html
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .pg-body{
+            width: 500px;
+            height: 200px;
+            border: 1px solid red;
+            margin: 0 auto;
+        }
+        .pg-button{
+            width: 50px;
+            height: 50px;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div style="position: relative" class="pg-body">
+        <div style="position: absolute;left: 0;bottom: 0" class="pg-button" ></div>
+    </div>
+</body>
+```
+### 10、opcity(透明度)、z-index(层级顺序)
+`z-index:9这个值谁的大，哪个页面就在上面；也就是层级顺序`
+`opcity:0.5 是透明度`
+```html
+display: none 默认页面是隐藏的，可以通过设置这个让页面显现和隐藏
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .content-page{
+            height: 5000px;
+            background-color: white;
+        }
+
+        .second-page{
+            /*display:none;*/
+            z-index:9;
+            position: fixed;
+            background-color: #999999;
+            top:0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            opacity: 0.5;
+        }
+
+        .pop-page{
+            /*display: none;*/
+            z-index: 10px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-left: -250px;
+            margin-top: -200px;
+            background-color: #2459a2;
+            height: 400px;
+            width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pop-page">
+        <input type="text" />
+        <input type="text" />
+        <input type="text" />
+    </div>
+    <div class="second-page"></div>
+    <div class="content-page">
+        BabyShen
+    </div>
+</body>
+```
+### 11、overflow
+#### 11.1 auto
+`图片的大小超过了设定的值，就会自动生成下拉框`
+```html
+<body>
+    <div style="height: 200px;width: 300px;overflow: auto">
+        <img src="1.JPG">
+    </div>
+</body>
+```
+#### 11.2 hidden
+`图片的大小超过了设定的值，超出部分就会全部隐藏掉`
+```html
+<body>
+    <div style="height: 200px;width: 300px;overflow: hidden">
+        <img src="1.JPG">
+    </div>
+</body>
+```
+
+### 12、hover(鼠标移到到此就会变色)
+```html
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .pg-header{
+            height: 44px;
+            background-color: #2459a2;
+            color: white;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+        }
+        .pg-body{
+            margin-top: 44px;
+        }
+
+        .w{
+            width: 980px;
+            margin: 0 auto; # 整个这个980px的框会在中间，是框，不是框里面的文字
+        }
+
+        .pg-header .menu{
+            display: inline-block;
+            padding: 10px;  # 上下左右全留10像素
+            color: white;
+        }
+        .pg-header .menu:hover{
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="pg-header">
+        <div class="w">
+            <a>LOGO</a>
+            <a class="menu">全部</a>
+            <a class="menu">42区</a>
+            <a class="menu">段子</a>
+            <a class="menu">1024</a>
+        </div>
+    </div>
+    <div class="pg-body">
+        <div class="w">BabyShen</div>
+    </div>
+</body>
+```
+
+### 13、background
+#### 13.1 background-image
+```html
+默认background会根据设置的大小复制图片
+
+<body>
+    <div style="background-image: url(icon_18_118.png);height: 500px;width: 500px"></div>
+</body>
+```
+#### 13.2 background-repeat: no-repeat
+```html
+background-repeat: no-repeat 不会复制图片
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .img{
+            height: 500px;
+            width: 1190px;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <div class="img" style="background-image: url(bg.png);"></div>
+</body>
+```
+#### 13.3  background-repeat: repeat-x/y
+```html
+background-repeat: repeat-x 图片横向复制
+background-repeat: repeat-y 图片纵向复制
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .img{
+            height: 5000px;
+            width: 1190px;
+            background-repeat: repeat-y;
+        }
+    </style>
+</head>
+<body>
+    <div class="img" style="background-image: url(bg.png);"></div>
+</body>
+```
+
+#### 13.4 截取图片中的某一个图标
+```html
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .img{
+            background-repeat: no-repeat;
+            height: 80px;
+            width: 20px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div class="img" style="background-image: url(icon_18_118.png);"></div>
+</body>
+
+这时候的再显示图片的其他位置，不能移动div，div的位置是固定的，只能移动图片位置
+```
+
+#### 13.5 background-position-x/y
+```html
+background-position-x/y分别表示x轴和y轴
+background-position：10px 10px；也可以直接这么写
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .img{
+            background-repeat: no-repeat;
+            height: 20px;
+            width: 20px;
+            border: 1px solid red;
+            background-position-x: 0px;
+            background-position-y: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div class="img" style="background-image: url(icon_18_118.png);"></div>
+</body>
+```
+
+- 用户输入框添加图片
+```html
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .user-button{
+            height: 48px;
+            width: 980px;
+            margin: 0 auto;
+            line-height: 48px;
+            padding-left: 500px;
+
+        }
+        .user-button .input{
+            height: 30px;
+            width: 400px;
+        }
+
+        .user-button .img{
+            height: 16px;
+            width: 16px;
+            right: 500px;
+            top: 18px;
+            display: inline-block;
+
+        }
+    </style>
+
+</head>
+<body>
+    <div class="user-button" style="position: relative" >
+        <span>*用户名</span>
+        <input class="input" type="text" style="padding-right:30px ">
+        <span style="background-image: url(i_name.jpg);position: absolute" class="img" ></span>
+    </div>
+
+</body>
+
+```
+
+## JavaScript:
+### 1. 格式
+```js
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        /**css代码*/
+    </style>
+    
+    <script>
+//        javascript代码
+    </script>
+</head>
+```
