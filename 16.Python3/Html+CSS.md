@@ -1372,7 +1372,25 @@ background-position：10px 10px；也可以直接这么写
 ```
 
 ## JavaScript:
-### 1. 格式
+### 1. JavaScript代码存在形式：
+```ruby
+
+JavaScript代码存在形式：
+        - Head中
+                <script>
+                    //javascript代码
+                    alert(123);
+                </script>
+                
+                <script type="text/javascript">
+                    //javascript代码
+                    alert(123);
+                </script>
+        - 文件
+            <script src='js文件路径'> </script>
+            
+        PS: JS代码需要放置在 <body>标签内部的最下方
+```
 ```js
 <head>
     <meta charset="UTF-8">
@@ -1385,4 +1403,134 @@ background-position：10px 10px；也可以直接这么写
 //        javascript代码
     </script>
 </head>
+```
+```html
+默认就是type="text/javascript",不要修改text成其他的
+
+    <script type="text/javascript">
+//        javascript代码
+    </script>
+```
+### 2、注释：
+```ruby
+当行注释  //
+多行注释  /*     */
+```
+
+### 3、变量：
+```ruby
+name = 'alex'     # 全局变量
+var name = 'eric' # 局部变量
+```
+```js
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <h1>BabyShen</h1>
+    <script>
+        name = "Wang";
+        function func(){
+            var name = "Zong"
+        }
+    </script>
+</body>
+```
+### 4、基本数据类型：
+#### 4.1 数字
+```ruby
+a = 18;
+```
+#### 4.2 字符串
+```ruby
+a = "alex"
+a.chartAt(索引位置)
+a.substring(起始位置，结束位置)
+a.lenght    获取当前字符串长度
+...
+```
+```js
+a = "BabyShen"
+"BabyShen"
+a.charAt(0)
+"B"
+a.charAt(1)
+"a"
+a.charAt(2)
+"b"
+
+a.substring(1,3)
+"ab"
+a.substring(1,4)
+"aby"
+
+a.length
+8
+```
+#### 4.3 列表(数组)
+
+#### 4.4 字典
+
+
+#### 4.5 布尔类型
+
+### 函数：
+```js
+<body>
+
+    <script>
+        function f1(){
+            console.log(1)
+        }
+//        setInterval("alert(WangZY);",5000);
+          setInterval("f1()",5000);
+    </script>
+</body>
+```
+- 字符串的拼接+流动演示实验：
+```html
+<body>
+    <div id="id1">汪宗宇你好</div>
+</body>
+```
+```js
+document.getElementById('id1')
+<div id=​"id1">​汪宗宇你好​</div>​
+tag = document.getElementById('id1')
+<div id=​"id1">​汪宗宇你好​</div>​
+tag.innerText
+"汪宗宇你好"
+content = tag.innerText
+"汪宗宇你好"
+content
+"汪宗宇你好"
+f= content.charAt(0)
+"汪"
+l = content.substring(1,content.length)
+"宗宇你好"
+new_content = l + f
+"宗宇你好汪"
+```
+`代码整合`
+```js
+<body>
+    <div id="id1">汪宗宇你好</div>
+
+    <script>
+        function func(){
+            // 根据ID获取指定标签的内容，定义局部变量接收
+            var tag = document.getElementById('id1')
+            // 获取标签内部的内容
+            var content = tag.innerText
+
+            var f = content.charAt(0);
+            var l = content.substring(1,content.length);
+
+            var new_content = l + f;
+            tag.innerText = new_content
+        }
+        setInterval('func()',1000)
+    </script>
+</body>
 ```
