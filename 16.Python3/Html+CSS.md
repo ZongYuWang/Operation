@@ -1769,7 +1769,7 @@ tag
 
 - 实验：点击框(添加、全选、取消、反选) 
 
-`效果图:`
+`效果图:`      
 ![](https://github.com/ZongYuWang/image/blob/master/python-js1.png)    
 ```js
 <!DOCTYPE html>
@@ -1925,7 +1925,7 @@ true
 ```
 - 实验：左侧菜单： 
 
-`效果图:`
+`效果图:`    
 ![](https://github.com/ZongYuWang/image/blob/master/python-js2.png)    
 ```js
 <!DOCTYPE html>
