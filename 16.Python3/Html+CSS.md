@@ -982,6 +982,8 @@ display: inline-block;
 ```
 ### 8、padding  margin(0,auto)
 
+![](https://github.com/ZongYuWang/image/blob/master/python-margin-padding1.png)
+
 #### 8.1 margin(外边距)
 ```ruby
 margin-top:30px 距上30像素
@@ -1019,6 +1021,7 @@ margin-left:auto;
 </body>
 ```
 #### 8.2 padding(内边距)
+`如果使用了padding就表示内容相对于外面边框的上下左右距离`
 
 ### 9、position
 #### 9.1 fiexd(固定在页面的某个位置)
