@@ -1467,15 +1467,53 @@ a.substring(1,4)
 
 a.length
 8
+
+字符串拼接：
+a = "Baby"
+"Baby"
+a.concat("Shen")
+"BabyShen"
+
+查找子序列的位置：
+a = "BabyShen"
+"BabyShen"
+a.indexOf("Sh")
+4
+
+切片分隔：
+a = "wangzongyu"
+"wangzongyu"
+a.split("n")
+(3) ["wa", "gzo", "gyu"]
 ```
-#### 4.3 列表(数组)
+#### 4.3 列表(在JS中叫数组)
+```js
+a = [11,22,33]
+
+a = [11,22,33,44]
+(4) [11, 22, 33, 44]
+a.length
+4
+a.splice(1,1,99)  //第一个1表示起始位置，第二个1表示删除1个值，插入99
+[22]
+a
+(4) [11, 99, 33, 44]
+```
 
 #### 4.4 字典
-
+```js
+a = {'k1':'v1','k2':'v2'}
+a["k1"]
+"v1"
+```
 
 #### 4.5 布尔类型
+```js
+a = true
+true
+```
 
-### 函数：
+### 5、函数：
 ```js
 <body>
 
@@ -1527,10 +1565,435 @@ new_content = l + f
             var f = content.charAt(0);
             var l = content.substring(1,content.length);
 
-            var new_content = l + f;
-            tag.innerText = new_content
+            var new_content = l + f;  //字符串拼接
+            tag.innerText = new_content  //将改造后的值再重新赋值给tag.innertext
         }
         setInterval('func()',1000)
     </script>
 </body>
+```
+
+### 6、for循环(JS有两种循环方式)
+```js
+方式一：
+
+循环数组：
+
+a = [11,22,33,44]
+        for(var item in a){
+            console.log(item);
+        }
+
+// item就是a里面的每个元素的索引(坐标)
+
+ a = [11,22,33,44]
+        for(var item in a){
+            console.log(a[item]);
+        }
+11
+22
+33
+44
+// 循环时，循环的元素就是索引
+
+
+循环字典：
+ a = {'k1':'v1','k2':'v2'}
+            for(var item in a){
+                console.log(item);
+        }
+k1
+k2
+
+a = {'k1':'v1','k2':'v2'}
+            for(var item in a){
+                console.log(a[item]);
+        }
+v1
+v2
+
+
+方式二：
+
+循环数组：
+a = [11,22,33,44]
+       for(var i=0;i<a.length;i++){   // 方式二不能循环字典
+
+        }
+
+```
+
+### 7、条件语句：
+```js
+ if(条件){
+        
+        }else if(条件){
+        
+        }else if(条件){
+        
+        }else{
+            
+         }
+         
+== 		值相等
+===  	值和类型都要相等
+&&  	和
+|| 		或
+
+
+if(1==1){
+        
+        }
+        
+if(1!=1){
+        
+        }
+        
+if(1===1){
+        
+        }
+        
+if(1!==1){
+        
+        }
+        
+if(1==1 || 2==2)
+```
+
+### 8、Dom(其实就是Document)
+#### 8.1 Dom直接选择器：
+`想让页面'动'起来，需要先找到标签，然后再操作标签`
+```html
+html文件内容如下：
+
+<body>
+    <div id="i1">BabyShen</div>
+    <a>wang</a>
+    <a>zong</a>
+    <a>yu</a>
+</body>
+```
+```js
+在浏览器中打开上面的html文件，并在开发者工具的Console中输入以下内容，查看浏览器显示内容的变化值
+
+document.getElementById('i1')  // 获取单个元素
+<div id=​"i1">​BabyShen​</div>​
+document.getElementById('i1').innerText  //获取标签中的文本内容
+"BabyShen"
+document.getElementById('i1').innerText = "new_BabyShen"  //对标签内部文本进行重新赋值
+"new_BabyShen"   
+
+
+document.getElementsByTagName('a')[0]  // 获取多个元素(列表)
+<a>​wang​</a>​
+document.getElementsByTagName('a')[1]
+<a>​zong​</a>​
+document.getElementsByTagName('a')[2]
+<a>​yu​</a>​
+document.getElementsByTagName('a')[1].innerText = 'ZONG';
+"ZONG"
+tags = document.getElementsByTagName('a');
+for(var i=0;i<tags.length;i++){
+	tags[i].innerText='SHEN'
+	}
+
+// document.getElementsByClassName 根据class属性获取标签集合
+// document.getElementsByName  根据name属性获取标签集合
+```
+#### 8.2 Dom间接选择器：
+`先找到某个标签，再通过这个标签去找其他的标签`
+```html
+html内容如下：
+
+<body>
+    <div>
+        <div>brother:Wang</div>
+        <div>wang</div>
+    </div>
+    <div>
+        <div>brother:Zong</div>
+        <div id="2">zong</div>
+    </div>
+    <div>
+        <div>brother:Yu</div>
+        <div>yu</div>
+    </div>
+</body>
+```
+```js
+tag = document.getElementById('2')
+<div id=​"2">​zong​</div>
+
+tag
+<div id=​"2">​zong​</div>​
+​
+tag.parentElement   // 找到父亲标签
+<div>​
+	<div>​brother:Zong​</div>
+	​<div id=​"2">​zong​</div>
+</div>​
+tag.parentElement.children  // 找到父亲标签的孩子标签
+
+tag.parentElement.previousElementSibling  // 通过父亲标签，找到父亲的兄弟标签
+<div>​
+	<div>​brother:Wang​</div>​
+	<div>​wang​</div>​
+</div>​
+```
+- 简单操作：
+```js
+tag.className = 'c1';
+"c1"
+tag
+<div id=​"2" class=​"c1">​zong​</div>​
+
+tag.className = 'c2';
+"c2"
+tag
+<div id=​"2" class=​"c2">​zong​</div>​
+
+
+tag.classList
+["c2"]  // 列表形式
+tag.classList.add('c3')  //增加一个c3，就多一个c3
+undefined
+tag
+<div id=​"2" class=​"c2 c3">​zong​</div>
+
+tag.classList.remove('c2')
+tag
+<div id=​"2" class=​"c3">​zong​</div>​​
+```
+`<div onclick="func();"></div> 表示一点击，就执行func函数`
+
+
+- 实验：点击框(添加、全选、取消、反选)      
+![](https://github.com/ZongYuWang/image/blob/master/python-js1.png)    
+```js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .hide{   /* 默认遮罩层和弹出框不能显示出来，所以后面调用这个修改这个display值就行*/
+            display: none;
+        }
+        .c1{   /*遮罩层的class*/
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background-color: black;
+            opacity: 0.6;
+            z-index: 9;
+        }
+        .c2{   /*弹出框的class*/
+            width: 500px;
+            height: 400px;
+            background-color: white;
+            position: fixed;
+            left: 50%;
+            top: 50%;  /* 当前这种情况是框的"左上角"在中间了*/
+            margin-left: -250px;
+            margin-top: -200px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body style="margin: 0;">  <!-- body默认两遍有边距，去掉边距-->
+    <div>
+        <input type="button" value="添加" onclick="ShowModel();" />
+        <!--点击"添加"按钮，应该弹出遮罩层和弹出框，所以设置一个onclick调用后面的函数-->
+        <input type="button" value="全选" onclick="ChooseAll();" />
+        <input type="button" value="取消" onclick="cancelAll();" />
+        <input type="button" value="反选" onclick="ReverseAll();" />
+
+        <table>
+            <thead>
+                <tr>
+                    <th>选择</th>
+                    <th>主机名</th>
+                    <th>端口</th>
+                </tr>
+            </thead>
+            <tbody id="tb">  <!--需要通过tbody这个标签找到所有的孩子；全选、取消、反选都需要用这个tbody-->
+                <tr>
+                    <td>
+                        <input type="checkbox" />
+                    </td>
+                    <td>1.1.1.1</td>
+                    <td>190</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"f id="test" /></td>
+                    <td>1.1.1.2</td>
+                    <td>192</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td>1.1.1.3</td>
+                    <td>193</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 遮罩层开始 -->
+   <div id="i1" class="c1 hide"></div>   <!-- 都应用hide样式；定义id为了下面js的使用，要修改hide里面的值-->
+    <!-- 遮罩层结束 -->
+
+    <!-- 弹出框开始 -->
+    <div id="i2" class="c2 hide">  <!-- 都应用hide样式-->
+        <p><input type="text" /></p>
+        <p><input type="text" /></p>
+        <p>
+            <input type="button" value="取消" onclick="HideModel();"/>  <!-- 点击弹出框中的取消就应该消失，所以再写一个HideModel方法 -->
+            <input type="button" value="确定"/>
+
+        </p>
+    </div>
+     <!-- 弹出框结束 -->
+
+    <script>
+        function ShowModel(){
+            document.getElementById('i1').classList.remove('hide');
+            document.getElementById('i2').classList.remove('hide');
+        }
+        function HideModel(){
+            document.getElementById('i1').classList.add('hide');
+            document.getElementById('i2').classList.add('hide');
+        }
+
+        function ChooseAll(){
+            var tbody = document.getElementById('tb');
+            // 获取所有的tr
+            var tr_list = tbody.children;
+            for(var i=0;i<tr_list.length;i++){
+                // 循环所有的tr，current_tr
+                var current_tr = tr_list[i];   //当前循环的tr
+                var checkbox = current_tr.children[0].children[0]; //current_tr.children取所有的td，但是需要取第一个td；然后再取td下的第一个孩子
+                // 取完的值就是checkbox了，对checkbox打对勾
+                checkbox.checked = true;   // 设置为true，打上对勾
+
+            }
+        }
+
+        function cancelAll(){
+            var tbody = document.getElementById('tb');
+            // 获取所有的tr
+            var tr_list = tbody.children;
+            for(var i=0;i<tr_list.length;i++){
+                // 循环所有的tr，current_tr
+                var current_tr = tr_list[i];
+                var checkbox = current_tr.children[0].children[0];
+                checkbox.checked = false;  // 取消和全选的唯一区别就是这地方设置为false就行
+
+            }
+        }
+
+        function ReverseAll(){
+            var tbody = document.getElementById('tb');
+            // 获取所有的tr
+            var tr_list = tbody.children;
+            for(var i=0;i<tr_list.length;i++){
+                // 循环所有的tr，current_tr
+                var current_tr = tr_list[i];
+                var checkbox = current_tr.children[0].children[0];
+                if(checkbox.checked){
+                    checkbox.checked = false;
+                }else{checkbox.checked = true;
+                }
+            }
+        }
+        // 反选就是判断现在假如是true，就设置为false，如果是false，就设置为true
+    </script
+</body>
+</html>
+
+
+checkbox.checked = true 通过这个值设置勾选与不勾选
+document.getElementById('test')
+<input type=​"checkbox" f id=​"test">​
+document.getElementById('test').checked
+false
+document.getElementById('test').checked = true;
+true
+```
+- 实验：左侧菜单：    
+![](https://github.com/ZongYuWang/image/blob/master/python-js2.png)    
+```js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .hide{
+            display: none;
+        }
+        .item .header{
+            height: 35px;
+            background-color: #2459a2;
+            color: white;
+            line-height: 35px;
+        }
+    </style>
+</head>
+<body>
+    <div style="height: 48px"></div>
+
+    <div style="width: 300px">
+
+        <div class="item">
+            <div id='i1' class="header" onclick="ChangeMenu('i1');">菜单1</div>
+            <div class="content">
+                <div>内容1</div>
+                <div>内容1</div>
+                <div>内容1</div>
+            </div>
+        </div>
+        <div class="item">
+            <div id='i2' class="header" onclick="ChangeMenu('i2');">菜单2</div>
+            <div class="content hide">
+                <div>内容2</div>
+                <div>内容2</div>
+                <div>内容2</div>
+            </div>
+        </div>
+        <div class="item">
+            <div id='i3' class="header" onclick="ChangeMenu('i3');">菜单3</div>
+            <div class="content hide">
+                <div>内容3</div>
+                <div>内容3</div>
+                <div>内容3</div>
+            </div>
+        </div>
+        <div class="item">
+            <div id='i4' class="header" onclick="ChangeMenu('i4');">菜单4</div>
+            <div class="content hide">
+                <div>内容4</div>
+                <div>内容4</div>
+                <div>内容4</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function ChangeMenu(nid){
+            var current_header = document.getElementById(nid);  // 接收传过来的值nid，上面的ChangeMenu('i#')中都传递了形参
+
+            var item_list = current_header.parentElement.parentElement.children;
+
+            for(var i=0;i<item_list.length;i++){
+                var current_item = item_list[i];
+                current_item.children[1].classList.add('hide');  //先都添加上hide，都隐藏
+            }
+
+            current_header.nextElementSibling.classList.remove('hide');  // 然后再去掉当前标签的hide
+        }
+    </script>
+</body>
+</html>
 ```
