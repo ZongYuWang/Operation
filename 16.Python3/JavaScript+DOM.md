@@ -583,7 +583,199 @@ function Foo(n){
 // 通过obj1先找到Foo这个类，然后去类的原型中照sayName，如果有就执行;
 原型可以理解成字典，key是方法名，value就是值;
 ```
+### 13、事件操作：
+绑定事件的两种方式：
+- 直接标签绑定 onclick='xxx()'  onfocus
+- 先获取Dom对象，然后进行绑定
+  	  - document.getElementById('xx').onclick
+   	  - document.getElementById('xx').onfocus
+- this：当前触发事件的标签(谁调用这个函数，this就指向谁)
+	  
+a.第一种绑定方式（直接写在标签中）：
+```js
+<input id="i1" type="button" onclick="clickOn(this)">
 
+function clickOn(self){
+	// self 当前点击的标签
+            
+     }
+     
+     
+左侧菜单实验使用this语法改版：
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .hide{
+            display: none;
+        }
+        .item .header{
+            height: 35px;
+            background-color: #2459a2;
+            color: white;
+            line-height: 35px;
+        }
+    </style>
+</head>
+<body>
+    <div style="height: 48px"></div>
+
+    <div style="width: 300px">
+
+        <div class="item">
+            <div class="header" onclick="ChangeMenu(this);">菜单1</div>
+            <div class="content">
+                <div>内容1</div>
+                <div>内容1</div>
+                <div>内容1</div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header" onclick="ChangeMenu(this);">菜单2</div>
+            <div class="content hide">
+                <div>内容2</div>
+                <div>内容2</div>
+                <div>内容2</div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header" onclick="ChangeMenu(this);">菜单3</div>
+            <div class="content hide">
+                <div>内容3</div>
+                <div>内容3</div>
+                <div>内容3</div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header" onclick="ChangeMenu(this);">菜单4</div>
+            <div class="content hide">
+                <div>内容4</div>
+                <div>内容4</div>
+                <div>内容4</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function ChangeMenu(ths){
+            current_header = ths;
+            var item_list = current_header.parentElement.parentElement.children;
+
+            for(var i=0;i<item_list.length;i++){
+                var current_item = item_list[i];
+                current_item.children[1].classList.add('hide');  //先都添加上hide，都隐藏
+            }
+
+            current_header.nextElementSibling.classList.remove('hide');  // 然后再去掉当前标签的hide
+        }
+    </script>
+</body>
+```
+
+b.第二种绑定方式（单独写一个匿名函数）：
+```js
+<input id="i1" type="button" >
+document.getElementById('i1').onclick = function(){
+		// this 代指当前点击的标签
+            
+        }
+```
+```js
+鼠标点进表格中就变色，鼠标移除表格颜色消失
+
+<body>
+    <table border="1" width="300px">
+        <tr><td>1</td><td>2</td><td>3</td></tr>
+        <tr><td>1</td><td>2</td><td>3</td></tr>
+        <tr><td>1</td><td>2</td><td>3</td></tr>
+    </table>
+    <script>
+
+        var myTrs = document.getElementsByTagName("tr");
+        var len = myTrs.length;
+        for(var i=0;i<len;i++){
+            myTrs[i].onmouseover = function(){
+                this.style.backgroundColor = "red";
+            }
+
+            myTrs[i].onmouseout = function(){
+                this.style.backgroundColor = "";
+            }
+        }
+    </script>
+</body>
+```
+
+
+c.第三种绑定方式
+
+`addEventListener中的第三个参数设置为true表示捕捉，设置为false或者不填写表示冒泡`
+![](https://github.com/ZongYuWang/image/blob/master/python-event1.png)    
+`红色是捕捉，绿色是冒泡`
+
+```js
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        #main{
+            background-color: red;
+            width: 300px;
+            height: 400px;
+        }
+
+        #content{
+            background-color: pink;
+            width: 150px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <div id="content"></div>
+    </div>
+    <script>
+        var mymain = document.getElementById("main");
+        var mycontent = document.getElementById("content");
+        mymain.addEventListener("click",function(){console.log("main")},true);
+        mycontent.addEventListener("click",function(){console.log("content")},true);
+    </script>
+
+</body>
+```
+
+
+### 13、词法分析
+`词法分析不涉及执行阶段`
+```js
+ <script>
+        function t1(age){
+            console.log(age);
+            var age = 27;
+            console.log(age);
+            function age(){}
+            console.log(age);
+        }
+
+        t1(3);
+    </script>
+
+// 输出：
+ƒ age(){}
+27
+27
+
+active object ——> AO
+a.形式参数
+	AO.age = undefined
+	AO.age = 3;
+b.函数内局部变量(如果已经有值不改变，没有值设置为undefined)
+	AO.age = undefined
+c.函数声明表达式
+	AO.age = function()
+```
 
 
 ## Dom(Document Object Model)
