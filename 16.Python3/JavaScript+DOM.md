@@ -152,7 +152,7 @@ value       值
     </div>
 </body>
 ```
-`innerText 仅文本:`
+innerText 仅文本:
 ```html
 obj = document.getElementById('i1');
 <div id=​"i1">​…​</div>​
@@ -166,7 +166,7 @@ obj.innerText = "ZONG"
 obj.innerText = "<a href='http://www.dubai.com'>BabyShen</a>"
 "<a href='http://www.dubai.com'>BabyShen</a>"
 ```
-`innerHTML 全内容:`
+innerHTML 全内容:
 ```html
 obj = document.getElementById('i1');
 <div id=​"i1">​…​</div>​
@@ -183,7 +183,7 @@ obj.innerHTML = 'ZONG';
 obj.innerHTML = "<a href='http://www.dubai.com'>BabyShen</a>"
 "<a href='http://www.dubai.com'>BabyShen</a>"
 ```
-`input value获取当前标签中的值：`
+input value获取当前标签中的值：
 ```html
 <body>
     <input type="text" id="i2">
@@ -240,9 +240,10 @@ obj.value
 obj.value
 "Babyshen"
 ```
-- 实验:输入框中默认有提示语言(当鼠标点进去输入框提示语消失，鼠标离开框，提示语出现)
+- 实验：输入框中默认有提示语言(当鼠标点进去输入框提示语消失，鼠标离开框，提示语出现)
 ```js
-模板：
+实验雏形：
+
 <body>
    <div style="width: 600px;margin: 0 auto">
        <input onfocus="Focus();" onblur="Blur();" type="text" value="请输入关键字">
@@ -257,7 +258,9 @@ obj.value
         }
     </script>
 </body>
+
 // 鼠标点击到框里浏览器console中输出1，点击外面就输出2
+
 
 功能完善：
 <body>
@@ -398,7 +401,7 @@ obj.style.backgroundColor = "red";
 document.getElementById('f1').submit()
 ```
 #### 2.7 其他操作：
-##### 2.7.1 URL和刷新：
+##### URL和刷新：
 ```js
 location.reload()  //页面刷新
 location.href  = location.reload()
@@ -417,7 +420,7 @@ location.href  = location.reload()
 location.href = 'http://baidu.com'; //会直接跳转百度
 ```
 
-##### 2.7.2 定时器
+##### 定时器
 ```js
 setInterval    定时器一直执行(多次定时器)
 clearInterval  清除多次定时器
@@ -466,7 +469,7 @@ clearInterval(o2)
 
 `效果图:`      
 ![](https://github.com/ZongYuWang/image/blob/master/python-js1.png)    
-```js
+```ruby
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -828,7 +831,7 @@ document.getElementById('i1').onclick = function(){
 ![](https://github.com/ZongYuWang/image/blob/master/python-event1.png)    
 `红色是捕捉，绿色是冒泡`
 
-```js
+```ruby
 <head>
     <meta charset="UTF-8">
     <title></title>
