@@ -708,6 +708,34 @@ true
 	- document.getElementById('xx').onclick
 	- document.getElementById('xx').onfocus
 - this：当前触发事件的标签(谁调用这个函数，this就指向谁)
+
+- 实例：知识引导
+```js
+鼠标移动到某一行表格的时候，就变为红色，鼠标移走的时候，颜色就消失
+
+<body>
+    <table border="1" width="300px">
+        <tr onmouseover="t1(0);"onmouseout="t2(0)"><td>1</td><td>2</td><td>3</td></tr>
+        <tr onmouseover="t1(1);"onmouseout="t2(1)"><td>1</td><td>2</td><td>3</td></tr>
+        <tr onmouseover="t1(2);"onmouseout="t2(2)"><td>1</td><td>2</td><td>3</td></tr>
+    </table>
+    <script>
+        function t1(n){
+            var myTrs = document.getElementsByTagName("tr")[n];
+            // 获取tr的Dom对象，但是会获取三个出来(0、1、2),0是第一个，当接收到0的时候，第一行就会有下面设定的效果
+            console.log(myTrs);
+            myTrs.style.backgroundColor = "red";
+        }
+
+        function t2(n){
+            var myTrs = document.getElementsByTagName("tr")[n];
+            myTrs.style.backgroundColor = "";
+        }
+    </script>
+</body>
+
+
+```
 	  
 #### 3.1 第一种绑定方式（直接写在标签中）：
 ```js
