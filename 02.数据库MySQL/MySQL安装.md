@@ -1,4 +1,4 @@
-## MySQL (MariaDB) 安装:
+## 采用cmake+LVM方式安装MariaDB:
 `建议：将数据目录和二进制目录使用不同的目录，将数据单独存放`
 
 ### 1、LVM创建新的磁盘分区(模拟两块磁盘)
@@ -176,6 +176,43 @@ Version     : 2.8.12.2
 
 ```
 #### 4.2 编译MariaDB：
+
+##### 编译选项：
+```ruby
+指定安装文件的安装路径时常用的选项：
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql
+-DMYSQL_DATADIR=/data/mysql
+-DSYSCONFDIR=/etc
+
+默认编译的存储引擎包括：csv、myisam、myisammrg和heap。若要安装其它存储引擎，可以使用类似如下编译选项：
+-DWITH_INNOBASE_STORAGE_ENGINE=1
+-DWITH_ARCHIVE_STORAGE_ENGINE=1
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1
+-DWITH_FEDERATED_STORAGE_ENGINE=1
+
+若要明确指定不编译某存储引擎，可以使用类似如下的选项：
+-DWITHOUT_<ENGINE>_STORAGE_ENGINE=1
+比如：
+-DWITHOUT_EXAMPLE_STORAGE_ENGINE=1
+-DWITHOUT_FEDERATED_STORAGE_ENGINE=1
+-DWITHOUT_PARTITION_STORAGE_ENGINE=1
+
+如若要编译进其它功能，如SSL等，则可使用类似如下选项来实现编译时使用某库或不使用某库：
+-DWITH_READLINE=1
+-DWITH_SSL=system
+-DWITH_ZLIB=system
+-DWITH_LIBWRAP=0
+
+其它常用的选项：
+-DMYSQL_TCP_PORT=3306
+-DMYSQL_UNIX_ADDR=/tmp/mysql.sock
+-DENABLED_LOCAL_INFILE=1
+-DEXTRA_CHARSETS=all
+-DDEFAULT_CHARSET=utf8
+-DDEFAULT_COLLATION=utf8_general_ci
+-DWITH_DEBUG=0
+-DENABLE_PROFILING=1
+```
 ```ruby
 [root@mysql ~]# tar xf mariadb-5.5.56.tar.gz
 [root@mysql mariadb-5.5.56]# cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
@@ -195,8 +232,28 @@ Version     : 2.8.12.2
 # 如果上面的安装路径是/usr/local/mariadb-5.5.56，则就需要创建软连接:ln -sv mariadb-5.5.56/ mysql
 
 [root@mysql mariadb-5.5.56]# make && make install 
+
+// 如果想清理此前的编译所生成的文件，则需要使用如下命令：
+make clean
+rm CMakeCache.txt
 ```
 #### 4.3 初始化配置
+```ruby
+配置格式：类ini格式，为各程序均通过单个配置文件提供配置信息
+配置文件查找次序：/etc/my.cnf --> /etc/mysql/my.cnf -->$MYSQL_HOME/my.cnf --> --default-extra-file=/path/to/somedir/my.cnf --> ~/.my.cnf
+// 按照上面的顺序查找mysql的配置文件，上一个若没有，会依次向下查找
+
+配置文件：集中式的配置，能够为mysql的各应用程序提供配置信息
+[mysqld]
+[mysqld_safe]
+[mysqld_muti]
+[server]
+[mysql]
+[mysqldump]
+[client]
+// 在配置文件中配置文件项可以使用中横线-也可以使用下划线_，但是最好统一一致
+```
+
 ```ruby
 [root@mysql ~]# chown -R mysql.mysql /usr/local/mysql/*
 [root@mysql ~]# cp /usr/local/mysql/support-files/my-large.cnf /etc/my.cnf 
@@ -299,4 +356,124 @@ skip_name_resolve = on
 [root@mysql mysql]# chmod 777 -R /var/log/
 ```
 
+## 采用cmake方式安装MySQL
+由于MySQL5.5.xx-5.6.xx产品系列特殊性，所以编译方式也和早期的产品安装方式不同，采用cmake活gmake方式编译安装
+### 1、安装依赖包
+```ruby
+[root@mysql ~]# yum install -y gcc gcc-c++ ncurses-devel
+```
+```ruby
+编译安装cmake：
 
+[root@mysql ~]# tar xf cmake-3.3.2.tar.gz 
+[root@mysql ~]# cd cmake-3.3.2
+[root@mysql cmake-3.3.2]# ./configure && make && make install
+
+[root@mysql ~]# which cmake
+/usr/local/bin/cmake
+
+```
+```ruby
+编译安装bison
+
+[root@mysql ~]# tar xf bison-2.5.tar.gz 
+[root@mysql ~]# cd bison-2.5
+[root@mysql bison-2.5]# ./configure && make && make install
+
+[root@mysql ~]# which bison
+/usr/local/bin/bison
+
+```
+
+### 2、创建MySQL用户并创建MySQL数据目录：
+```ruby
+[root@mysql ~]# mkdir -p /mydata/data
+[root@mysql ~]# mkdir -p /usr/local/mysql
+
+[root@mysql ~]# groupadd -r mysql
+[root@mysql ~]# useradd -g mysql -r -d /mydata/data/ mysql
+
+[root@mysql ~]# chown mysql.mysql -R /mydata/data/
+
+```
+
+### 3、编译安装MySQL：
+```ruby
+[root@mysql ~]# tar xf mysql-5.5.20.tar.gz 
+[root@mysql ~]# cd mysql-5.5.20
+[root@mysql mysql-5.5.20]#  cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+>  -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
+>  -DDEFAULT_CHARSET=utf8 \
+>  -DDEFAULT_COLLATION=utf8_general_ci \
+>  -DWITH_EXTRA_CHARSETS=all \
+>  -DWITH_MYISAM_STORAGE_ENGINE=1 \
+>  -DWITH_MYISAM_STORAGE_ENGINE=1 \
+>  -DWITH_MEMORY_STORAGE_ENGINE=1 \
+>  -DWITH_READLINE=1 \
+>  -DENABLED_LOCAL_INFILE=1 \
+>  -DMYSQL_DATADIR=/mydata/data \
+>  -DMYSQL_USER=mysql
+
+[root@mysql mysql-5.5.20]# make && make install
+```
+
+### 4、配置MySQL：
+```ruby
+
+[root@mysql ~]# cd /usr/local/mysql/
+[root@mysql mysql]# scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/mydata/data
+
+[root@mysql mysql]# cp support-files/my-large.cnf /etc/my.cnf 
+[root@mysql mysql]# cp support-files/mysql.server /etc/init.d/mysqld
+[root@mysql mysql]# chmod 755 /etc/init.d/mysqld
+```
+
+`设置环境变量:`
+```ruby
+[root@mysql ~]# vim /etc/profile
+export PATH=/usr/local/mysql/bin:$PATH
+[root@mysql ~]# source /etc/profile
+
+```
+### 5、启动MySQL：
+```ruby
+[root@mysql ~]# chkconfig --add mysqld
+[root@mysql ~]# /etc/init.d/mysqld start
+Starting MySQL..... SUCCESS!
+```
+
+## 采用YUM/RPM方式安装MySQL
+[下载最新版MySQL源](http://dev.mysql.com/downloads/repo/yum/)
+yum/rpm安装适合对数据库要求不太高的场合
+
+### 1、安装MySQL：
+```ruby
+[root@mysql ~]# rpm -Uvh mysql57-community-release-el6-11.noarch.rpm
+[root@mysql ~]# yum install mysql-server
+
+[root@mysql ~]# service mysqld start
+Initializing MySQL database:                               [FAILED]
+[root@mysql ~]# service mysqld start
+Starting mysqld:                                           [  OK  ]
+
+```
+### 2、修改MySQL的root账号密码：
+```ruby
+[root@mysql ~]# /etc/init.d/mysqld stop
+[root@mysql ~]# mysqld_safe --user=mysql --skip-grant-tables --skip-networking &
+[root@mysql ~]# mysql -u root mysql
+mysql> use mysql;
+mysql> update mysql.user set authentication_string=password('root') where user='root';
+// 新版本的MySQL已经没有password这个字段了
+mysql> flush privileges;
+
+```
+### 3、登陆MySQL：
+```ruby
+[root@mysql ~]# /etc/init.d/mysqld start
+[root@mysql ~]# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 5.7.20
+```
