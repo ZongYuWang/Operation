@@ -100,9 +100,11 @@ mysql> FLUSH PRIVILEGES;
 #### 1.2 授权法：
 ```ruby
 mysql>GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'mypassword' WITH GRANT OPTION;
-【说明】*.*第一个*可以改为库名，表示授权可以连接哪个库
+//*.*第一个*可以改为库名，表示授权可以连接哪个库
 mysql> FLUSH PRIVILEGES;
 
+grant select ,update on *.* to user1 [with grant option ]
+// 末尾加上"WITH GRANT OPTION"表示user1可以将select ,update权限传递给其他用户如user2
 ```
 #### 1.3 create和grant配合法：
 ```ruby

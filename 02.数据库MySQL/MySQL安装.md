@@ -142,6 +142,13 @@ tmpfs                          939M     0  939M   0% /dev/shm
 
 [root@mysql ~]# groupadd -r mysql
 [root@mysql ~]# useradd -g mysql -r -s /sbin/nologin -M -d /mydata/data mysql
+
+-g --gid GROUP  name or ID of the primary group of the new account
+-r --system   create a system account
+-s --shell SHELL  login shell of the new account
+-M --no-create-home  do not create the user's home directory
+-d --home-dir HOME_DIR    home directory of the new account
+
 ```
 ### 4、编译安装MariaDB：
 #### 4.1 安装cmake：
