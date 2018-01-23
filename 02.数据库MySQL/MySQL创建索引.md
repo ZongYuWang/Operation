@@ -1,7 +1,7 @@
 ## MySQL索引类型
 ### 1、B+Tree索引：
 - BTREE索引就是一种将索引值按一定的算法，存入一个树形的数据结构中，BTREE在MyISAM里的形式和Innodb稍有不同；
-- Innodb：一种是Cluster形式的主键索引（Primary Key），另外一种则是和其他存储引擎（如MyISAM 存储引擎）存放形式基本相同的普通 B-Tree索引，这种索引在Innodb存储引擎中被称为Secondary Index
+- InnoDB：一种是Cluster形式的主键索引（Primary Key），另外一种则是和其他存储引擎（如MyISAM 存储引擎）存放形式基本相同的普通 B-Tree索引，这种索引在Innodb存储引擎中被称为Secondary Index
 
 ```ruby
 MariaDB [babydb]> show index from student\G;
@@ -16,16 +16,16 @@ MariaDB [babydb]> show index from student\G;
      Sub_part: NULL
        Packed: NULL
          Null: 
-   Index_type: BTREE
+   Index_type: BTREE  //InnoDB默认使用BTree索引
       Comment: 
 Index_comment: 
 
 ```
 
-`Primary Key方式：`
+Primary Key方式：
 ![](https://github.com/ZongYuWang/image/blob/master/MySQL1.png)
 
-```ruby
+
 上述查找过程详解：
 
 每个节点占用一个盘块的磁盘空间，一个节点上有两个升序排序(17到35)的关键字和三个指向子树根节点的指针；
@@ -34,16 +34,17 @@ Index_comment:
 如果正好查找where id=17，那么17下面的data正好被取出来；
 
 然后针对上图模拟下 where id=29的具体过程：（首先mysql读取数据是以块（page）为单位的）。
-首先根据根节点找到磁盘块1，读入内存。【磁盘I/O操作第1次】
+首先根据根节点找到磁盘块1，读入内存; // 磁盘I/O操作第1次
 比较关键字29在区间（17,35），找到磁盘块1的指针P2。
-根据P2指针找到磁盘块3，读入内存。【磁盘I/O操作第2次】
+根据P2指针找到磁盘块3，读入内存;  // 磁盘I/O操作第2次
 比较关键字29在区间（26,30），找到磁盘块3的指针P2。
-根据P2指针找到磁盘块8，读入内存。【磁盘I/O操作第3次】
+根据P2指针找到磁盘块8，读入内存  // 磁盘I/O操作第3次
 
 在磁盘块8中的关键字列表中找到关键字29。
 
 // 分析上面过程，发现需要3次磁盘I/O操作，和3次内存查找操作。由于内存中的关键字是一个有序表结构，可以利用二分法查找提高效率。而3次磁盘I/O操作是影响整个B-Tree查找效率的决定因素。
-```
+
+
 
 - MyISAM:同Innodb中的Secondary Index方式
 ![](https://github.com/ZongYuWang/image/blob/master/MySQL2.png)
