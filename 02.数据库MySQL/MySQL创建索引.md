@@ -1,5 +1,6 @@
 ## MySQL索引类型
 ### 1、B+Tree索引：
+`按照顺序存储的，所以很适合查找范围数据`
 - BTREE索引就是一种将索引值按一定的算法，存入一个树形的数据结构中，BTREE在MyISAM里的形式和Innodb稍有不同；
 - InnoDB：一种是Cluster形式的主键索引（Primary Key），另外一种则是和其他存储引擎（如MyISAM 存储引擎）存放形式基本相同的普通B-Tree索引，这种索引在Innodb存储引擎中被称为Secondary Index
 - MyISAM:同Innodb中的Secondary Index方式;     
@@ -45,6 +46,7 @@ Primary Key方式：
 // 分析上面过程，发现需要3次磁盘I/O操作，和3次内存查找操作。由于内存中的关键字是一个有序表结构，可以利用二分法查找提高效率。而3次磁盘I/O操作是影响整个B-Tree查找效率的决定因素。
 
 
+BTree索引能够加快访问数据的速度，因为存储引擎不再需要进行全表扫描来获取需要的数据，取而代之的是从索引的根节点开始进行搜索，根节点的槽中存放了指向子节点的指针，存储引擎根据这些指针向下层查找,通过比较节点页的值和要查找的值可以找到合适的指针进入下一层子节点，这些指针实际上定义了子节点页中值的上限和下限，最终存储引擎要么是找到对应的值，要么是该记录不存在。其实在根节点与叶子节点之间可能有很多层节点页，树的深度和表的大小直接相关。
 
 Secondary Index方式:
 ![](https://github.com/ZongYuWang/image/blob/master/MySQL2.png)
@@ -54,19 +56,29 @@ Secondary Index方式:
 
 
 #### 1.1 适用场景：
-- ##### 全值匹配：精确某个值，“JinJiao King”；
+- ##### 全值匹配：精确某个值，“JinJiao King”
+全值匹配指的是和索引中的所有列进行匹配，即可用于查找姓名和出生日期；
 - ##### 匹配最左前缀：只精确匹配起头部分 “Jin%”；
+如：只查找姓，即只使用索引的第一列；
 - ##### 匹配范围值：
-- ##### 精确匹配某一列并范围匹配另一列：例如查找名字是“jerry”，并且年龄大于20的
+如查找姓在allen和barrymore之间的人，这里也只使用了索引的第一列；
+- ##### 精确匹配某一列并范围匹配另一列
+例如查找名字是“jerry”，并且年龄大于20的；
 - ##### 只访问索引的查询
+BTree通常可以支持只访问索引的查询，即查询只需要访问索引，而无需访问数据行，即，这个就是覆盖索引的概念，需要访问的数据直接从索引中取得；
    
 ####  1.2 不适合使用B-Tree索引的场景：
-- ##### 如果不从最左列开始，索引无效；
-- ##### 不能跳过索引中的列；
-- ##### 如果查询中某个列是为范围查询，那么其右侧的列都无法再使用索引优化查询；             
+- ##### 如果不从最左列开始，索引无效     
+这里不是指的where条件的顺序，即where条件中，不管条件顺序，只要where中出现的列从最左开始连贯起来就能使用到索引；     
+- ##### 不能跳过索引中的列    
+查询条件为姓和出生日期，跳过了名字列，这样，多列索引就只能使用到姓这一列；     
+- ##### 如果查询中某个列是为范围查询，那么其右侧的列都无法再使用索引优化查询       
+如where last_name=xxx and first_name like ‘xxx%’ and age=’xxx’;这样first_name列可以使用索引，这列之后的age列无法使用索引；        
+   
    
 ### 2、Hash索引：
-- Hash索引：基于哈希表实现，特别适用于精确匹配索引中的所有列，只有Memory存储引擎支持显式hash索引；
+- 基于哈希表实现，只有精确匹配索引所有列的查询才有效，对于每一行数据，存储引擎都会对所有的索引列的值计算一个哈希码，哈希码是一个较小的值，并且不同键值的行计算出来的哈希码不一样，哈希索引将所有的哈希码存储在索引中，同时在哈希表中保存指向每个数据行的指针。
+- Hash索引：基于哈希表实现，特别适用于精确匹配索引中的所有列，只有Memory存储引擎支持显式hash索引，这也是memory引擎表的默认索引类型，memory也支持btree，值得一提的是，memory引擎是支持非唯一哈希索引的；
 
 #### 2.1 适用场景：
 - ##### 只支持等值比较查询，包括=，IN()，<=>，不能使用范围查询
@@ -97,7 +109,71 @@ hash值即为通过特定算法由指定列数据计算出来，磁盘地址即�
 #### 2.2 不适合使用hash索引的场景：
 - ##### 存储的不是值的顺序，因此，不适用于顺序查询；
 - ##### 不支持模糊匹配；
-   
+- ##### 哈希索引也不支持部分索引列匹配查找，因为哈希索引始终是使用索引的全部列值内容来计算哈希值的。
+如：数据列（a,b）上建立哈希索引，如果只查询数据列a，则无法使用该索引。
+
+创建使用HASH引擎表：
+```ruby
+MariaDB [babydb]> create table testhash(fname varchar(50) not null,lname varchar(50) not null,key using hash(fname)) engine=memory;
+
+MariaDB [babydb]>  insert into testhash values('Arjen','Lentz'),('Baron','Schwartz'),('Peter','Zaitsev'),('Vadim','Tkachenko');
+
+MariaDB [babydb]> SHOW CREATE TABLE testhash\G;
+*************************** 1. row ***************************
+       Table: testhash
+Create Table: CREATE TABLE `testhash` (
+  `fname` varchar(50) NOT NULL,
+  `lname` varchar(50) NOT NULL,
+  KEY `fname` (`fname`) USING HASH
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+1 row in set (0.00 sec)
+
+
+假设索引使用假想的哈希函数f(),它返回下面的值：
+f('Arjen')=2323
+f('Baron')=7437
+f('Peter')=8784
+f('Vadim')=2458
+ 
+则哈希索引的数据结构如下：
+槽：        值：
+2323        指向第1行的指针
+2458        指向第4行的指针
+7437        指向第2行的指针
+8784        指向第3行的指针
+
+
+MariaDB [babydb]> SHOW INDEXES FROM testhash\G;
+*************************** 1. row ***************************
+        Table: testhash
+   Non_unique: 1
+     Key_name: fname
+ Seq_in_index: 1
+  Column_name: fname
+    Collation: NULL
+  Cardinality: 2
+     Sub_part: NULL
+       Packed: NULL
+         Null: 
+   Index_type: HASH
+      Comment: 
+Index_comment: 
+1 row in set (0.00 sec)
+
+
+MariaDB [babydb]> explain select lname from testhash where fname='Peter';
++------+-------------+----------+------+---------------+-------+---------+-------+------+-------------+
+| id   | select_type | table    | type | possible_keys | key   | key_len | ref   | rows | Extra       |
++------+-------------+----------+------+---------------+-------+---------+-------+------+-------------+
+|    1 | SIMPLE      | testhash | ref  | fname         | fname | 152     | const |    2 | Using where |
++------+-------------+----------+------+---------------+-------+---------+-------+------+-------------+
+1 row in set (0.00 sec)
+
+// mysql先计算Peter的哈希值，并使用该值寻找对应的记录指针，因为f(‘Peter’)=8784，所以mysql在索引中查找8784，可以找到指向第三行的指针，最后一步是比较第三行的值是否为Peter，以确保就是要查找的行,当出现哈希冲突的时候，存储引擎必须遍历链表中所有的行指针，逐行进行比较，直到找到所有符合条件的行。
+```
+
+Innodb引擎有一个特殊的功能叫做自适应哈希索引，当Innodb注意到某些索引值被使用的非常频繁时，它会在内存中基于BTree索引之上再创建一个哈希索引，这样就让BTree索引也具有哈希索引的一些优点，比如：快速的哈希查找，这是一个全自动的，内部的行为，用户无法控制或者配置，不过如果有必要，可以选择关闭这个功能（innodb_adaptive_hash_index=OFF，默认为ON）
+
 ### 3、空间索引（R-Tree）：
 MyISAM支持空间索引；
 
