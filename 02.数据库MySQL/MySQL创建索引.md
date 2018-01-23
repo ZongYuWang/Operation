@@ -1,7 +1,8 @@
 ## MySQL索引类型
 ### 1、B+Tree索引：
 - BTREE索引就是一种将索引值按一定的算法，存入一个树形的数据结构中，BTREE在MyISAM里的形式和Innodb稍有不同；
-- InnoDB：一种是Cluster形式的主键索引（Primary Key），另外一种则是和其他存储引擎（如MyISAM 存储引擎）存放形式基本相同的普通 B-Tree索引，这种索引在Innodb存储引擎中被称为Secondary Index
+- InnoDB：一种是Cluster形式的主键索引（Primary Key），另外一种则是和其他存储引擎（如MyISAM 存储引擎）存放形式基本相同的普通B-Tree索引，这种索引在Innodb存储引擎中被称为Secondary Index
+- MyISAM:同Innodb中的Secondary Index方式;     
 
 ```ruby
 MariaDB [babydb]> show index from student\G;
@@ -22,7 +23,9 @@ Index_comment:
 
 ```
 
-Primary Key方式：
+Primary Key方式：   
+
+
 ![](https://github.com/ZongYuWang/image/blob/master/MySQL1.png)
 
 
@@ -43,7 +46,7 @@ Primary Key方式：
 
 
 
-- MyISAM:同Innodb中的Secondary Index方式
+Secondary Index方式:
 ![](https://github.com/ZongYuWang/image/blob/master/MySQL2.png)
 
 
