@@ -45,3 +45,30 @@ MariaDB [(none)]> delete from mysql.user where user='root';
 MariaDB [(none)]> flush privileges;
 
 ```
+
+### 4、防止误操作MySQL数据库
+假如对数据库做一个update操作，但是忘记加where条件，那么就会悲剧发生了，所有的记录将全部被修改
+```ruby
+[root@mysql ~]# mysql --help | grep dummy
+  -U, --i-am-a-dummy  Synonym for option --safe-updates, -U.
+i-am-a-dummy                      FALSE
+
+// 在mysql命令加上选项-U后，当发出没有WHERE或LIMIT关键字的UPDATE或DELETE时，mysql程序就会拒绝执行
+```
+```ruby
+[root@mysql ~]# mysql -usystem -pwang123 -U
+MariaDB [(none)]> delete from babydb.student;
+ERROR 1175 (HY000): You are using safe update mode and you tried to update a table without a WHERE that uses a KEY column
+// 不加条件无法删除，目的达到
+```
+做成别名防止误操作：
+```ruby
+[root@mysql ~]# alias mysql='mysql -U'
+[root@mysql ~]# mysql -usystem -pwang123
+
+[root@mysql ~]# echo "alias mysql='mysql -U'" >> /etc/profile
+[root@mysql ~]# source /etc/profile
+[root@mysql ~]# tail -1 /etc/profile
+alias mysql='mysql -U'
+
+```
