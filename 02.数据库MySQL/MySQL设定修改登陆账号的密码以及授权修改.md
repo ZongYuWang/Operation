@@ -99,7 +99,8 @@ mysql> FLUSH PRIVILEGES;
 ```
 #### 1.2 授权法：
 ```ruby
-mysql>GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'mypassword' WITH GRANT OPTION;
+mysql>GRANT ALL  ON *.* TO 'root'@'%' IDENTIFIED BY 'mypassword' WITH GRANT OPTION;
+// ALL表示文章末尾提到的所有的用户权限
 //*.*第一个*可以改为库名，表示授权可以连接哪个库
 mysql> FLUSH PRIVILEGES;
 
