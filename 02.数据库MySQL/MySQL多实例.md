@@ -293,6 +293,8 @@ Enter password:   // 关闭需要密码的
 [root@mysql 3307]# /mydata/data/3307/mysql start
 MySQL is running...
 
+// 如果不是正常关闭MySQL多实例，再次启动的时候有时会存在问题，解决办法：
+[root@mysql ~]#rm -rf /mydata/data/3306/mysql.sock /mydata/data/3306/*.pid
 ```
 
 `查看MySQL多实例并测试：`
