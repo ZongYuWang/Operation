@@ -629,6 +629,178 @@ MariaDB [My_DB]> select * from MyTB;
 
 ```
 
-## MySQL异步同步(半同步)
+## MySQL半同步复制
 优点：确保至少一个从库和主库的数据一致；
 缺点：主从之间网络延迟，或者从库有问题的时候，用户体验很差，当然也可以设置超时时间=10秒；
+
+### 1、安装插件
+##### MySQL主服务器：
+```ruby
+MariaDB [(none)]> help install;
+MariaDB [(none)]> INSTALL PLUGIN rpl_semi_sync_master SONAME 'semisync_master.so';
+MariaDB [(none)]> show plugins;
++--------------------------------+--------+--------------------+--------------------+---------+
+| Name                           | Status | Type               | Library            | License |
++--------------------------------+--------+--------------------+--------------------+---------+
+| rpl_semi_sync_master           | ACTIVE | REPLICATION        | semisync_master.so | GPL     |
++--------------------------------+--------+--------------------+--------------------+---------+
+
+```
+##### MySQL从服务器：
+```ruby
+MariaDB [(none)]> INSTALL PLUGIN rpl_semi_sync_slave SONAME 'semisync_slave.so';
+MariaDB [(none)]> show plugins;
++--------------------------------+--------+--------------------+-------------------+---------+
+| Name                           | Status | Type               | Library           | License |
++--------------------------------+--------+--------------------+-------------------+---------+
+| rpl_semi_sync_slave            | ACTIVE | REPLICATION        | semisync_slave.so | GPL     |
++--------------------------------+--------+--------------------+-------------------+---------+
+
+```
+
+### 2、开启半同步复制变量：
+##### MySQL主服务器：
+```ruby
+MariaDB [(none)]> SHOW GLOBAL VARIABLES LIKE '%semi%';
++------------------------------------+-------+
+| Variable_name                      | Value |
++------------------------------------+-------+
+| rpl_semi_sync_master_enabled       | OFF   |
+| rpl_semi_sync_master_timeout       | 10000 |
+| rpl_semi_sync_master_trace_level   | 32    |
+| rpl_semi_sync_master_wait_no_slave | ON    |
++------------------------------------+-------+
+
+MariaDB [(none)]> SET GLOBAL rpl_semi_sync_master_enabled=1;
+// 需要将rpl_semi_sync_master_enabled设置为ON，开启半同步复制
+
+
+MariaDB [(none)]> SHOW GLOBAL STATUS LIKE '%semi%';
++--------------------------------------------+-------+
+| Variable_name                              | Value |
++--------------------------------------------+-------+
+| Rpl_semi_sync_master_clients               | 0     |
+| Rpl_semi_sync_master_net_avg_wait_time     | 0     |
+| Rpl_semi_sync_master_net_wait_time         | 0     |
+| Rpl_semi_sync_master_net_waits             | 0     |
+| Rpl_semi_sync_master_no_times              | 0     |
+| Rpl_semi_sync_master_no_tx                 | 0     |
+| Rpl_semi_sync_master_status                | OFF   |
+| Rpl_semi_sync_master_timefunc_failures     | 0     |
+| Rpl_semi_sync_master_tx_avg_wait_time      | 0     |
+| Rpl_semi_sync_master_tx_wait_time          | 0     |
+| Rpl_semi_sync_master_tx_waits              | 0     |
+| Rpl_semi_sync_master_wait_pos_backtraverse | 0     |
+| Rpl_semi_sync_master_wait_sessions         | 0     |
+| Rpl_semi_sync_master_yes_tx                | 0     |
++--------------------------------------------+-------+
+
+// Rpl_semi_sync_master_clients是有多少个半同步节点，还没开始配置，所以目前为0
+```
+##### MySQL从服务器：
+```ruby
+MariaDB [(none)]> SHOW GLOBAL VARIABLES LIKE '%semi%';
++---------------------------------+-------+
+| Variable_name                   | Value |
++---------------------------------+-------+
+| rpl_semi_sync_slave_enabled     | OFF   |
+| rpl_semi_sync_slave_trace_level | 32    |
++---------------------------------+-------+
+
+MariaDB [(none)]> SET GLOBAL rpl_semi_sync_slave_enabled=1;
+// 需要将rpl_semi_sync_slave_enabled设置为ON，开启半同步复制
+```
+### 3、检查测试：
+#### 3.1 通过增删改查看主库的变量值的变化：
+##### MySQL从服务器：
+```ruby
+MariaDB [(none)]> slave start;
+```
+##### MySQL主服务器：
+```ruby
+MariaDB [(none)]> SHOW GLOBAL STATUS LIKE '%semi%';
++--------------------------------------------+-------+
+| Variable_name                              | Value |
++--------------------------------------------+-------+
+| Rpl_semi_sync_master_clients               | 1     |
+| Rpl_semi_sync_master_net_avg_wait_time     | 0     |
+| Rpl_semi_sync_master_net_wait_time         | 0     |
+| Rpl_semi_sync_master_net_waits             | 0     |
+| Rpl_semi_sync_master_no_times              | 0     |
+| Rpl_semi_sync_master_no_tx                 | 0     |
+| Rpl_semi_sync_master_status                | ON    |
+| Rpl_semi_sync_master_timefunc_failures     | 0     |
+| Rpl_semi_sync_master_tx_avg_wait_time      | 0     |
+| Rpl_semi_sync_master_tx_wait_time          | 0     |
+| Rpl_semi_sync_master_tx_waits              | 0     |
+| Rpl_semi_sync_master_wait_pos_backtraverse | 0     |
+| Rpl_semi_sync_master_wait_sessions         | 0     |
+| Rpl_semi_sync_master_yes_tx                | 0     |
++--------------------------------------------+-------+
+
+// Rpl_semi_sync_master_clients这项的值已经变成了1
+
+```
+```ruby
+MariaDB [(none)]> create database MYDB;
+MariaDB [(none)]> use MYDB;
+MariaDB [MYDB]> create table TB1 (id int,name char(30));
+
+MariaDB [MYDB]> SHOW GLOBAL STATUS LIKE '%semi%';
++--------------------------------------------+-------+
+| Variable_name                              | Value |
++--------------------------------------------+-------+
+| Rpl_semi_sync_master_clients               | 1     |
+| Rpl_semi_sync_master_net_avg_wait_time     | 2034  |
+| Rpl_semi_sync_master_net_wait_time         | 4068  |
+| Rpl_semi_sync_master_net_waits             | 2     |
+| Rpl_semi_sync_master_no_times              | 0     |
+| Rpl_semi_sync_master_no_tx                 | 0     |
+| Rpl_semi_sync_master_status                | ON    |
+| Rpl_semi_sync_master_timefunc_failures     | 0     |
+| Rpl_semi_sync_master_tx_avg_wait_time      | 1949  |
+| Rpl_semi_sync_master_tx_wait_time          | 3898  |
+| Rpl_semi_sync_master_tx_waits              | 2     |
+| Rpl_semi_sync_master_wait_pos_backtraverse | 0     |
+| Rpl_semi_sync_master_wait_sessions         | 0     |
+| Rpl_semi_sync_master_yes_tx                | 2     |
++--------------------------------------------+-------+
+
+// Rpl_semi_sync_master_net_waits=2 正好使用了两条语句，所以wait值是2
+// Rpl_semi_sync_master_net_wait_time=4068，总的等待时间是4068毫秒
+// Rpl_semi_sync_master_net_avg_wait_time=2034 每条语句需要等待2034秒，大约2秒钟
+```
+#### 3.2 通过tcpdump抓包比较半同步复制与异步复制的区别：
+##### 半同步复制：
+```ruby
+主库(172.30.105.121)插入一条数据会同步到从库(172.30.105.122)：
+MariaDB [MyDB]> insert into MyTB(name) values('wangzy102');
+
+[root@MySQlL1-Master ~]# tcpdump -n -i eth0 host 172.30.105.121 and 172.30.105.122
+// 表示抓取172.30.105.121与172.30.105.122之间的数据包
+
+20:55:58.347048 IP 172.30.105.121.mysql > 172.30.105.122.41056: Flags [P.], seq 4254710471:4254710727, ack 1486459343, win 114, options [nop,nop,TS val 156958776 ecr 155948401], length 256
+20:55:58.349664 IP 172.30.105.122.41056 > 172.30.105.121.mysql: Flags [P.], seq 1:30, ack 256, win 165, options [nop,nop,TS val 156158332 ecr 156958776], length 29
+20:55:58.349922 IP 172.30.105.121.mysql > 172.30.105.122.41056: Flags [.], ack 30, win 114, options [nop,nop,TS val 156958779 ecr 156158332], length 0
+
+20:56:03.353127 ARP, Request who-has 172.30.105.122 tell 172.30.105.121, length 28
+20:56:03.353798 ARP, Request who-has 172.30.105.121 tell 172.30.105.122, length 46
+20:56:03.353816 ARP, Reply 172.30.105.121 is-at 00:0c:29:54:7a:ef, length 28
+20:56:03.353867 ARP, Reply 172.30.105.122 is-at 00:0c:29:da:65:76, length 46
+
+```
+##### 异步复制：
+```ruby
+主库(172.30.105.121)插入一条数据会同步到从库(172.30.105.122)：
+MariaDB [MyDB]> insert into MyTB(name) values('wangzy102');
+
+[root@MySQlL1-Master ~]# tcpdump -n -i eth0 host 172.30.105.121 and 172.30.105.122
+
+18:08:01.910215 IP 172.30.105.121.mysql > 172.30.105.122.41055: Flags [P.], seq 2094180227:2094180475, ack 4278786909, win 114, options [nop,nop,TS val 146882340 ecr 145287155], length 248
+18:08:01.911020 IP 172.30.105.122.41055 > 172.30.105.121.mysql: Flags [.], ack 248, win 148, options [nop,nop,TS val 146368186 ecr 146882340], length 0
+
+18:08:06.922866 ARP, Request who-has 172.30.105.122 tell 172.30.105.121, length 28
+18:08:06.922968 ARP, Request who-has 172.30.105.121 tell 172.30.105.122, length 46
+18:08:06.922988 ARP, Reply 172.30.105.121 is-at 00:0c:29:54:7a:ef, length 28
+18:08:06.925632 ARP, Reply 172.30.105.122 is-at 00:0c:29:da:65:76, length 46
+```
