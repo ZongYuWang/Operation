@@ -1,4 +1,8 @@
-## MySQL主从同步
+
+[MySQL异步复制(默认方式)](#MySQL异步复制(默认方式)) 
+
+
+##  MySQL异步复制(默认方式)
 
 ### 1、MySQL主从复制的原理过程
 
@@ -12,10 +16,9 @@
 
 - Slave服务器端的SQL线程会实时的检测本地的Relay Log中新增加的日志内容，然后及时把Log文件中的内容解析成在Master 端曾经执行的SQL语句内容，并在自身Slave服务器上按语句的顺序执行应用这些SQL语句，应用完毕后清理应用过的日志；
 
-- 经过上面的过程，就可以确保在Master端和Slave端执行了同样的SQL语句，当复制状态正常情况下，Master端和Slave端的数据是完全一样的；
+- 经过上面的过程，就可以确保在Master端和Slave端执行了同样的SQL语句，当复制状态正常情况下，Master端和Slave端的数据是完全一样的；   
 
-图：
-
+![](https://github.com/ZongYuWang/image/blob/master/MySQL4.png)    
 
 - 主库通过记录binlog实现对从库的同步，binlog记录数据库的更新语句；
 - 主库1个IO线程，从库1个IO线程和1个SQL线程来完成；
