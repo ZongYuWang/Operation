@@ -50,12 +50,15 @@ mysqldump -u$MYUSER -p$MYPASS -F -B -A --lock-all-tables |gzip > $DATA_FILE
 
 ![](https://github.com/ZongYuWang/image/blob/master/MySQL3.png)    
 
+#### 4.1 0点做一次全备份：
 ```ruby
 [root@MySQlL1-Master ~]# mkdir /MySQL_FULLBACK
 
 [root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -F -B --master-data=2 -x MyDB|gzip > /MySQL_FULLBACK/fullback_$(date +%F).sql.gz
-```
 
+// 备份的时候指定-F做一下Binlog日志的切割
+```
+#### 4.2 0:00-0:10有新的数据写入：
 ```ruby
 MariaDB [(none)]> use MyDB;
 MariaDB [MyDB]> select * from MyTB;
@@ -70,27 +73,23 @@ MariaDB [MyDB]> insert into MyTB(name) values('babyshen5');
 MariaDB [MyDB]> insert into MyTB(name) values('babyshen6');
 
 ```
-
+#### 4.3 模拟用户破坏数据库：
+##### 0:10 某个同事误删了MyDB数据库
 ```ruby
 MariaDB [(none)]> drop database MyDB;
-
 ```
-
+##### 发现故障并排查原因：    
 数据库出问题10分钟后，公司的网站运营人员报网站故障，联系运维人员解决，接到故障之后运维DBA或开发人员查看网站报错或查看后台日志，显示连接不上MyDB数据库，然后登陆数据库发现MyDB数据库没有了，经过询问，有人在10分钟之前误删了一个数据库，至此，问题原因找到，准备开始恢复数据库(所以设定权限是多么重要的！)
 
-
-
+#### 4.4 检查并修改增量数据库文件：
 通过防火墙禁止WEB等应用向主库写数据或者锁表，让主库暂时停止更新，然后在进行恢复
 
-
-检查全备及Binlog日志：
-检查凌晨全备：
+##### 检查全备及Binlog日志：
+- 检查凌晨全备：
 ```ruby
 [root@MySQlL1-Master ~]# ll /MySQL_FULLBACK/
 -rw-r--r--. 1 root root 857 Feb  2 10:52 fullback_2018-02-02.sql.gz
-
 [root@MySQlL1-Master MySQL_FULLBACK]# gzip -d fullback_2018-02-02.sql.gz 
-
 [root@MySQlL1-Master MySQL_FULLBACK]# grep -i "change" fullback_2018-02-02.sql 
 -- CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000011', MASTER_LOG_POS=245;
 
@@ -99,14 +98,15 @@ MariaDB [(none)]> drop database MyDB;
 ```ruby
 [root@MySQlL1-Master MySQL_FULLBACK]# mysqladmin -usystem -pwangzongyu flush-logs
 
+// 刷新一下Binlog，这样恢复的就只有mysql-bin.000011，新的数据会写入到mysql-bin.000012中，这种是企业业务不允许锁表的情况下
 ```
-
+- 将Binlog日志转换成sql文件：
 ```ruby
 [root@MySQlL1-Master ~]# cp /ourdata/binlog/mysql-bin.000011 /MySQL_FULLBACK/
 [root@MySQlL1-Master ~]# mysqlbinlog -d MyDB /MySQL_FULLBACK/mysql-bin.000011 > mysql-bin.000011.sql
 
 ```
-
+- 编辑sql文件，将误删数据库的语句(drop database MyDB)删除
 ```ruby
 [root@MySQlL1-Master ~]# vim mysql-bin.000011.sql
 ......
@@ -118,11 +118,12 @@ drop database MyDB
 ......
 
 ```
-
+#### 4.5 全备恢复过程：
 ```ruby
 [root@MySQlL1-Master ~]# mysql -usystem -pwangzongyu < /MySQL_FULLBACK/fullback_2018-02-02.sql
 ```
 
+#### 4.4 增量恢复过程：
 ```ruby
 [root@MySQlL1-Master ~]# mysql -usystem -pwangzongyu < /root/mysql-bin.000011.sql
 ```
