@@ -187,3 +187,51 @@ http://blog.51cto.com/oldboy/1431161
 http://blog.51cto.com/oldboy/1431172
 https://www.cnblogs.com/peida/archive/2012/12/20/2825837.html
 http://blog.51cto.com/oldboy/909696
+
+### 4、MySQL错误代码
+```ruby
+1005：创建数据库失败
+1007：数据库已存在，创建数据库失败
+1008：数据库不存在，删除数据库失败
+1009：不能删除数据库文件导致删除数据库失败
+1010：不能删除数据目录导致删除数据库失败
+1011：删除疏忽句酷文件失败
+1012：不能读取系统表中的记录
+1020：记录已被其他用户修改
+1021：硬盘剩余空间不足，请加大磁盘可用空间
+1022：关键字重复，更改记录失败
+1023：关闭时发生错误
+1024：读文件错误
+1025：更改名字时发生错误
+1026：写文件错误
+1032：记录不存在
+1036：数据表是只读的，不能对它进行修改
+```
+##### 举例：
+主从同步都正常，先关闭同步(slave stop)，然后在主库上创建一个库，从库上也创建一个和主库一样的库名，再开启同步(slave stop)
+```ruby
+Last_SQL_Errno: 1007
+Last_SQL_Error: Error 'Can't create database 'butongbu'; database exists' on query. Default database: 'butongbu'. Query: 'create database butongbu'
+
+```
+##### 解决办法一:
+`set global sql_slave_skip_counter`
+```ruby
+MariaDB [(none)]> stop slave;
+MariaDB [(none)]> set global sql_slave_skip_counter = 1;
+MariaDB [(none)]> slave start;
+
+// set的作用就是让同步的POS值向下跳过一个继续执行同步
+
+set global sql_slave_skip_counter = n
+// n>0,表示忽略执行N个更新，N值越大，表示丢失的数据也就会多
+```
+##### 解决办法二：
+`slave-skip-errors = 1032,1062,1007`
+不推荐使用all值忽略所有的错误消息，如果使用该值，我们不能保证数据的完整性
+```ruby
+[root@MySQL2-Slave ~]# vim /etc/my.cnf 
+[mysqld]
+slave-skip-errors = 1032,1062
+
+```

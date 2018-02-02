@@ -125,6 +125,12 @@ MariaDB [MyDB]> show variables like '%timeout%';
 +----------------------------+----------+
 
 ```
+`也可以不在此处做锁表操作，在下面的mysqldump命令中指定-x参数锁表`
+```ruby
+[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -A -B --master-data=1 -x --events > /opt/mysql_fullback.sql
+// -x是锁表 ，类似于登陆数据库执行 flush table with read lock
+```
+
 
 #### 4.2 将现有数据做一个全备份：
 新打开窗口，linux命令行备份或导出原有的数据库数据，并拷贝到从库所在的服务器目录，如果数据量很大，并且允许停机，可以停机打包，而不用mysqldump     
@@ -133,7 +139,7 @@ MariaDB [MyDB]> show variables like '%timeout%';
 ```ruby
 [root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -A -B --events|gzip > /opt/MyDB.sql.gz
 
-// --event：
+// --event：mysqldump默认是不备份事件表的,只有加了--events 才会不警告
 // 如果数据量比较小的话，就不用压缩备份了
 
 [root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -A -B --events --master-data=2 > /opt/MyDB.sql
@@ -149,13 +155,15 @@ MariaDB [MyDB]> show master status;
 ```
 ##### 使用--master-data=1
 ```ruby
-[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -A -B --events --master-data=1 > /opt/MyDB_master1.sq
+[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -A -B --events --master-data=1 > /opt/MyDB_master1.sql
 
 [root@MySQlL1-Master ~]# vim /opt/MyDB_master1.sql
 CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000006', MASTER_LOG_POS=1933;
 // 这条没有被注释
 
 ```
+
+
 
 
 #### 4.3 解开锁并将全备份的文件拷贝至从服务器：
@@ -169,7 +177,7 @@ MariaDB [MyDB]> unlock tables;
 ```
 #### 4.4 配置从库连接主库
 根据主库的show master status查看binlog的位置状态，在从库执行change master to...语句
-##### ##### 使用--master-data=2的情况：
+##### 使用--master-data=2的情况：
 ```ruby
 MariaDB [(none)]> CHANGE MASTER TO
      MASTER_HOST='172.30.105.121',
@@ -266,3 +274,361 @@ mysql-bin.000006
 - 在从库执行change master to...语句，无需binlog文件及对应位置点；
 - 从库开启同步开关，start slave；
 - 从库show slave status\G，检查同步状态，并在主库进行更新测试；
+
+### 6、主从备份自动化脚本：
+MySQL主服务器和MySQL从服务器需要做好时钟同步，因为备份文件都是按照时间备份的
+##### MySQL主服务器：
+```ruby
+[root@MySQlL1-Master ~]# vim mysql_master_fullback.sh
+
+#!/bin/sh
+
+##################################################
+# This scripts is create by wangzongyu
+# wangzongyu QQ:479414941
+##################################################
+
+MYUSER="system"
+MYPASSWORD="wangzongyu"
+MYSOCK=/tmp/mysql.sock
+
+
+DATA_PATH=/mysql_back && mkdir -p $DATA_PATH
+LOG_FILE=${DATA_PATH}/mysqllogs_`date +%F`.log
+DATA_FILE=${DATA_PATH}/mysql_backup_`date +%F`.sql.gz
+MYSQL_PATH=/usr/local/mysql/bin
+MYSQL_CMD="$MYSQL_PATH/mysql -u$MYUSER -p$MYPASSWORD -S$MYSOCK"
+
+MYSQL_DUMP="$MYSQL_PATH/mysqldump -u$MYUSER -p$MYPASSWORD -S$MYSOCK -A -B --master-data=1 --single-transaction -e"
+
+${MYSQL_DUMP} | gzip > $DATA_FILE
+
+```
+```ruby
+检验查看备份文件：
+
+[root@MySQlL1-Master ~]# ls /mysql_back/
+mysql_backup_2018-02-01.sql.gz
+[root@MySQlL1-Master mysql_back]# gzip -d mysql_backup_2018-02-01.sql.gz 
+[root@MySQlL1-Master mysql_back]# vim mysql_backup_2018-02-01.sql 
+CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=1170;
+```
+##### MySQL从服务器：
+`不停主库一键批量创建从库，也就是把上面主库的备份文件分发到想做从库的机器上，可以多台`
+
+```ruby
+[root@MySQL2-Slave ~]# mkdir /mysql_back 
+// 主库全备份文件拷贝至这个目录中，这个目录在脚本中也需要，也可以自行修改成其他目录
+
+[root@MySQlL1-Master mysql_back]# scp mysql_backup_2018-02-01.sql.gz 172.30.105.122:/mysql_back/
+// 将主库的全备份文件分发至从服务器
+
+```
+```ruby
+#!/bin/sh
+
+##################################################
+# This scripts is create by wangzongyu
+# wangzongyu QQ:479414941
+##################################################
+
+echo -e "\033[41;36m installing software \033[0m"
+yum install -y mail
+echo -e "\033[41;36m package is installed done \033[0m"
+
+
+MYUSER="system"
+MYPASSWORD="wangzongyu"
+MYSOCK=/tmp/mysql.sock
+
+DATA_PATH=/mysql_back #主库的备份文件需要拷贝至这个目录下
+LOG_FILE=${DATA_PATH}/mysqllogs_`date +%F`.log
+MYSQL_PATH=/usr/local/mysql/bin
+MYSQL_CMD="$MYSQL_PATH/mysql -u$MYUSER -p$MYPASSWORD -S $MYSOCK"
+
+#recover
+cd ${DATA_PATH}
+gzip -d mysql_backup_`date +%F`.sql.gz
+$MYSQL_CMD < mysql_backup_`date +%F`.sql
+
+#config slave
+$MYSQL_CMD -e << EOF
+CHANGE MASTER TO
+MASTER_HOST='172.30.105.121',
+MASTER_PORT=3306,
+MASTER_USER='rep',
+MASTER_PASSWORD='wangzongyu';
+EOF
+
+$MYSQL_CMD -e "start slave;"
+sleep 20
+$MYSQL_CMD -e "show slave status\G"|egrep "IO_Running|SQL_Running">$LOG_FILE
+
+#mail -s "mysql slave result" 479414941@qq.com < $LOG_FILE
+```
+### 7、相关MySQL主从复制技术技巧概览：
+#### 7.1 登陆数据库查看MySQL线程同步状态：
+##### MySQL主服务器：
+```ruby
+MariaDB [MyDB]> show processlist\G
+*************************** 1. row ***************************
+      Id: 12
+    User: system
+    Host: localhost
+      db: MyDB
+ Command: Query
+    Time: 0
+   State: NULL
+    Info: show processlist
+Progress: 0.000
+*************************** 2. row ***************************
+      Id: 17
+    User: rep
+    Host: 172.30.105.122:41056
+      db: NULL
+ Command: Binlog Dump
+    Time: 873
+   State: Master has sent all binlog to slave; waiting for binlog to be updated
+    Info: NULL
+Progress: 0.000
+
+```
+##### MySQL从服务器：
+```ruby
+MariaDB [MyDB]> show processlist\G
+*************************** 1. row ***************************
+      Id: 10
+    User: system
+    Host: localhost
+      db: MyDB
+ Command: Query
+    Time: 0
+   State: NULL
+    Info: show processlist
+Progress: 0.000
+*************************** 2. row ***************************
+      Id: 22
+    User: system user
+    Host: 
+      db: NULL
+ Command: Connect
+    Time: 924
+   State: Waiting for master to send event
+    Info: NULL
+Progress: 0.000
+*************************** 3. row ***************************
+      Id: 23
+    User: system user
+    Host: 
+      db: NULL
+ Command: Connect
+    Time: 924
+   State: Slave has read all relay log; waiting for the slave I/O thread to update it
+    Info: NULL
+Progress: 0.000
+
+```
+#### 7.2 主从复制主线程状态
+下面列出了主服务器的Binlog Dump线程的State列的最常见的状态
+- Sending binlog event to slave
+二进制日志由各种事件组成，一个事件通常为一个更新加一些其它信息。线程已经从二进制日志读取了一个事件并且正将它发送到从服务器。
+
+- Finished reading one binlog; switching to next binlog
+线程已经读完二进制日志文件并且正打开下一个要发送到从服务器的日志文件。
+
+- Has sent all binlog to slave; waiting for binlog to be updated
+线程已经从二进制日志读取所有主要的更新并已经发送到了从服务器。线程现在正空闲，等待由主服务器上新的更新导致的出现在二进制日志中的新事件。
+
+- Waiting to finalize termination
+线程停止时发生的一个很简单的状态。
+
+#### 7.2 主从复制从I/O线程状态
+下面列出了从服务器的I/O线程的State列的最常见的状态    
+
+- Connecting to master
+线程正试图连接主服务器。
+
+- Checking master version
+建立同主服务器之间的连接后立即临时出现的状态。
+
+- Registering slave on master
+建立同主服务器之间的连接后立即临时出现的状态。
+
+- Requesting binlog dump
+建立同主服务器之间的连接后立即临时出现的状态。线程向主服务器发送一条请求，索取从请求的二进制日志文件名和位置开始的二进制日志的内容。
+
+- Waiting to reconnect after a failed binlog dump request
+如果二进制日志转储请求失败(由于没有连接)，线程进入睡眠状态，然后定期尝试重新连接。可以使用–master-connect-retry选项指定重试之间的间隔。
+
+- Reconnecting after a failed binlog dump request
+线程正尝试重新连接主服务器。
+
+- Waiting for master to send event
+线程已经连接上主服务器，正等待二进制日志事件到达。如果主服务器正空闲，会持续较长的时间。如果等待持续slave_read_timeout秒，则发生超时。此时，线程认为连接被中断并企图重新连接。
+
+- Queueing master event to the relay log
+线程已经读取一个事件，正将它复制到中继日志供SQL线程来处理。
+
+- Waiting to reconnect after a failed master event read
+读取时(由于没有连接)出现错误，线程企图重新连接前将睡眠master-connect-retry秒。
+
+- Reconnecting after a failed master event read
+线程正尝试重新连接主服务器，当连接重新建立后，状态变为Waiting for master to send event。
+
+- Waiting for the slave SQL thread to free enough relay log space
+正使用一个非零relay_log_space_limit值，中继日志已经增长到其组合大小超过该值。I/O线程正等待直到SQL线程处理中继日志内容并删除部分中继日志文件来释放足够的空间。
+
+- Waiting for slave mutex on exit
+线程停止时发生的一个很简单的状态。
+
+### 8、主从同步灾难恢复：
+- 主库的MySQL服务故障，这样可以把主库的Binlog日志拷贝至从库上，补全从库的Binlog，然后把这个从库提升为主库，如果是一主多从的架构，那么要看每个从库的master-info ` cat /mydata/data/master.info` 信息哪个更接近最新
+- 主库的MySQL服务器宕机
+
+#### 8.1 确保所有的relay log全部更新完毕
+```ruby
+在每个从库执行：
+MariaDB [(none)]> stop slave io_thread;
+MariaDB [(none)]> show processlist\G 
+直到看到State: Slave has read all relay log;表示从库更新都执行完毕；
+```
+#### 8.2 登陆从库：
+```ruby
+[root@MySQL2-Slave ~]# mysql -usystem -pwangzongyu
+MariaDB [(none)]> stop slave;
+MariaDB [(none)]> reset master;
+```
+#### 8.3 从服务器进入数据目录，删除master.info和relay-log.info：
+```ruby
+[root@MySQL2-Slave ~]# cd /mydata/data/
+[root@MySQL2-Slave data]# rm -rf master.info relay-log.info
+```
+#### 8.4 提升从库为主库：
+```ruy
+开启：log-bin=/ourdata/binlog/mysql-bin
+
+// 如果存在read-only和log-slave-updates等一定要注释
+[root@MySQL2-Slave ~]# service mysqld restart
+```
+
+#### 8.5 补全新主库的Binlog：
+如果原主库服务器没有宕机，需要去原主库拉取Binlog补全新主库
+
+#### 8.6 其他从库操作：
+```ruby
+MariaDB [(none)]> stop slave;
+MariaDB [(none)]> change master to master_host='172.30.105.121';
+MariaDB [(none)]> start slave;
+MariaDB [(none)]> show slave status\G
+
+```
+`或者直接使用半同步功能，直接选择做了实时同步那个从库提升为主库`
+
+### 9、主从不同步解决方案：
+#### 9.1 使用set global sql_slave_skip_counter：
+```ruby
+[root@MySQL2-Slave ~]# echo "stop slave; set global sql_slave_skip_counter=1; slave start;" | mysql -usystem -pwangzongyu 
+```
+#### 9.2 重新做SLAVE：
+重新配置一遍slave端
+
+
+
+## MySQL的级联同步
+- 当前从库还要作为其他从库的主库，也就是级联同步
+- 把从库作为备份服务器时需要开启binlog
+
+### 1、MySQL从库记录binlog的方法：
+```ruby
+log-bin=/ourdata/binlog/mysql-bin
+log-slave-updates
+// 上面这两个必须开启
+
+expire_logs_days = 7 
+// 只留最近7天的binlog日志
+// find /ourdata/binlog/ -type f -name "mysql-bin.000* -mtime +7 | xargs rm -f
+
+```
+
+## MySQL双主及多主同步
+
+### 1、解决主键自增长变量冲突：
+```ruby
+
+Master1:
+[mysqld]
+auto_increment_increment = 2  
+// 自增ID的间隔，如1,3,5
+auto_increment_offset =1
+// ID的初始位置
+
+Master2:
+auto_increment_increment = 2  
+auto_increment_offset =2
+
+// 两个主如果都可以写权限，那么ID可能不连续，Master1写1,3,5，然后Master2写的ID是6,8,10，再可能Master又来写的请求，ID就从11开始
+```
+### 2、配置双主模式：
+##### MySQL主服务器：
+```ruby
+[root@MySQlL1-Master ~]# vim /etc/my.cnf
+[mysqld]
+auto_increment_increment = 2
+auto_increment_offset =1
+log-slave-updates
+log-bin=/ourdata/binlog/mysql-bin
+```
+
+##### MySQL从服务器：
+```ruby
+[root@MySQL2-Slave ~]# vim /etc/my.cnf 
+[mysqld]
+auto_increment_increment = 2
+auto_increment_offset =2
+log-slave-updates
+log-bin=/ourdata/binlog/mysql-bin
+
+```
+`其他的过程和MySQL主从同步一致，此处不再赘述`
+
+### 3、测试：
+```ruby
+Master1：
+MariaDB [(none)]> create database My_DB;
+MariaDB [(none)]> use My_DB;
+MariaDB [(none)]> create table MyTB(
+id int(4) not null AUTO_INCREMENT,
+name char(20) not null,
+primary key(id)
+);
+// 创建一个自增的表
+
+MariaDB [My_DB]> insert into MyTB(name) values('wangzy1');
+MariaDB [My_DB]> insert into MyTB(name) values('wangzy2');
+MariaDB [My_DB]> select * from MyTB;
++----+---------+
+| id | name    |
++----+---------+
+|  1 | wangzy1 |
+|  3 | wangzy2 |
++----+---------+
+
+Master2：
+MariaDB [(none)]> use My_DB;
+MariaDB [My_DB]> insert into MyTB(name) values('wangzy3');
+MariaDB [My_DB]> insert into MyTB(name) values('wangzy4');
+MariaDB [My_DB]> select * from MyTB;
++----+---------+
+| id | name    |
++----+---------+
+|  1 | wangzy1 |
+|  3 | wangzy2 |
+|  4 | wangzy3 |
+|  6 | wangzy4 |
++----+---------+
+
+```
+
+## MySQL异步同步(半同步)
+优点：确保至少一个从库和主库的数据一致；
+缺点：主从之间网络延迟，或者从库有问题的时候，用户体验很差，当然也可以设置超时时间=10秒；
