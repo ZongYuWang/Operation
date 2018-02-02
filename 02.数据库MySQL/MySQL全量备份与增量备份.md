@@ -106,7 +106,7 @@ MariaDB [(none)]> drop database MyDB;
 [root@MySQlL1-Master ~]# mysqlbinlog -d MyDB /MySQL_FULLBACK/mysql-bin.000011 > mysql-bin.000011.sql
 
 ```
-##### 编辑sql文件，将误删数据库的语句(drop database MyDB)删除
+#### 4.2 编辑sql文件，将误删数据库的语句(drop database MyDB)删除
 ```ruby
 [root@MySQlL1-Master ~]# vim mysql-bin.000011.sql
 ......
