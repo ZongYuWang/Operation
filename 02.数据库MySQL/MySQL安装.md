@@ -1,4 +1,4 @@
-## 采用cmake+LVM方式安装MariaDB:
+## 一、采用cmake+LVM方式安装MariaDB:
 `建议：将数据目录和二进制目录使用不同的目录，将数据单独存放`
 
 ### 1、LVM创建新的磁盘分区(模拟两块磁盘)
@@ -271,7 +271,8 @@ datadir = /mydata/data
 innodb_file_per_table = on
 skip_name_resolve = on
 log-bin=/ourdata/binlogs/mysql-bin  //默认配置文件中有log-bin的配置
-
+```
+```ruby
 [root@mysql mysql]# scripts/mysql_install_db --user=mysql --datadir=/mydata/data/
 WARNING: The host 'mysql' could not be looked up with resolveip.
 This probably means that your libc libraries are not 100 % compatible
@@ -288,7 +289,8 @@ Filling help tables...
 180105 22:49:43 [Note] ./bin/mysqld (mysqld 5.5.56-MariaDB) starting as process 16650 ...
 OK
 ......
-
+```
+```ruby
 [root@mysql ~]# ls /mydata/data/
 aria_log.00000001  aria_log_control  mysql  performance_schema  test
 [root@mysql ~]# 
@@ -317,53 +319,7 @@ root      2360  1310  0 01:10 pts/1    00:00:00 grep mysql
 # mysql服务器真正运行的不是mysqld，而是mysqld_safe（线程安全的mysql）
 ```
 
-### 5、对编译好的MariaDB包直接使用：
-```ruby
-[root@mysql ~]# tar xf mariadb-5.5.56-linux-x86_64.tar.gz -C /usr/local/
-[root@mysql ~]# ln -sv /usr/local/mariadb-5.5.56-linux-x86_64/ /usr/local/mysql
-`/usr/local/mysql' -> `/usr/local/mariadb-5.5.56-linux-x86_64/'
-[root@mysql ~]# chown -R root:mysql /usr/local/mysql/*
-
-[root@mysql mysql]# scripts/mysql_install_db --datadir=/mydata/data/ --user=mysql
-WARNING: The host 'mysql' could not be looked up with resolveip.
-This probably means that your libc libraries are not 100 % compatible
-with this binary MariaDB version. The MariaDB daemon, mysqld, should work
-normally with the exception that host name resolving will not work.
-This means that you should use IP addresses instead of hostnames
-when specifying MariaDB privileges !
-Installing MariaDB/MySQL system tables in '/mydata/data/' ...
-180105  0:56:10 [Note] ./bin/mysqld (mysqld 5.5.56-MariaDB) starting as process 1867 ...
-OK
-Filling help tables...
-180105  0:56:11 [Note] ./bin/mysqld (mysqld 5.5.56-MariaDB) starting as process 1876 ...
-OK
-......
-
-# 查看帮助信息：scripts/mysql_install_db --help
-
-```
-```ruby
-[root@mysql mysql]# cp support-files/mysql.server /etc/rc.d/init.d/mysqld
-[root@mysql mysql]# chkconfig --add mysqld
-[root@mysql mysql]# chkconfig --list mysqld
-mysqld         	0:off	1:off	2:on	3:on	4:on	5:on	6:off
-
-[root@mysql mysql]# ls /mydata/data/
-aria_log.00000001  aria_log_control  mysql  performance_schema  test
-
-[root@mysql mysql]# mkdir /etc/mysql
-[root@mysql mysql]# 
-[root@mysql mysql]# cd /usr/local/mysql/          
-[root@mysql mysql]# cp support-files/my-large.cnf /etc/mysql/my.cnf
-[root@mysql mysql]# vim /etc/mysql/my.cnf 
-datadir = /mydata/data/
-innodb_file_per_table = on
-skip_name_resolve = on 
-
-[root@mysql mysql]# chmod 777 -R /var/log/
-```
-
-## 采用cmake方式安装MySQL
+## 二、采用cmake方式安装MySQL
 由于MySQL5.5.xx-5.6.xx产品系列特殊性，所以编译方式也和早期的产品安装方式不同，采用cmake活gmake方式编译安装
 ### 1、安装依赖包
 ```ruby
@@ -448,9 +404,91 @@ export PATH=/usr/local/mysql/bin:$PATH
 [root@mysql ~]# /etc/init.d/mysqld start
 Starting MySQL..... SUCCESS!
 ```
+`自动化安装脚本：`
+```ruby
+#!/bin/sh
 
-## 采用YUM/RPM方式安装MySQL
-[下载最新版MySQL源](http://dev.mysql.com/downloads/repo/yum/)
+# 参数设置
+INSTALL_PATH=/usr/local/mysql # 指定安装目录
+DATA_PATH=/mnt/datadisk1/soft/mysql # 指定数据目录
+
+if [ -s /etc/my.cnf ];then
+rm -rf /etc/my.cnf
+fi
+
+echo "----------------------------------start install mysql -----------------------------"
+yum install -y gcc gcc-c++ gcc-g77 autoconf automake zlib* fiex* libxml* ncurses-devel libmcrypt* libtool-ltdl-devel* cmake
+mkdir -p $DATA_PATH
+if [ 'grep "mysql" /etc/passwd | wc -l' ]; then
+echo "adding user mysql"
+groupadd mysql
+useradd -s /sbin/nologin -M -g mysql mysql
+else
+echo "mysql user exists"
+fi
+
+echo "------------------------------unpackaging mysql -----------------------------------"
+tar -xvf mysql-5.5.20.tar.gz
+cd mysql-5.5.20
+
+echo "-------------------------configuring mysql,please wait-----------------"
+cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH \
+-DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DWITH_EXTRA_CHARSETS:STRING=utf8,gbk \
+-DWITH_MYISAM_STORAGE_ENGINE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_MEMORY_STORAGE_ENGINE=1 \
+-DWITH_READLINE=1 \
+-DENABLED_LOCAL_INFILE=1 \
+-DMYSQL_DATADIR=$DATA_PATH \
+-DMYSQL_USER=mysql
+
+if [ $? -ne 0 ];then
+echo "configure failed ,please check it out!"
+exit 1
+fi
+
+echo "make mysql, please wait for 10 minutes"
+make
+if [ $? -ne 0 ];then
+echo "make failed ,please check it out!"
+exit 1
+fi
+
+make install
+
+chmod +w $INSTALL_PATH
+chown -R mysql:mysql $INSTALL_PATH
+ln -s $INSTALL_PATH/lib/libmysqlclient.so.16 /usr/lib/libmysqlclient.so.16
+cd support-files/
+cp my-large.cnf /etc/my.cnf
+cp mysql.server /etc/init.d/mysqld
+sed -i 's#^thread_concurrency = 8#& \ndatadir = '$DATA_PATH' \nbasedir = '$INSTALL_PATH' \nlog-error = '$INSTALL_PATH'/mysql_error.log \npid-file = '$INSTALL_PATH'/data/mysql.pid \ndefault-storage-engine=MyISAM \nuser = mysql#g' /etc/my.cnf
+$INSTALL_PATH/scripts/mysql_install_db --user=mysql --basedir=$INSTALL_PATH --datadir=$DATA_PATH
+chmod +x /etc/init.d/mysqld
+
+sed -i "s#^basedir=#basedir="$INSTALL_PATH"#g" /etc/init.d/mysqld
+sed -i "s#^datadir=#datadir="$DATA_PATH"#g" /etc/init.d/mysqld
+
+chkconfig --add mysqld
+chkconfig --level 345 mysqld on
+
+export PATH=/usr/local/mysql/bin:$PATH
+
+ln -s $INSTALL_PATH/bin/mysql /usr/bin
+
+echo "------------------------------------------------------------------------------------------"
+echo "------------------------mysql install successful,congratulations!-------------------------"
+echo "------------------------------------------------------------------------------------------"
+
+```
+
+
+
+## 三、采用YUM/RPM方式安装MySQL
+[下载最新版MySQL源](http://dev.mysql.com/downloads/repo/yum/)     
 yum/rpm安装适合对数据库要求不太高的场合
 
 ### 1、安装MySQL：
@@ -483,4 +521,51 @@ Enter password:
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 8
 Server version: 5.7.20
+```
+
+
+## 四、对编译好的MariaDB包直接使用：
+```ruby
+[root@mysql ~]# tar xf mariadb-5.5.56-linux-x86_64.tar.gz -C /usr/local/
+[root@mysql ~]# ln -sv /usr/local/mariadb-5.5.56-linux-x86_64/ /usr/local/mysql
+`/usr/local/mysql' -> `/usr/local/mariadb-5.5.56-linux-x86_64/'
+[root@mysql ~]# chown -R root:mysql /usr/local/mysql/*
+
+[root@mysql mysql]# scripts/mysql_install_db --datadir=/mydata/data/ --user=mysql
+WARNING: The host 'mysql' could not be looked up with resolveip.
+This probably means that your libc libraries are not 100 % compatible
+with this binary MariaDB version. The MariaDB daemon, mysqld, should work
+normally with the exception that host name resolving will not work.
+This means that you should use IP addresses instead of hostnames
+when specifying MariaDB privileges !
+Installing MariaDB/MySQL system tables in '/mydata/data/' ...
+180105  0:56:10 [Note] ./bin/mysqld (mysqld 5.5.56-MariaDB) starting as process 1867 ...
+OK
+Filling help tables...
+180105  0:56:11 [Note] ./bin/mysqld (mysqld 5.5.56-MariaDB) starting as process 1876 ...
+OK
+......
+
+# 查看帮助信息：scripts/mysql_install_db --help
+
+```
+```ruby
+[root@mysql mysql]# cp support-files/mysql.server /etc/rc.d/init.d/mysqld
+[root@mysql mysql]# chkconfig --add mysqld
+[root@mysql mysql]# chkconfig --list mysqld
+mysqld         	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+
+[root@mysql mysql]# ls /mydata/data/
+aria_log.00000001  aria_log_control  mysql  performance_schema  test
+
+[root@mysql mysql]# mkdir /etc/mysql
+[root@mysql mysql]# 
+[root@mysql mysql]# cd /usr/local/mysql/          
+[root@mysql mysql]# cp support-files/my-large.cnf /etc/mysql/my.cnf
+[root@mysql mysql]# vim /etc/mysql/my.cnf 
+datadir = /mydata/data/
+innodb_file_per_table = on
+skip_name_resolve = on 
+
+[root@mysql mysql]# chmod 777 -R /var/log/
 ```
