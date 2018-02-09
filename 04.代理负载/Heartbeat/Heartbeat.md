@@ -37,8 +37,8 @@ ip-request和ip-request-resp
 
 #### 2.3 Heartbeat IP地址接管和故障转移：
 Heartbeat是通过IP地址接管和ARP广播进行故障转移的；
-ARP广播：在主服务器故障时，备用节点接管资源后，会立即强制更新所有客户端本地的ARP表(即清除客户端本地缓存的失败服务器的VIP地址和MAC地址的解析记录)确保客户端和新的主服务器对话；
-`客户端：是和heartbeat高可用服务器对在同一网络中的客户机，不是最终的互联网用户`
+ARP广播：在主服务器故障时，备用节点接管资源后，会立即强制更新所有客户端本地的ARP表(即清除客户端本地缓存的失败服务器的VIP地址和MAC地址的解析记录)确保客户端和新的主服务器对话；      
+`客户端：是和heartbeat高可用服务器对在同一网络中的客户机，不是最终的互联网用户`    
 
 ### 3、配置Heartbeat：
 #### 3.1 配置VIP(这个步骤不用配置)：
@@ -70,7 +70,7 @@ haresource | heartbeat资源配置文件 | 如配置IP资源及脚本程序等|
 [root@localhost ~]# hostnamectl set-hostname master1
 ```
 服务器角色 | 网卡名称 | IP地址 | 备注 | 
-|:-: | :-: | :-: | -: | 
+|:-: | :-: | :-: | :- | 
 Master | ens38| 172.30.105.12 | 管理IP，用于WAN数据转发|
 | | ens33| 172.30.105.101 | 用于服务期间心跳连接(直连)|
 VIP地址 | | 172.30.105.201 | 用于提供应用程序A挂载服务|
@@ -99,7 +99,7 @@ VIP地址 | | 172.30.105.201 | 用于提供应用程序A挂载服务|
 
 ```
 服务器角色 | 网卡名称 | IP地址 | 备注 | 
-|:-: | :-: | :-: | -: | 
+|:-: | :-: | :-: | :- | 
 Master | ens38| 172.30.105.13 | 管理IP，用于WAN数据转发|
 | | ens33| 172.30.105.102 | 用于服务期间心跳连接(直连)|
 VIP地址 | | 172.30.105.202 | 用于提供应用程序A挂载服务|
@@ -123,7 +123,6 @@ VIP地址 | | 172.30.105.202 | 用于提供应用程序A挂载服务|
 ```
 
 #### 3.1 配置主机hosts以及服务器防火墙:
-`两台机器都需要配置`
 ```ruby
 172.30.105.12 master1
 172.30.105.13 master2
@@ -233,7 +232,7 @@ drwxr-xr-x. 2 root root  4096 Feb  7 21:59 resource.d
 -rw-r--r--. 1 root root  2112 Feb  7 21:49 shellfuncs
 ```
 #### 3.4 Heartbeat配置文件详解：
-##### ha.cf：
+##### ha.cf配置文件：
 ```ruby
 debugfile /var/log/ha-debug
 logfile /var/log/ha-log
@@ -278,7 +277,7 @@ respawn hacluster /usr/local/heartbeat/libexec/heartbeat/ipfail
 |ping 172.30.105.254 | IP地址是网关地址 |
 |respawn hacluster /usr/local/heartbeat/libexec/heartbeat/ipfail | 该进程用于检测和处理网络故障，需要配合ping语句指定的ping node来检测网络连接。如果你的系统是64bit，请注意该文件的路径 |
 
-##### authkeys ：
+##### authkeys配置文件 ：
 ```ruby
 [root@master1 ha.d]# chmod 600 authkeys
 [root@master1 ha.d]# vim authkeys
@@ -292,7 +291,7 @@ auth 2
 // 默认的配置使用的crc方法，这是不加密的，不够安全
 ```
 
-##### haresource：
+##### haresource配置文件：
 ```ruby
 master1 IPaddr::172.30.105.201/24/ens38 nginx
 master2 IPaddr::172.30.105.202/24/ens38
@@ -310,7 +309,7 @@ master2 IPaddr::172.30.105.202/24/ens38
 ```
 `VIP其实是由IPaddr脚本自动启动的，和heartbeat没什么关系`
 ```ruby
-完全配置完成可以通过ha-log查看:（截取选段）
+配置完成后可以通过ha-log查看:（截取选段）
 2018/02/09_01:01:28 info: Running /usr/local/heartbeat/etc/ha.d/resource.d/IPaddr 172.30.105.202/24/ens38 start
 ```
 ##### /resource.d/目录：
@@ -323,10 +322,10 @@ master2 IPaddr::172.30.105.202/24/ens38
 
 如果脚本文件在/etc/init.d/和/usr/local/heartbeat/etc/ha.d/resource.d/里都存在，那么会以后者目录中存放的脚本优先启动
 ```ruby
+[root@master1 ~]# tail -f /var/log/ha-log
 2018/02/09_02:05:59 info: Running /usr/local/heartbeat/etc/ha.d/resource.d/nginx  start
 
 ```
-
 
 #### 3.5 将配置文件拷贝至master2服务器：
 ```ruby
@@ -341,19 +340,20 @@ master2 IPaddr::172.30.105.202/24/ens38
 [root@master2 ha.d]# chmod 600 /usr/local/heartbeat/etc/ha.d/authkeys
 ```
 ```ruby
-ha.cf:
+ha.cf配置文件:
 ucast ens33 172.30.105.101
 // 互相指向对端的IP地址
 
 ```
 
 ```ruby
-haresources:
+haresources配置文件:
 master1 IPaddr::172.30.105.201/24/ens38
 master2 IPaddr::172.30.105.202/24/ens38 nginx
 ```
 
 ### 4、启动heartbeat并查看状态：
+##### Master1：
 ```ruby
 [root@master1 ha.d]# systemctl status  heartbeat
 ● heartbeat.service - Heartbeat High Availability Cluster Communication and Membership
@@ -381,7 +381,7 @@ Feb 08 03:19:49 master1 heartbeat[38569]: [38569]: info: Link 172.30.105.254:172
 Feb 08 03:19:49 master1 heartbeat[38569]: [38569]: info: Status update for node 172.30.105.254: status ping
 
 ```
-
+##### Master2：
 ```ruby
 [root@master2 ha.d]# systemctl start heartbeat
 [root@master2 ha.d]# systemctl status heartbeat
@@ -676,9 +676,26 @@ Feb 09 01:40:03 master2 heartbeat: [88010]: info: remote resource transition com
 
 ```
 
-
-
 ### 8、FAQ:
+```ruby
+ ./configure的时候会报如下错误：
+ 
+configure: error: in `/root/Heartbeat-3-0-958e11be8686':
+configure: error: Core development headers were not found
+See `config.log' for more details   
+
+// 所以要加上export CFLAGS="$CFLAGS -I/usr/local/heartbeat/include -L/usr/local/heartbeat/lib"
+```
+
+```ruby
+Feb 08 03:15:40 master1 heartbeat[38533]: heartbeat: udpport setting must precede media statementsFeb 08 03:15:40 master1 heartbeat: [38533]: ERROR: Illegal directive [ucast] in /usr/local/heartbeat/etc/ha.d/ha.cf
+Feb 08 03:15:40 master1 heartbeat[38533]: Feb 08 03:15:40 master1 heartbeat: [38533]: ERROR: Illegal directive [ping] in /usr/local/heartbeat/etc/ha.d/ha.cf
+
+解决办法：
+[root@master1 ha.d]# ln -svf /usr/local/heartbeat/lib64/heartbeat/plugins/RAExec/* /usr/local/heartbeat/lib/heartbeat/plugins/RAExec/
+[root@master1 ha.d]# ln -svf /usr/local/heartbeat/lib64/heartbeat/plugins/* /usr/local/heartbeat/lib/heartbeat/plugins/
+```
+
 ```ruby
 [root@master2 ha.d]# tail -f /var/log/ha-debug 
 Feb 08 02:59:36 master2 heartbeat: [39893]: info: One or the other must be specified.
@@ -694,15 +711,6 @@ Feb 08 02:59:36 master2 heartbeat: [39893]: ERROR: Invalid apiauth directive [an
 ```
 
 ```ruby
-Feb 08 03:15:40 master1 heartbeat[38533]: heartbeat: udpport setting must precede media statementsFeb 08 03:15:40 master1 heartbeat: [38533]: ERROR: Illegal directive [ucast] in /usr/local/heartbeat/etc/ha.d/ha.cf
-Feb 08 03:15:40 master1 heartbeat[38533]: Feb 08 03:15:40 master1 heartbeat: [38533]: ERROR: Illegal directive [ping] in /usr/local/heartbeat/etc/ha.d/ha.cf
-
-解决办法：
-[root@master1 ha.d]# ln -svf /usr/local/heartbeat/lib64/heartbeat/plugins/RAExec/* /usr/local/heartbeat/lib/heartbeat/plugins/RAExec/
-[root@master1 ha.d]# ln -svf /usr/local/heartbeat/lib64/heartbeat/plugins/* /usr/local/heartbeat/lib/heartbeat/plugins/
-```
-
-```ruby
 Feb 08 09:44:09 master1 ipfail: [56403]: ERROR: Cannot chdir to [/usr/local/heartbeat/var/lib/heartbeat/cores/hacluster]: Permission denied
 IPaddr(IPaddr_172.30.105.201)[56914]:	2018/02/08_09:44:09 ERROR: Setup problem: couldn't find command: ifconfig
 /usr/lib/ocf/resource.d//heartbeat/IPaddr(IPaddr_172.30.105.201)[56888]
@@ -712,15 +720,7 @@ IPaddr(IPaddr_172.30.105.201)[56914]:	2018/02/08_09:44:09 ERROR: Setup problem: 
 [root@master1 ~]# chmod 755 /usr/local/heartbeat/var/lib/heartbeat/cores/hacluster
 ```
 
-```ruby
- ./configure的时候会报如下错误：
- 
-configure: error: in `/root/Heartbeat-3-0-958e11be8686':
-configure: error: Core development headers were not found
-See `config.log' for more details   
 
-// 所以要加上export CFLAGS="$CFLAGS -I/usr/local/heartbeat/include -L/usr/local/heartbeat/lib"
-```
 
 
 
