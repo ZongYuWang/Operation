@@ -38,8 +38,8 @@ server-id = xxx
 ```
 #### 2.2 MySQL从服务器设置只读模式：
 ```ruby
-[root@MySQL2-Slave1 ~]# mysql -usystem -pwangzongyu -e 'set global read_only=1'
-[root@MySQL2-Slave2 ~]# mysql -usystem -pwangzongyu -e 'set global read_only=1'
+[root@MySQL2-Slave1 ~]# mysql -uroot -pwangzongyu -e 'set global read_only=1'
+[root@MySQL2-Slave2 ~]# mysql -uroot -pwangzongyu -e 'set global read_only=1'
 
 // 两台slave服务器设置read_only（从库对外提供读服务，只所以没有写进配置文件，是因为随时slave会提升为master）
 // read_only参数对对super权限的用户无效(也就是授权不能指定super或all privileges权限)
@@ -137,10 +137,10 @@ epel-release-7-11.noarch
 [root@manager mha4mysql-manager-0.54]# make && make install
 ```
 #### 4.3 配置MHA-Manager节点：
-[app1.cnf下载地址]()
-[master_ip_failover下载地址]()
-[master_ip_online_change]()
-[send_report]()
+[app1.cnf下载地址](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)
+[master_ip_failover下载地址](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)
+[master_ip_online_change](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)
+[send_report](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)
 `将这四个文件分别放到下面app1.cnf配置文件的指定目录中`
 
 ```ruby
@@ -248,10 +248,10 @@ no_master=1
 ```
 #### 5.1 两台Slave节点上设置relay log的清除方式:
 ```ruby
-[root@slave1 ~]# mysql -usystem -pwangzongyu -e 'set global relay_log_purge=0'
+[root@slave1 ~]# mysql -uroot -pwangzongyu -e 'set global relay_log_purge=0'
 ```
 ```ruby
-[root@slave2 ~]# mysql -usystem -pwangzongyu -e 'set global relay_log_purge=0'
+[root@slave2 ~]# mysql -uroot -pwangzongyu -e 'set global relay_log_purge=0'
 ```
 - 在默认情况下，从服务器上的中继日志会在SQL线程执行完毕后被自动删除。但是在MHA环境中，这些中继日志在恢复其他从服务器时可能会被用到，因此需要禁用中继日志的自动删除功能。定期清除中继日志需要考虑到复制延时的问题。在ext3的文件系统下，删除大的文件需要一定的时间，会导致严重的复制延时。为了避免复制延时，需要暂时为中继日志创建硬链接，因为在linux系统中通过硬链接删除大文件速度会很快。（在mysql数据库中，删除大表时，通常也采用建立硬链接的方式）
 - MHA节点中包含了pure_relay_logs命令工具，它可以为中继日志创建硬链接，执行SET GLOBAL relay_log_purge=1,等待几秒钟以便SQL线程切换到新的中继日志，再执行SET GLOBAL relay_log_purge=0
@@ -487,7 +487,7 @@ Stopped app1 successfully.
 ### 9、采用手动配置VIP方式
 `当然也可以使用keepalive软件`
 ```ruby
-[root@master ~]# ifconfig enss3:1 172.30.105.203
+[root@master ~]# ifconfig ens33:1 172.30.105.203
 [root@master ~]# ip a
 ......
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN qlen 1000
@@ -507,7 +507,7 @@ Stopped app1 successfully.
 
 #### 10.1 在主库(172.30.105.104)上生成10W条记录：
 ```ruby
-[root@master ~]# /usr/local/bin/sysbench --test=oltp \
+[root@master ~]# /usr/local/sysbench/bin/sysbench --test=oltp \
 --oltp-table-size=100000 \
 --oltp-read-only=off \
 --init-rng=on \
@@ -515,7 +515,8 @@ Stopped app1 successfully.
 --max-requests=0 \
 --oltp-dist-type=uniform \
 --max-time=1800 \
---mysql-user=root 
+--mysql-user=root \
+--mysql-password=wangzongyu \
 --mysql-socket=/tmp/mysql.sock \
 --db-driver=mysql \
 --mysql-table-engine=innodb \
@@ -538,7 +539,7 @@ mysql> stop slave io_thread;
 #### 10.3 在主库(172.30.105.104)上进行压力测试会产生大量的Binlog：
 
 ```ruby
-[root@master ~]# sysbench --test=oltp \
+[root@master ~]# /usr/local/sysbench/bin/sysbench --test=oltp \
 --oltp-table-size=100000 \
 --oltp-read-only=off  \
 --num-threads=16 \
@@ -797,3 +798,4 @@ total 4
 ```
 
 收到的邮件截图：
+![](https://github.com/ZongYuWang/image/blob/master/MySQL/MySQL_MHA1.png)
