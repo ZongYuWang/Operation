@@ -290,6 +290,18 @@ Filling help tables...
 OK
 ......
 ```
+- 将MySQL的数据目录和Binlog日志目录分开存储说明：
+`千万不能先启动MySQL服务`
+```ruby
+chown -R mysql.mysql /ourdata/binlogs
+// 首先提前创建一个目录，注意要把权限设置为mysql.mysql
+
+log-bin=/ourdata/binlogs/mysql-bin 
+// 然后在配置文件中指定创建的binlogs目录
+
+```
+
+
 ```ruby
 [root@mysql ~]# ls /mydata/data/
 aria_log.00000001  aria_log_control  mysql  performance_schema  test

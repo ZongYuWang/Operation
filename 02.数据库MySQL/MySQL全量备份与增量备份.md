@@ -9,6 +9,8 @@
 
 // -F 会刷新binlog,也就是切割了binlog
 // -x 锁表，防止备份的时候新的数据写入，但是可读 = --lock-all-tables = --single-transaction
+// 可以加-R，-R意思是备份存储过程和函数；
+// 可以加--triggres，--triggres的意思是备份触发器
 
 [root@MySQlL1-Master MySQL_BACK]# gzip -d mysqlbak_2018-02-01.sql.gz
 [root@MySQlL1-Master MySQL_BACK]# grep -E -v "#|\/|^$|--" mysqlbak_2018-02-01.sql

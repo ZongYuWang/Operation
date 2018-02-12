@@ -195,6 +195,8 @@ MariaDB [(none)]> CHANGE MASTER TO
 // 上面mysqldump使用--master-data=1备份之后，备份文件会自动记录Binlog的file文件和POS位置点
 ```
 
+`MySQL从服务器重置连接：MariaDB [(none)]> reset salve;`
+
 #### 4.5 启动从服务器节点并查看主从复制状态：
 从库开启同步开关，同步之后，检查同步状态，并在主库进行更新测试
 ```ruby
@@ -271,7 +273,7 @@ mysql-bin.000006
 - 从库开启同步开关，start slave；
 - 从库show slave status\G，检查同步状态，并在主库进行更新测试；
 
-### 6、主从备份自动化脚本：
+### 6、自动化脚本部署主从同步：
 MySQL主服务器和MySQL从服务器需要做好时钟同步，因为备份文件都是按照时间备份的
 ##### MySQL主服务器：
 ```ruby
@@ -348,13 +350,12 @@ gzip -d mysql_backup_`date +%F`.sql.gz
 $MYSQL_CMD < mysql_backup_`date +%F`.sql
 
 #config slave
-$MYSQL_CMD -e << EOF
+$MYSQL_CMD -e "
 CHANGE MASTER TO
 MASTER_HOST='172.30.105.121',
 MASTER_PORT=3306,
 MASTER_USER='rep',
-MASTER_PASSWORD='wangzongyu';
-EOF
+MASTER_PASSWORD='wangzongyu';"
 
 $MYSQL_CMD -e "start slave;"
 sleep 20
