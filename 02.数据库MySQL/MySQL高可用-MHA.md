@@ -2,9 +2,9 @@
 [MHA官方配置文档](https://www.percona.com/blog/2016/09/02/mha-quickstart-guide/)
 
 ### 1、环境准备：
-操作系统：CentOS7
+操作系统：CentOS7    
 数据库版本：Server version: 5.5.20
-#### 1.1 准备服务器：
+#### 1.1 服务器准备：
 
 角色 | IP地址 | 主机名 | Server_ID | 类型 | 
 |- | :-: | :-: | :-: | :-: | 
@@ -13,13 +13,16 @@ MySQL-Master | 172.30.105.104 | master | 104 | 写操作|
 MySQL-Slave | 172.30.105.105 | slave1 | 105 | 读操作(半同步节点)|
 MySQL-Slave | 172.30.105.106 | slave2 | 106 | 读操作|
 
-#### 1.2 配置主机名并安装Net-tools：
+#### 1.2 配置主机名并安装net-tools：
 ```ruby
 [root@localhost ~]# hostnamectl set-hostname Manager
 // 这种配置方式永久生效
 
 [root@localhost ~]# yum install net-tools
 // 三台数据库服务器都要安装，配置VIP的时候使用ifconfig命令
+
+
+
 ```
 
 ### 2、配置主从同步：
@@ -27,14 +30,16 @@ MySQL-Slave | 172.30.105.106 | slave2 | 106 | 读操作|
 - 为了尽可能的减少主库硬件损坏宕机造成的数据丢失，因此在配置MHA的同时建议配置成MySQL 5.5的半同步复制；
 - binlog-do-db 和 replicate-ignore-db 设置必须相同，因为MHA 在启动时候会检测过滤规则，如果过滤规则不同，MHA 不启动监控和故障转移；    
 
-#### 2.1 MySQL的主服务器和从服务器都要开启Binlog和Realylog：
-`也就是万一主宕机了，其他的从可以升级为主服务器，老的主服务器可以充当从服务器`
+#### 2.1 MySQL的主服务器和从服务器都要开启binlog和realylog：
+`也就是万一主库宕了，其他的从库可以升级为主库，老的主库可以充当从库`
 ```ruby
 innodb_file_per_table = 1
 skip_name_resolve = 1
 log-bin = /mysqlbinlogs/mysql-bin
 relay-log = /mysqlbinlogs/relay-bin
 server-id = xxx
+
+
 ```
 #### 2.2 MySQL从服务器设置只读模式：
 ```ruby
@@ -54,20 +59,23 @@ mysql> FLUSH PRIVILEGES;
 ```ruby
 mysql> grant all on *.* to repuser@'172.30.105.%' identified by 'wangzongyu';
 mysql> FLUSH PRIVILEGES;
+
+
+
 ```
 
 
 ### 3、配置每台主机的无秘钥登陆：
-`配置每台主机都能无秘钥登陆到其他主机，需要互相都可以登陆，可以在任意主机上操作`
+`配置每台主机都能无秘钥登陆到其他主机，需要互相都可以登陆，可以在任意主机上操作`    
 一定要检查每台机器的SElinux，都配置正确但是selinux开启会影响无秘钥连接
 ```ruy
-// 下面这种方式必须使用主机名，所以需要在/etc/hosts中解析
-// 每个主机都需要配置
 
 172.30.105.120  Manager       
 172.30.105.121  MySQL1-Master 
 172.30.105.122  MySQL2-Slave1 
 172.30.105.123  MySQL2-Slave2
+
+// 必须使用主机名，所以需要在/etc/hosts中解析，每个主机都需要配置
 ```
 ```ruby
 [root@Manager ~]# ssh-keygen -t rsa -P ''
@@ -104,8 +112,8 @@ The key's randomart image is:
 ```
 ### 4、安装配置MHA-Manager节点：
 
-#####  Manager-172.30.105.120 : 
-[MHA软件包下载](https://code.google.com/archive/p/mysql-master-ha/downloads)
+#####  Manager-172.30.105.120服务器 : 
+[MHA软件包下载](https://code.google.com/archive/p/mysql-master-ha/downloads)      
 `MHA-Manager和MHA-Node的版本号不一定要完全匹配`
  
 #### 4.1 安装依赖包：
@@ -115,7 +123,15 @@ The key's randomart image is:
 [root@manager ~]# rpm -qa|grep epel
 epel-release-7-11.noarch
 [root@manager ~]# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
-[root@manager ~]# yum install perl-DBD-MySQL perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager perl-Time-HiRes perl-ExtUtils-CBuilder perl-ExtUtils-MakeMaker cpan
+[root@manager ~]# yum install -y \
+perl-DBD-MySQL \
+perl-Config-Tiny \
+perl-Log-Dispatch \
+perl-Parallel-ForkManager \
+perl-Time-HiRes \
+perl-ExtUtils-CBuilder \
+perl-ExtUtils-MakeMaker \
+cpan
 ```
 #### 4.2 安装mha4mysql-manager：
 ##### RPM方式安装(推荐使用这种安装方式)：
@@ -137,12 +153,8 @@ epel-release-7-11.noarch
 [root@manager mha4mysql-manager-0.54]# make && make install
 ```
 #### 4.3 配置MHA-Manager节点：
-[app1.cnf下载地址](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)
-[master_ip_failover下载地址](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)
-[master_ip_online_change](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)
-[send_report](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)
-`将这四个文件分别放到下面app1.cnf配置文件的指定目录中`
-
+[app1.cnf下载地址](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)       
+[master_ip_failover下载地址](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)      
 ```ruby
 master_ip_failover文件需要修改如下部分：
 
@@ -151,6 +163,7 @@ my $key = '1';
 my $ssh_start_vip = "/sbin/ifconfig ens33:$key $vip";
 my $ssh_stop_vip = "/sbin/ifconfig ens33:$key down";
 ```
+[master_ip_online_change](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)     
 ```ruby
 master_ip_online_change文件需要修改如下部分：
 
@@ -163,6 +176,10 @@ my $new_master_password='wangzongyu';
 my $orig_master_password='wangzongyu';
 
 ```
+[send_report](https://github.com/ZongYuWang/File/tree/master/File/MySQL/MySQL_MHA)       
+`将这四个文件分别放到下面app1.cnf配置文件的指定目录中`     
+
+
 
 ```ruby
 配置文件分为：
@@ -176,24 +193,33 @@ application配置：
 [server default]
 user=mhauser            
 //也就是能登陆各mysql主机 并能管理mysql的用户，可以使用root
+
 password=wangzongyu
 manager_workdir=/data/masterha/app1                       
 //设置manager的工作目录，这个目录会自动创建
+
 manager_log=/data/masterha/manager.log                    
 //设置manager的日志
+
 remote_workdir=/data/masterha/app1                                                
 //设置远端mysql在发生切换时binlog的保存位置
+
 master_ip_failover_script= /usr/bin/master_ip_failover             
 //设置自动failover时候的切换脚本
+
 master_ip_online_change_script= /usr/bin/master_ip_online_change             
 //设置手动切换时候的切换脚本
+
 report_script=/usr/bin/send_report                             
 //设置发生切换后发送的报警的脚本
+
 secondary_check_script= /usr/bin/masterha_secondary_check -s slave1 -s master
 shutdown_script=""                                     
 //设置故障发生后关闭故障主机脚本（该脚本的主要作用是关闭主机放在发生脑裂,这里没有使用）
+
 ssh_user=root                        
 //设置ssh的登录用户名，不需要密码，以为已经做了无秘钥登陆；
+
 repl_user=repluser                 
 //设置复制环境中的复制用户名
 repl_password=wangzongyu
@@ -203,6 +229,7 @@ ping_interval=1
 hostname=172.30.105.104
 #ssh_port=22                
 // 如果ssh使用的不是默认端口，则需要修改；
+
 master_binlog_dir=/mysqlbinlogs       
 //设置master 保存binlog的位置，以便MHA可以找到master的日志
 
@@ -210,9 +237,11 @@ master_binlog_dir=/mysqlbinlogs
 hostname=172.30.105.105
 candidate_master=1                 
 //设置为候选master，如果设置该参数以后，发生主从切换以后将会将此从库提升为主库，即使这个主库不是集群中事件最新的slave
+
 check_repl_delay=0                 
 //默认情况下如果一个slave落后master 100M的relay logs的话，MHA将不会选择该slave作为一个新的master，因为对于这个slave的恢复需要花费很长时间;
 // 通过设置check_repl_delay=0,MHA触发切换在选择一个新的master的时候将会忽略复制延时，这个参数对于设置了candidate_master=1的主机非常有用，因为这个候选主在切换的过程中一定是新的master
+
 master_binlog_dir=/mysqlbinlogs
 
 [server3]
@@ -259,15 +288,19 @@ no_master=1
 pure_relay_logs脚本参数如下所示：
 --user mysql               
 //  用户名
+
 --password mysql      
 // 密码
+
 --port                           
 // 端口号
+
 --workdir                    
 // 指定创建relay log的硬链接的位置，默认是/var/tmp，由于系统不同分区创建硬链接文件会失败，故需要执行硬链接具体位置，成功执行脚本后，硬链接的中继日志文件被删除
+
 --disable_relay_log_purge        
 // 默认情况下，如果relay_log_purge=1，脚本会什么都不清理，自动退出;
-//通过设定这个参数，当relay_log_purge=1的情况下会将relay_log_purge设置为0；清理relay log之后，最后将参数设置为OFF；
+// 当relay_log_purge=1的情况下会将relay_log_purge设置为0；清理relay log之后，最后将参数设置为OFF；
 ```
 ##### 两台Slave服务器中设置定时清理relay脚本：
 ```ruby
@@ -316,7 +349,7 @@ $purge --user=$user --password=$passwd --disable_relay_log_purge --port=$port --
 
 
 ### 6、检查MHA集群的SSH配置：
-检测各节点间ssh互相通信配置是否正常
+检测各节点间ssh互相通信配置是否正常:
 ```ruby
 [root@manager ~]# masterha_check_ssh --conf=/etc/masterha/app1.cnf 
 Sun Feb 11 22:26:10 2018 - [warning] Global configuration file /etc/masterha_default.cnf not found. Skipping.
@@ -788,7 +821,7 @@ VIP已经切换到了Slave1节点：
        valid_lft forever preferred_lft forever
 
 ```
-发生主从切换后，MHAmanager服务会自动停掉，且在manager_workdir目录下面生成文件app1.failover.complete，若要启动MHA，必须先确保无此文件
+- 发生主从切换后，MHAmanager服务会自动停掉，且在manager_workdir目录下面生成文件app1.failover.complete，若要启动MHA，必须先确保无此文件
 ```ruby
 [root@manager app1]# pwd
 /data/masterha/app1
@@ -797,5 +830,5 @@ total 4
 -rw-r--r--. 1 root root   0 Feb 11 23:33 app1.failover.complete
 ```
 
-收到的邮件截图：
+收到的邮件截图：     
 ![](https://github.com/ZongYuWang/image/blob/master/MySQL/MySQL_MHA1.png)
