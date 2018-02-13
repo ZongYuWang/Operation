@@ -1,10 +1,50 @@
 ## MySQL高可用-MHA
-[MHA官方配置文档](https://www.percona.com/blog/2016/09/02/mha-quickstart-guide/)
+[MHA官方配置文档](https://www.percona.com/blog/2016/09/02/mha-quickstart-guide/)    
+MHA(Master HA)是一款开源的MySQL的高可用程序，它为MySQL主从复制架构提供了automating master failover功能，MHA在监控到master节点故障时，会提供其中拥有最新数据的slave节点成为新的master节点，在此期间，MHA会通过于其它从节点获取额外信息来避免一致性方面的问题，MHA还提供了master节点的在线切换功能，即按需切换master/slave节点(也就是对主节点进行监控，可实现自动故障转移至其它从节点；通过提升某一从节点为新的主节点)
+
+MHA服务有两种角色，MHA Manager（管理节点）和MHA Node（数据节点）:
+- MHA Manager：通常单独部署在一台独立机器上管理多个master/slave集群，每个master/slave集群称作一个application；
+- MHA Node：运行在每台MySQL服务器上(master/slave/manager)，它通过监控具备解析和清理logs功能的脚本来加快故障转移；
+`Manager节点不能放在MySQL Master节点上，应该放在MySQL 的Slave节点上，如果放在Master上，Master机器宕机之后，那么MHA的Manager也就不能使用了`
+
+### MHA的工作原理：
+- 从宕机崩溃的master保存二进制日志事件（binlog events）;     
+- 识别含有最新更新的slave；          
+- 应用差异的中继日志（relay log）到其他的slave；      
+- 应用从master保存的二进制日志事件（binlog events）；       
+- 提升一个slave为新的master；       
+- 使其他的slave连接新的master进行复制；      
+
+### MHA-Manager节点组件：
+       
+- masterha_check_ssh:MHA依赖的SSH环境监测工具；
+- masterha_check_repl:MySQL复制环境监测工具；
+- masterha_manager:MHA服务主程序；
+- masterha_check_status:MHA运行状态探测工具；
+- masterha_master_monitor:MySQL master节点可用性监测工具；
+- masterha_master_switch:master节点切换工具；
+- masterha_conf_host:添加或删除配置的节点；
+- masterha_stop:关闭MHA服务的工具；
+
+### MHA-Node节点组件：
+- save_binary_logs:保存和复制master的二进制日志；
+- apply_diff_relay_logs:识别差异的中继日志事件并应用于其它salve；
+- filter_mysqlbinlogs:去除不必要的ROLLBACK事件（MHA已不再使用这个工具）；
+- purge_relay_logs:清除中继日志（不会阻塞SQL线程）；
+##### 自定义扩展：
+- secondary_check_script:通过多条网络路由检测master的可用性；
+- master_ip_failover_script:自动切换时vip管理的脚本，不是必须，如果我们使用keepalived的，我们可以自己编写脚本完成对vip的管理，比如监控mysql，如果mysql异常，我们停止keepalived就行，这样vip就会自动漂移；
+- shutdown_script:强制关闭master节点；
+- init_conf_load_script:加载初始配置参数；
+- master_ip_online_change_script:更在线切换时vip的管理，不是必须，同样可以可以自行编写简单的shell完成；
+- power_manager :故障发生后关闭主机的脚本，不是必须
+- send_report :因故障切换后发送报警的脚本，不是必须，可自行编写简单的shell完成；
 
 ### 1、环境准备：
 操作系统：CentOS7    
 数据库版本：Server version: 5.5.20
 #### 1.1 服务器准备：
+要搭建MHA,要求一个复制集群中必须最少有三台数据库服务器，一主二从，即一台充当master，一台充当备用master，另外一台充当从库,其中一个slave节点设置为半同步复制 
 
 角色 | IP地址 | 主机名 | Server_ID | 类型 | 
 |- | :-: | :-: | :-: | :-: | 
@@ -500,6 +540,12 @@ MySQL Replication Health is OK.
 #### 8.1 开启MHA Manager监控：
 ```ruby
 [root@manager ~]# nohup masterha_manager --conf=/etc/masterha/app1.cnf --remove_dead_master_conf --ignore_last_failover < /dev/null > /data/masterha/app1/manager.log 2>&1 & 
+
+// --remove_dead_master_conf:当发生主从切换后，老的主库的ip将会从配置文件中移除，也就是这个配置文件中/etc/masterha/app1.cnf自动删除老的master服务器的配置信息
+// --manger_log:日志存放位置
+// --ignore_last_failover  ：在默认情况下，如果MHA检测到连续发生宕机，且两次宕机间隔不足8小时的话，则不会进行Failover,之所以这样限制是为了避免ping-pong效应,
+该参数代表忽略上次MHA触发切换产生的文件，默认情况下，MHA发生切换后会在日志目录，也就是上面设置的/data/masterha/app1/产生app1.failover.complete文件，
+下次再次切换的时候如果发现该目录下存在该文件将不允许触发切换，除非在第一次切换后收到删除该文件，为了方便，这里设置为--ignore_last_failover
 ```
 #### 8.2 查看MHA运行状态：
 ```ruby
@@ -521,7 +567,8 @@ Stopped app1 successfully.
 
 
 ### 9、采用手动配置VIP方式
-`当然也可以使用keepalive软件`
+- 通过keepalived的方式管理VIP
+- 通过脚本的方式管理VIP(使用脚本管理vip的话，需要手动在master服务器上绑定一个vip)
 ```ruby
 [root@master ~]# ifconfig ens33:1 172.30.105.203
 [root@master ~]# ip a
@@ -914,7 +961,8 @@ Mon Feb 12 21:32:43 2018 - [info] Sending mail..
 ```
 `切换成功之后，在/etc/masterha/app1.cnf配置文件中老的Master信息会自动删除`
 
-通过查看MHA切换日志，整个切换过程如下：
+#### 10.6 整个自动切换过程如下如下：
+`可通过日志观察切换过程`    
 - 配置文件检查阶段，这个阶段会检查整个集群配置文件配置；
 - 宕机的master处理，这个阶段包括虚拟ip摘除操作，主机关机操作（这个我这里还没有实现，需要研究）；
 - 复制dead maste和最新slave相差的relay log，并保存到MHA Manger具体的目录下；
@@ -923,10 +971,7 @@ Mon Feb 12 21:32:43 2018 - [info] Sending mail..
 - 提升一个slave为新的master进行复制；
 - 使其他的slave连接新的master进行复制；
 - 最后启动MHA Manger监控；
-```ruby
-[root@manager ~]# masterha_check_status --conf=/etc/masterha/app1.cnf 
-app1 (pid:28127) is running(0:PING_OK), master:172.30.105.105
-```
+
 VIP已经切换到了Slave1节点：
 ```ruby
 [root@slave1 ~]# ip a
@@ -949,13 +994,19 @@ VIP已经切换到了Slave1节点：
 total 4
 -rw-r--r--. 1 root root   0 Feb 11 23:33 app1.failover.complete
 ```
+```ruby
+[root@manager ~]# masterha_check_status --conf=/etc/masterha/app1.cnf 
+app1 (pid:28127) is running(0:PING_OK), master:172.30.105.105
+```
 
 收到的邮件截图：     
 ![](https://github.com/ZongYuWang/image/blob/master/MySQL/MySQL_MHA1.png)
 
 
 ### 11、测试主数据库的手动切换：
-`手动切换操作同自动切换操作，只是不能启动MHA Manager监控`
+手动切换这种场景意味着在业务上没有启用MHA自动切换功能，当主服务器故障时，人工手动调用MHA来进行故障切换操作      
+`手动切换操作同自动切换操作，只是不能启动MHA Manager监控，也要模拟MySQL主库故障`      
+
 ```ruby
 [root@manager ~]# masterha_stop --conf=/etc/masterha/app1.cnf
 ```
