@@ -264,6 +264,18 @@ mysql-bin.000006
 1933
 
 ```
+
+#### 4.7 忽略同步某些库和表：
+```ruby
+replicate-wild-ignore-table = mysql.%
+replicate-wild-ignore-table = test.%
+replicate-wild-ignore-table = information_schema.%
+replicate-wild-ignore-table = performance_schema.%
+
+replicate-wild-ignore-table = tradeeaseipt.es_settings
+replicate-wild-ignore-table = tradeeasepic.es_settings
+```
+
 ### 5、生产场景快速配置MySQL主从复制方案
 - 安装好要配置从库的数据库，配置好log-bin和server-id参数；
 - 无需配置主库的my.cnf文件，主库的log-bin和server-id参数默认就是配置好的；
