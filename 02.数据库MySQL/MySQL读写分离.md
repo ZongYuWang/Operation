@@ -81,11 +81,12 @@ ERROR 1290 (HY000): The MariaDB server is running with the --read-only option so
 
 ## PHP程序实现读写分离：
 ### 1、通过判断SQL语句：
-&emsp;&emsp;这种情况是开发和项目经理或者部门主管，拿到运维部门给好的读写数据库连接地址，提前定义好数据库的操作类程序文件，然后编写开发文档，让所有开发人员，统一调用这个类来执行SQL语句；    
-&emsp;&emsp;封装的内部通过SQL语句里的select关键字来判断，是读取数据还是更新写入，来区分连接读取库还是写入库； `(update users set select='wangzy' where id=1;)(select * from users;)`
+&emsp;&emsp;这种情况是开发和项目经理或者部门主管，拿到运维部门给好的读写数据库连接地址，提前定义好数据库的操作类程序文件，然后编写开发文档，让所有开发人员，统一调用这个类来执行SQL语句    
+&emsp;&emsp;封装的内部通过SQL语句里的select关键字来判断，是读取数据还是更新写入，来区分连接读取库还是写入库         
+`(update users set select='wangzy' where id=1;)(select * from users;)`
 
 ### 2、通过调用方法实现读写分离：
-&emsp;&emsp;拿到运维部门给的读写库地址，项目经理或主管封装好数据库操作类程序文件，然后编写文档，告知开发人员或开会定义，写入数据调用操作方法和读取数据调取方法，从而实现数据读写分离功能；
+&emsp;&emsp;拿到运维部门给的读写库地址，项目经理或主管封装好数据库操作类程序文件，然后编写文档，告知开发人员或开会定义，写入数据调用操作方法和读取数据调取方法，从而实现数据读写分离功能
 
 
 ## Amoeba实现读写分离
@@ -129,7 +130,7 @@ export PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
 
 ```
 ### 3、主从服务器上分别配置一个授权用户：
-##### master主服务器(用于写操作)：
+##### master主服务器(写操作)：
 ```ruby
 mysql> grant select,insert,update,delete on *.* to amuser@'172.30.105.%' identified by 'ampasswd';
 mysql> flush privileges;
@@ -146,7 +147,7 @@ mysql> show grants for amuser@'172.30.105.%';
 ```
 &emsp;&emsp;如果开起了主从同步功能，这时当主服务器创建一个用户后会自动同步到从服务器，所以我们要在从服务器上收回主服务器创建的用户的部分权限
 
-##### slave从服务器(用于读操作)：
+##### slave从服务器(读操作)：
 ```ruby
 mysql> REVOKE INSERT,UPDATE,DELETE ON *.* FROM 'amuser'@'172.30.105.%';
 
@@ -414,6 +415,7 @@ Error: A fatal exception has occurred. Program will exit.
 [root@amoeba ~]# vim /usr/local/amoeba/jvm.properties
 JVM_OPTIONS="-server -Xms1024m -Xmx1024m -Xss256k -XX:PermSize=16m -XX:MaxPermSize=96m"
 
+// 替换成这一行
 ```
 
 ### 6、测试连接：
