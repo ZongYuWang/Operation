@@ -62,6 +62,61 @@ master | ens33| 172.30.105.102 | 管理IP，用于WAN数据转发|
 ### 2、安装部署DRBD
 [安装DRBD-安装部署DRBD部分](https://github.com/ZongYuWang/Operation/blob/master/02.%E6%95%B0%E6%8D%AE%E5%BA%93MySQL/DRBD.md)
 
+
+<table class="table table-bordered table-striped table-condensed">
+    <tr>
+        <th align="left">主机名称</th>
+    <td>master</td>
+    <td>backup</td>
+    </tr>
+    <tr>
+        <th align="left">管理IP  </th>
+    <td>ens33:172.30.105.101</td>
+    <td>ens33:172.30.105.102</td>
+    </tr>
+     <tr>
+        <th align="left">DRBD管理名称</th>
+    <td>mysql0</td>
+    <td>mysql0</td>
+    </tr>
+     <tr>
+        <th align="left">DRBD挂载目录</th>
+    <td>/data</td>
+    <td>/data</td>
+    </tr>
+     <tr>
+        <th align="left">DRBD逻辑设备</th>
+    <td>/dev/drbd0</td>
+    <td>/dev/drbd0</td>
+    </tr>
+     <tr>
+        <th align="left">DRBD对接IP</th>
+    <td>ens38:192.168.1.101/24</td>
+    <td>ens38:192.168.1.102/24</td>
+    </tr>
+      <tr>
+        <th align="left">DRBD存储设备</th>
+    <td>/dev/sdb1</td>
+    <td>/dev/sdb1</td>
+    </tr>
+      <tr>
+        <th align="left">DRBD Meta设备</th>
+    <td>internal</td>
+    <td>internal</td>
+    </tr>
+      <tr>
+        <th align="left">NFS导出目录</th>
+    <td>/data(暂时没有使用)</td>
+    <td>/data(暂时没有使用)</td>
+    </tr>
+    <tr>
+        <th align="left">NFS虚拟IP</th>
+    <td>ens33:172.30.105.201</td>
+    <td>ens33:172.30.105.201</td>
+    </tr>
+</table>
+
+
 #### 2.1 创建drbd磁盘：
 ```ruby
 [root@master ~]# parted /dev/sdb p
@@ -443,7 +498,7 @@ master | eth0| 172.30.105.122 | 管理IP，用于WAN数据转发|
 
 // 需要重新启动服务器
 ```
-### 2、安装DRBD：
+### 2、安装DRBD并配置DRBD：
 
 #### 2.1 创建DRBD磁盘：
 ```ruby
@@ -495,6 +550,37 @@ kmod-drbd84-8.4.9-1.el6.elrepo.x86_64
 drbd                  374888  0 
 libcrc32c               1246  1 drbd
 [root@master ~]# echo "modprobe drbd >/dev/null 2>&1" > /etc/sysconfig/modules/drbd.modules
+```
+#### 2.3 配置drbd：
+```ruby
+[root@master ~]# vim /etc/drbd.d/global_common.conf
+```
+```ruby
+global { usage-count no; }
+common { syncer { rate 20M; } } 
+resource mysql0 {                    
+        protocol C;                
+        startup {
+        }
+        disk {
+                on-io-error detach;
+        }
+        net {
+        }
+        on master {    
+                device /dev/drbd0; 
+                disk /dev/sdb1;
+                address 192.168.0.121:7888; 
+                meta-disk internal;
+        }
+        on backup {
+                device /dev/drbd0;
+                disk /dev/sdb1;
+                address 192.168.0.122:7888;
+                meta-disk internal;  
+       }
+}
+
 ```
 
 #### 2.3 启动drbd并查看状态：
