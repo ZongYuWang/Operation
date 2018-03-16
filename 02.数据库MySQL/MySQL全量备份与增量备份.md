@@ -3,7 +3,7 @@
 
 ## 一、MySQLdump备份
 
-### 1、MySQLdump备份命令:
+### 1、MySQLdump备份命令参数:
 
 #### 1.1 -A参数(备份所有库)：
 &emsp;&emsp;-A是备份所有的库，后面不能再指定库，再指定某个库babydb就引起了冲突
@@ -180,9 +180,40 @@ done
 全量数据就是数据库中所有的数据，全量备份就是把数据库中所有的数据进行备份
 
 #### 1.1 备份所有库：
+##### MyISAM:
 ```ruby
-[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu --default-character-set=utf8 -F -B -A -x --master-data=1 --events |gzip > /MySQL_BACK/mysqlbak_$(date +%F).sql.gz
+[root@MySQlL1-Master ~]# /usr/local/mysql/bin/mysqldump \
+--user=root \
+--password=wangzongyu \
+--all-databases \
+--flush-privileges \
+--lock-all-tables \
+--master-data=1 \
+--flush-logs \
+--triggers \
+--routines \
+--events \
+--hex-blob | gzip > /MySQL_BACK/mysqlbak_$(date +%F).sql.gz
 
+```
+##### InnoDB:
+```ruby
+[root@MySQlL1-Master ~]# /usr/local/mysql/bin/mysqldump \
+--user=root \
+--password=wangzongyu \
+--all-databases \
+--flush-privileges \
+--single-transaction \
+--master-data=1 \
+--flush-logs \
+--triggers \
+--routines \
+--events \
+--hex-blob | gzip > /MySQL_BACK/mysqlbak_$(date +%F).sql.gz
+```
+
+
+```ruby
 [root@MySQlL1-Master MySQL_BACK]# gzip -d mysqlbak_2018-02-01.sql.gz
 [root@MySQlL1-Master MySQL_BACK]# grep -E -v "#|\/|^$|--" mysqlbak_2018-02-01.sql
 ```
