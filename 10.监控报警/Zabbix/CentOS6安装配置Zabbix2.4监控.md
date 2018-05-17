@@ -7,7 +7,8 @@
 主机名 | IP地址 | 备注 
 - | :-: | :- 
 zabbix-NMS | 192.168.67.101| NMS端(zabbix-server、zabbix-web、zabbix-agent) 
-node1 | 192.168.67.102 | zabbix-agent 
+node1 | 192.168.67.102 | zabbix-agent   
+
 `NMS：Network Monitor System `
 
 ### 1、Zabbix基础说明
@@ -26,7 +27,7 @@ zabbix使用的是MySQL5.0+、PgSQL(postgreSQL)8.1+、Oracle10+、DB2 9.7+、SQL
 ### 2、Zabbix硬件资源说明
 
 监控规模 | 平台 | CPU/memory | DataBase | 监控节点数 
-- | :-: | :- 
+ - | :-: | :- 
 Small | CentOS | Virtual Appliance | MySQL InnoDB | 20
 Sedium | CentOS | 2 CPU cores/2GB | MySQL5.0+ InnoDB | 500
 Large | RedHat Enterprise Linux | 4 CPU cores/8GB | RAID10 MySQL InnoDB or PostgreSQL | >1000
@@ -45,7 +46,7 @@ Very large | RedHat Enterprise Linux | 8 CPU cores/16GB | Fast RAID10 MySQL Inno
 `这里使用编译安装MySQL5.5版本` 
 
 Software | Version | Comments 
-- | :-: | :- 
+  - | :-: | :- 
 MySQL | 5.0.3 or later | Required if MySQL is used as Zabbix backend database. InnoDB engine is required.MariaDB also works with Zabbix.
 Oracle | 10g or later | Required if Oracle is used as Zabbix backend database.
 PostgreSQL | 8.1 or later | Required if PostgreSQL is used as Zabbix backend database.It is suggested to use at least PostgreSQL 8.3
@@ -165,7 +166,7 @@ http://192.168.67.101/zabbix/
 登陆用户名：admin
 登陆用户名密码：zabbix
 ```
-图片zabbix1
+![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix1.png)
 
 
 ### 8、zabbix-agent配置并启动
@@ -187,7 +188,7 @@ Hostname=Zabbix-NMS  // 主机名在所有的被监控端中必须唯一
 Starting Zabbix agent:                                     [  OK  ]
 
 ```
-图片 zabbix2
+![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix2.png)
 
 ### 9、添加监控主机(node1)
 ```ruby
@@ -206,6 +207,6 @@ Hostname=node1
 [root@node1 ~]# service zabbix-agent start
 Starting Zabbix agent:                                     [  OK  ]
 ```
-图片 zabbix3
-图片 zabbix4
-图片 zabbix5
+![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix3.png)     
+![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix4.png)     
+![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix5.png)    
