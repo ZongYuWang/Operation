@@ -209,7 +209,7 @@ Starting Zabbix agent:                                     [  OK  ]
 ```
 
 ![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix3.png)   
-echo "<br />"  
+<br /> 
 ![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix4.png)    
-echo "<br />" 
+<br />
 ![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix5.png)    
