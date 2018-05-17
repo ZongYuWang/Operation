@@ -27,7 +27,7 @@ zabbix使用的是MySQL5.0+、PgSQL(postgreSQL)8.1+、Oracle10+、DB2 9.7+、SQL
 ### 2、Zabbix硬件资源说明
 
 | 监控规模 | 平台 | CPU/memory | DataBase | 监控节点数 
-| - | :-: | :- 
+| - | - | - | - | - 
 | Small | CentOS | Virtual Appliance | MySQL InnoDB | 20
 | Sedium | CentOS | 2 CPU cores/2GB | MySQL5.0+ InnoDB | 500
 | Large | RedHat Enterprise Linux | 4 CPU cores/8GB | RAID10 MySQL InnoDB or PostgreSQL | >1000
