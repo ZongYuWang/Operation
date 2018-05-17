@@ -4,10 +4,10 @@
 &emsp;&emsp;在多数情况下，Zabbix-server和frontend(前端)都安装在同一个机器上，当从2.2版本升级到3.0时Zabbix-server将会升级数据库(而且也没有办法回滚数据库的更改)并且frontend将停止工作，所以很多用户将被迫使用第三方工具升级PHP，这就也是Zabbix-server在RHEL6中也被弃用的原因
 &emsp;&emsp;如果你想使用Zabbix-frontend在RHEL6上而且使用了第三方工具升级了PHP，你还需要在/etc/yum.repos.d/zabbix.repo中开启zabbix-deprecated(set enabled=1)
 
-主机名 | IP地址 | 备注 
-- | :-: | :- 
-zabbix-NMS | 192.168.67.101| NMS端(zabbix-server、zabbix-web、zabbix-agent) 
-node1 | 192.168.67.102 | zabbix-agent   
+|主机名 | IP地址 | 备注 
+| - | :-: | :- 
+| zabbix-NMS | 192.168.67.101| NMS端(zabbix-server、zabbix-web、zabbix-agent) 
+| node1 | 192.168.67.102 | zabbix-agent   
 
 `NMS：Network Monitor System `
 
@@ -26,12 +26,12 @@ zabbix使用的是MySQL5.0+、PgSQL(postgreSQL)8.1+、Oracle10+、DB2 9.7+、SQL
 
 ### 2、Zabbix硬件资源说明
 
-监控规模 | 平台 | CPU/memory | DataBase | 监控节点数 
- - | :-: | :- 
-Small | CentOS | Virtual Appliance | MySQL InnoDB | 20
-Sedium | CentOS | 2 CPU cores/2GB | MySQL5.0+ InnoDB | 500
-Large | RedHat Enterprise Linux | 4 CPU cores/8GB | RAID10 MySQL InnoDB or PostgreSQL | >1000
-Very large | RedHat Enterprise Linux | 8 CPU cores/16GB | Fast RAID10 MySQL InnoDB or PostgreSQL | >10000
+| 监控规模 | 平台 | CPU/memory | DataBase | 监控节点数 
+| - | :-: | :- 
+| Small | CentOS | Virtual Appliance | MySQL InnoDB | 20
+| Sedium | CentOS | 2 CPU cores/2GB | MySQL5.0+ InnoDB | 500
+| Large | RedHat Enterprise Linux | 4 CPU cores/8GB | RAID10 MySQL InnoDB or PostgreSQL | >1000
+| Very large | RedHat Enterprise Linux | 8 CPU cores/16GB | Fast RAID10 MySQL InnoDB or PostgreSQL | >10000
 
 ### 3、获取Zabbix软件包：
 [zabbix软件包下载](https://repo.zabbix.com/zabbix)
@@ -45,13 +45,13 @@ Very large | RedHat Enterprise Linux | 8 CPU cores/16GB | Fast RAID10 MySQL Inno
 #### 4.1 安装Zabbix-database（数据库）：
 `这里使用编译安装MySQL5.5版本` 
 
-Software | Version | Comments 
-  - | :-: | :- 
-MySQL | 5.0.3 or later | Required if MySQL is used as Zabbix backend database. InnoDB engine is required.MariaDB also works with Zabbix.
-Oracle | 10g or later | Required if Oracle is used as Zabbix backend database.
-PostgreSQL | 8.1 or later | Required if PostgreSQL is used as Zabbix backend database.It is suggested to use at least PostgreSQL 8.3
-IBM DB2 | 9.7 or later | Required if IBM DB2 is used as Zabbix backend database.
-SQLite | 3.3.5 or later | SQLite is only supported with Zabbix proxies. Required if SQLite is used as Zabbix proxy database.
+| Software | Version | Comments 
+| - | :-: | :- 
+| MySQL | 5.0.3 or later | Required if MySQL is used as Zabbix backend database. InnoDB engine is required.MariaDB also works with Zabbix.
+| Oracle | 10g or later | Required if Oracle is used as Zabbix backend database.
+| PostgreSQL | 8.1 or later | Required if PostgreSQL is used as Zabbix backend database.It is suggested to use at least PostgreSQL 8.3
+| IBM DB2 | 9.7 or later | Required if IBM DB2 is used as Zabbix backend database.
+| SQLite | 3.3.5 or later | SQLite is only supported with Zabbix proxies. Required if SQLite is used as Zabbix proxy database.
 
 #### 4.2 安装Zabbix相关软件包：
 `NMS端既是zabbix-server端，又是zabbix-web端，又是zabbix-agent端(自己监控自己)` 
@@ -207,6 +207,7 @@ Hostname=node1
 [root@node1 ~]# service zabbix-agent start
 Starting Zabbix agent:                                     [  OK  ]
 ```
+
 ![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix3.png)     
 ![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix4.png)     
 ![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix5.png)    
