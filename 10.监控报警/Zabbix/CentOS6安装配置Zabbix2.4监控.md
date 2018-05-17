@@ -37,7 +37,7 @@ zabbix使用的是MySQL5.0+、PgSQL(postgreSQL)8.1+、Oracle10+、DB2 9.7+、SQL
 [zabbix软件包下载](https://repo.zabbix.com/zabbix)
 
 &emsp;&emsp;例如在CentOS6-X86_64系统中安装zabbix，yum源默认是没有zabbix软件包的
-&emsp;&emsp;可以直接下载响应的zabbix-release-xxx.noarch.rpm软件包安装，这样会在/etc/yum.repos.d下生成zabbix.repo源，这个源中的baseurl地址同时也指向了[zabbix相关软件包的yum源地址](http://repo.zabbix.com/zabbix/3.4/rhel/6/$basearch/)
+&emsp;&emsp;可以直接下载响应的zabbix-release-xxx.noarch.rpm软件包安装，这样会在/etc/yum.repos.d下生成zabbix.repo源，这个源中的baseurl地址同时也指向了[zabbix相关软件包的yum源地址](http://repo.zabbix.com/zabbix/3.4/rhel/6/$basearch/)        
 &emsp;&emsp;也可以直接把所有的软件包下载至服务器中，根据需要选择相关的软件包
 
 ### 4、安装Zabbix-NMS端(监控端)
@@ -208,6 +208,8 @@ Hostname=node1
 Starting Zabbix agent:                                     [  OK  ]
 ```
 
-![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix3.png)     
-![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix4.png)     
+![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix3.png)   
+echo "<br />"  
+![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix4.png)    
+echo "<br />" 
 ![](https://github.com/ZongYuWang/image/blob/master/Zabbix/Zabbix5.png)    
