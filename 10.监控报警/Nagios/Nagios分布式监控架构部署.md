@@ -156,13 +156,13 @@ encryption_method=1
 修改nagios主配置文件：
 # vim /usr/local/nagios/etc/nagios.cfg 
 enable_notifications=0 
-【说明】监控中心设置不发送告警信息，此项设置的是当监控的对象的状态发生变化的时候，是否启动通知机制，当值等于1时，表示通知 ；当值等于0时，表示不通知；默认情况下是启动事件处理通知                                                               
+// 监控中心设置不发送告警信息，此项设置的是当监控的对象的状态发生变化的时候，是否启动通知机制，当值等于1时，表示通知 ；当值等于0时，表示不通知；默认情况下是启动事件处理通知                                                               
 obsess_over_services=1                                                          
-【说明】此项设置的是决定nagios 是否被服务检测并运行之后定义的ocsp_command 命令，此项只在执行分布式检测是才启用，否则不要轻易启用该项，当然默认是是不启用的，当值为1是是启用，值为0时是不启用，也就是被监控客户端发送给分布式服务器监控信息之后，分布式服务器需要对数据进行处理通过开启ocsp_command定义的脚本命令，$1是主机名、$2是服务描述、$3是定义告警级别、$4是输出信息
+// 此项设置的是决定nagios 是否被服务检测并运行之后定义的ocsp_command 命令，此项只在执行分布式检测是才启用，否则不要轻易启用该项，当然默认是是不启用的，当值为1是是启用，值为0时是不启用，也就是被监控客户端发送给分布式服务器监控信息之后，分布式服务器需要对数据进行处理通过开启ocsp_command定义的脚本命令，$1是主机名、$2是服务描述、$3是定义告警级别、$4是输出信息
 ocsp_command=submit_check_result  
- 【说明】此命令是自己定义的命令，且该命令是在nagios的家目录下面的libexec 子目录下面； 该项是由nagios处理的，为每个服务检测而运行的命令，该命令仅当obsess_over_service选项的值设定为1时，此项执行有效；默认情况下是为空                               
+// 此命令是自己定义的命令，且该命令是在nagios的家目录下面的libexec 子目录下面； 该项是由nagios处理的，为每个服务检测而运行的命令，该命令仅当obsess_over_service选项的值设定为1时，此项执行有效；默认情况下是为空                               
 obsess_over_hosts=1                                                                 
-【说明】开启主机的被动监控
+// 开启主机的被动监控
 obsess_over_services=1
 
 # mkdir /usr/local/nagios/libexec/eventhandlers/
@@ -199,8 +199,8 @@ obsess_over_services=1
         # monitoring server
 
         /bin/printf "%s\t%s\t%s\t%s\n" "$1" "$2" "$return_code" "$4" | /usr/local/nagios/bin/send_nsca 192.168.5.131 -c  /usr/local/nagios/etc/send_nsca.cfg
-【说明】此处的IP为监控中心的Server IP地址
-【说明】$1是主机名、$2是服务描述、$3是定义告警级别、$4是输出信息，也就是定义了一个命令的脚本，通过引用这个ocsp_command命令的脚本将告警信息发送给监控中心，所以上面的IP地址要写监控中心的IP地址
+// 此处的IP为监控中心的Server IP地址
+// $1是主机名、$2是服务描述、$3是定义告警级别、$4是输出信息，也就是定义了一个命令的脚本，通过引用这个ocsp_command命令的脚本将告警信息发送给监控中心，所以上面的IP地址要写监控中心的IP地址
 # chmod +x /usr/local/nagios/libexec/eventhandlers/submit_check_result 
 # chown nagios.nagios /usr/local/nagios/libexec/eventhandlers/submit_check_result 
 
@@ -273,8 +273,8 @@ cfg_dir=/usr/local/nagios/etc/objects/monitor
 # ./configure --with-nagios-user=nagios --with-nagios-group=nagcmd --enable-perl-modules
 # make && make install 
 
-【说明】在Nagios监控平台的服务器上如果没有安装nagios-plugins插件，nagios展示平台也就不能获取本机的监控信息
-【注意】监控平台也必须要安装nagios-plugins插件，否则/usr/local/nagios/libexec下没有任何插件
+// 在Nagios监控平台的服务器上如果没有安装nagios-plugins插件，nagios展示平台也就不能获取本机的监控信息
+// 监控平台也必须要安装nagios-plugins插件，否则/usr/local/nagios/libexec下没有任何插件
 
 ```
 ![](https://github.com/ZongYuWang/image/blob/master/nagios-distributed3.png)
@@ -317,18 +317,18 @@ cfg_dir=/usr/local/nagios/etc/objects/monitor
  修改nsca的配置文件：
 # vim /usr/local/nagios/etc/nsca.cfg 
 password=wangzongyu
-【说明】此处要和分布式监控服务器中的密码一致
+// 此处要和分布式监控服务器中的密码一致
 server_port=5667
 server_address=192.168.1.1
 encryption_method=1
 
 # vim /usr/local/nagios/etc/nagios.cfg 
 check_external_commands=1
-【说明】设定是否检测外部命令。默认是不启用的，但是由于需要配合Apache工作，在Web界面下进行Nagiso的控制和管理的话，必须要将此项打开
+// 设定是否检测外部命令。默认是不启用的，但是由于需要配合Apache工作，在Web界面下进行Nagiso的控制和管理的话，必须要将此项打开
 acept_passive_service_checks=1
-【说明】此项是设定nagios在启动或者是重启时，是否将接受被动服务检测的结果。值1表示接受被动检测，值0表示拒绝被动检测。默认时是启动被动服务检测功能
+// 此项是设定nagios在启动或者是重启时，是否将接受被动服务检测的结果。值1表示接受被动检测，值0表示拒绝被动检测。默认时是启动被动服务检测功能
 accept_passive_host_checks=1
-【说明】此项设定nagios在启动或者是重启是是否会接受被动主机检测的结果。值是1时表示接受，值是0时表示拒绝
+// 此项设定nagios在启动或者是重启是是否会接受被动主机检测的结果。值是1时表示接受，值是0时表示拒绝
 
 # cd /usr/local/nagios/etc/
 # mkdir monitor
@@ -336,21 +336,20 @@ accept_passive_host_checks=1
 ```
 
 #### 3.8 添加被监控客户端：
-【注意】  
-① 中心服务器和分布式服务器的时间一定要调整一致   
-② 中心服务器和分布式服务器都需要添加监控的主机和服务，分布式服务器监控客户端主机可以用任何方式，主动/被动都可以（此实验分布式服务器是通过主动方式NRPE监控被监控端）   
-③ 中心服务器主机定义的host_name值需要和分布式服务器主机定义的host_name值一致；   
-④ 中心服务器服务定义的service_description值需要和分布式服务器服务定义的service_description值一致；   
-⑤ 分布式服务器上定义的服务检测命令（check_command）是真正的检测服务的命令 ，中心服务器上定义的服务检测命令   （check_command）是当中心服务器由被动检测变为主动刷新检测时执行的命令（也就是当分布式主机不发送检测命令或超时发送告警时中心服务器执行的命令），正常情况下不执行这个命令。   
-⑥ 分布服务器通常上面只安装有Nagios，它不需要安装Web接口   
+  
+&emsp;&emsp;中心服务器和分布式服务器的时间一定要调整一致   
+&emsp;&emsp;中心服务器和分布式服务器都需要添加监控的主机和服务，分布式服务器监控客户端主机可以用任何方式，主动/被动都可以（此实验分布式服务器是通过主动方式NRPE监控被监控端）   
+&emsp;&emsp;中心服务器主机定义的host_name值需要和分布式服务器主机定义的host_name值一致；   
+&emsp;&emsp;中心服务器服务定义的service_description值需要和分布式服务器服务定义的service_description值一致；   
+&emsp;&emsp;分布式服务器上定义的服务检测命令（check_command）是真正的检测服务的命令 ，中心服务器上定义的服务检测命令   （check_command）是当中心服务器由被动检测变为主动刷新检测时执行的命令（也就是当分布式主机不发送检测命令或超时发送告警时中心服务器执行的命令），正常情况下不执行这个命令。   
+&emsp;&emsp;分布服务器通常上面只安装有Nagios，它不需要安装Web接口   
 
-
-- 分布式服务器
+##### 分布式服务器
      分布式服务器的配置增加和主动监控一样，先添加host，然后添加service即可
-- 中心服务器
+##### 中心服务器
      根据以上提到的注意事项，原则是中心服务器和分布式服务器的host_name和 service_descriptio一
      样，这样数据才可以在主的nagios中显示；  
-- 添加passive模式的主机和服务模板：  
+##### 添加passive模式的主机和服务模板：  
 ```ruby
 # vim /usr/local/nagios/etc/objects/templates.cfg 
   define host{
@@ -375,7 +374,7 @@ accept_passive_host_checks=1
 【说明】freshness_threshold定义了600s，也就是说当分布式服务器超过了100s还没发送过来数据，中心服务器就会变被动为主动强制刷新监测，用check_command定义的命令执行服务检测，而中心服务器直接判定服务为critical
 
 ```
-- 添加强制刷新监测命令  
+##### 添加强制刷新监测命令  
 ```ruby
 
 # vim /usr/local/nagios/libexec/staleservice.sh
@@ -391,7 +390,7 @@ define command{
 }
 
 ```
-- 添加主机和服务   
+##### 添加主机和服务   
 ```ruby
 
 复制分布式服务器中的hosts和services到nagios中心服务器中，修改定义主机中的use模板为定义的passive-host，之前默认一般为linux-server，修改定义服务器中的use模板为定义的passive-service，取消check_command值的定义，类似如下：
@@ -423,13 +422,13 @@ define service{
 
 
 #### 3.9 查看输出日志
-监控中心查看：
+&emsp;&emsp;监控中心查看：
 ![](https://github.com/ZongYuWang/image/blob/master/nagios-distributed4.png)
 
-监控中心开始强制刷新：
+&emsp;&emsp;监控中心开始强制刷新：
 ![](https://github.com/ZongYuWang/image/blob/master/nagios-distributed5.png)
 
-分布式服务器发送到监控中心
+&emsp;&emsp;分布式服务器发送到监控中心
 ```ruby
 # echo "172.30.105.114;wangzy service;0;testOK"| /usr/local/nagios/bin/send_nsca 172.30.105.112 -d ";" -c /usr/local/nagios/etc/send_nsca.cfg 
 ```
@@ -438,7 +437,7 @@ define service{
 【说明】手动测试发送，通过一个管道将要发送的数据传给send_nsca插件，然后send_nsca再将数据发送到监控中心的nsca服务，其中172.30.105.114是被监控的客户端，wangzy service是nagios中定义的被动监控检测服务的名称，0是表示正常，testOK是输出信息，管道符之前的也就是分布式服务器中定义的submit_check_result 脚本中，$1、$2、$3、$4定义的内容；
 172.30.105.112是监控中心地址，-d ";" 是分隔符，-c /usr/local/nagios/etc/send_nsca.cfg 是send_nsca这个发送程序的配置文件
 
-分布式服务器显示信息：
+&emsp;&emsp;分布式服务器显示信息：
 ![](https://github.com/ZongYuWang/image/blob/master/nagios-distributed7.png)
 
 #### 3.10 监控中心展示效果说明：
@@ -450,12 +449,12 @@ define service{
 
 ## 被动监控架构部署
 ![](https://github.com/ZongYuWang/image/blob/master/nagios-distributed12.png)  
-- 被动模式工作原理：
+### 1、被动模式工作原理：
 相比与主动模式中服务器主动去被监控机上轮询获取监控数据的方式，被动模式则是在被监控机上面通过插件或脚本获取监控数据，然后将数据通过send_nsca发往监控机，最后监控机通过nsca接收并解析数据，并传递给Nagios。这样做的一个很大的优势就是将除去处理数据的其他工作都放在了被监控机上面（包括了数据的传输），这样就避免了被监控机数量大时，一次轮询时间过长而导致监控反应延迟，这也是被动模式能承担更大监控量的关键
 
-- NSCA由两个部分组成：
+### 2、NSCA由两个部分组成：
 nsca （安装在MonitorServer上，用来接收并解析MonitorClient发来的监控数据，传递给nagios）  
 send_nsca（安装在MonitorClient上，用来发送监控数据。）
 
-- 被动监控的过程：
+### 3、被动监控的过程：
 MonitorClient上面，使用nagios-plugins提供的插件，得出监控数据，然后将数据存为一个文件，利用输入重定向，通过send_nsca将数据发往MonitorServer，MonitorServer上面运行一个nsca的daemon（默认开启5667端口），用来接收这些数据，然后做一个简单的处理（会和nagios的service文件进行对应，将多余的监控数据排除），然后将数据进行格式的转换，发给nagios的“外部命令文件”（默认配置为“/usr/local/nagios/var/rw/nagios.cmd”在nagios.cfg中定义的），该文件是一个管道文件，也是nagios主程序的一个接口（用来接收监控数据），使用cat查看该文件时候，会出来经nsca处理后的数据格式。然后nagios主程序对数据进行处理（前台展示，警报）
