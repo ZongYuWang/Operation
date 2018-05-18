@@ -139,7 +139,7 @@ Alias /pnp4nagios "/usr/local/pnp4nagios/share"
 弹窗方式显示性能图表：
 效果图：   
 
-![](https://github.com/ZongYuWang/image/blob/master/Nagios-pnp4nagios1.png)
+![](https://github.com/ZongYuWang/image/tree/master/Nagios/Nagios-pnp4nagios1.png)
 
 ```ruby
 cp /nagios_soft/pnp4nagios-0.6.6/contrib/ssi/status-header.ssi /usr/local/nagios/share/ssi/

@@ -5,7 +5,7 @@
 &emsp;&emsp;Nagios监控远程主机的方法有多种，其方式包括SNMP、NRPE、SSH和NCSA等。这里介绍其通过NRPE监控远程Linux主机的方式。
 &emsp;&emsp;NRPE（Nagios Remote Plugin Executor）是用于在远端服务器上运行检测命令的守护进程，它用于让Nagios监控端基于安装的方式触发远端主机上的检测命令，并将检测结果输出至监控端。而其执行的开销远低于基于SSH的检测方式，而且检测过程并不需要远程主机上的系统帐号等信息，其安全性也高于SSH的检测方式。
 
-![](https://github.com/ZongYuWang/image/blob/master/Nagios-NRPE1.png)
+![](https://github.com/ZongYuWang/image/tree/master/Nagios/Nagios-NRPE1.png)
 
 ### 2、配置监控端
 

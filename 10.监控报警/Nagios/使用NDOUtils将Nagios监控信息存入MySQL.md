@@ -1,7 +1,7 @@
 
 ## 使用NDOUtils将Nagios监控信息存入MySQL    
 
-![](https://github.com/ZongYuWang/image/blob/master/Nagios-NDOUtils1.png)
+![](https://github.com/ZongYuWang/image/tree/master/Nagios/Nagios-NDOUtils1.png)
 
 ### 1、安装配置MySQL：
 ```ruby
@@ -133,7 +133,7 @@ Stopping ndo2db: head: cannot open `/usr/local/nagios/var/ndo2db.lock' for readi
 done.
 【说明】关闭ndo2db会存在问题
 ```
-[ndo2pnp.pl下载地址]( https://github.com/ZongYuWang/File/tree/master/File )
+[ndo2pnp.pl下载地址]( https://github.com/ZongYuWang/File/tree/master/File/Nagios )
 ```ruby
 
 [root@localhost ~]# cd /usr/local/nagios/libexec/

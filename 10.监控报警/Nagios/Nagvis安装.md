@@ -178,4 +178,4 @@ htmlcgi="/nagios/cgi-bin"
 `服务器图片路径`：/usr/local/nagvis/share/userfiles/images/iconsets
 
 `Edit Map` -> `Map Options`
-![](https://github.com/ZongYuWang/image/blob/master/Nagios-Nagvis1.png)
+![](https://github.com/ZongYuWang/image/tree/master/Nagios/Nagios-Nagvis1.png)
