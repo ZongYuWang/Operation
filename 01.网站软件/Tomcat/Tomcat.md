@@ -155,4 +155,4 @@ CATALINA_OPTS=" \
 ```
 - 启动Tomcat并测试(查看9012端口是否启动)
 
-![](https://github.com/ZongYuWang/image/blob/master/tomcat1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Tomcat/tomcat1.png)
