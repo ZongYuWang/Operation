@@ -6,7 +6,7 @@
 - 分布式服务器：通过对被监控服务器状态采集并且把被监控服务器的状态通过NSCA_send发送给监控中心服务器。
 - 被监控服务器：被监控服务器就是生产环境服务器。
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed1.png)
-<br />
+<br/>
 ![](https://github.com/ZongYuWang/image/blob/master/Nagios/nagios-distributed2.png)
 
 【说明】
