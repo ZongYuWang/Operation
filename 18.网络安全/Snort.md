@@ -16,7 +16,7 @@
 - BASE：分析入侵数据库的前端(Basic Analysis and Security Engine)
 - Snort
 
-![](https://github.com/ZongYuWang/image/blob/master/Snort1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort1.png)
 
 **相关软件包版本：**
 - adodb519.tar.gz 
@@ -145,14 +145,21 @@ error_reporting = E_ALL & ~E_NOTICE
 http://172.30.105.115/base/setup/index.php
 
 ```
-![](https://github.com/ZongYuWang/image/blob/master/snort.png)
-![](https://github.com/ZongYuWang/image/blob/master/Snort2.png)
-![](https://github.com/ZongYuWang/image/blob/master/Snort3.png)
-![](https://github.com/ZongYuWang/image/blob/master/Snort4.png)
-![](https://github.com/ZongYuWang/image/blob/master/Snort5.png)
-![](https://github.com/ZongYuWang/image/blob/master/Snort6.png)
-![](https://github.com/ZongYuWang/image/blob/master/Snort7.png)
-![](https://github.com/ZongYuWang/image/blob/master/Snort8.png)
+![](https://github.com/ZongYuWang/image/blob/master/Snort/snort.png)
+<br />
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort2.png)
+<br />
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort3.png)
+<br />
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort4.png)
+<br />
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort5.png)
+<br />
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort6.png)
+<br />
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort7.png)
+<br />
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort8.png)
 
 
 **5、安装libdnet：（必须使用这个版本）**
@@ -990,7 +997,7 @@ C:\Users\Administrator>ping 172.30.105.115
 
 ```
 ###### 会变成下面这样
-![](https://github.com/ZongYuWang/image/blob/master/Snort9.png)
+![](https://github.com/ZongYuWang/image/blob/master/Snort/Snort9.png)
 
 **补充(snort的其他启动方式)：**
 ```ruby
