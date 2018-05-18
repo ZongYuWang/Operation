@@ -5,8 +5,8 @@
 - 监控中心服务器：通过NSCA获取分布式监控服务器的相关状态，呈现相关服务器状态和发出报警等;
 - 分布式服务器：通过对被监控服务器状态采集并且把被监控服务器的状态通过NSCA_send发送给监控中心服务器。
 - 被监控服务器：被监控服务器就是生产环境服务器。
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/Nagios-distributed1.png)
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed2.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed2.png)
 
 【说明】
 - 对次架构说明，分布式服务器和被监控服务器之间使用NRPE插件获取监控信息，分布式服务器主动获取被监控主机的监控信息，但是分布式服务器和监控中心之间使用的被动监控模式，被动监控模式使用了NSCA插件完成
@@ -277,7 +277,7 @@ cfg_dir=/usr/local/nagios/etc/objects/monitor
 // 监控平台也必须要安装nagios-plugins插件，否则/usr/local/nagios/libexec下没有任何插件
 
 ```
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed3.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed3.png)
 
 #### 3.5 安装nagios
 ```ruby
@@ -423,32 +423,32 @@ define service{
 
 #### 3.9 查看输出日志
 &emsp;&emsp;监控中心查看：
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed4.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed4.png)
 
 &emsp;&emsp;监控中心开始强制刷新：
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed5.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed5.png)
 
 &emsp;&emsp;分布式服务器发送到监控中心
 ```ruby
 # echo "172.30.105.114;wangzy service;0;testOK"| /usr/local/nagios/bin/send_nsca 172.30.105.112 -d ";" -c /usr/local/nagios/etc/send_nsca.cfg 
 ```
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed6.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed6.png)
 
 【说明】手动测试发送，通过一个管道将要发送的数据传给send_nsca插件，然后send_nsca再将数据发送到监控中心的nsca服务，其中172.30.105.114是被监控的客户端，wangzy service是nagios中定义的被动监控检测服务的名称，0是表示正常，testOK是输出信息，管道符之前的也就是分布式服务器中定义的submit_check_result 脚本中，$1、$2、$3、$4定义的内容；
 172.30.105.112是监控中心地址，-d ";" 是分隔符，-c /usr/local/nagios/etc/send_nsca.cfg 是send_nsca这个发送程序的配置文件
 
 &emsp;&emsp;分布式服务器显示信息：
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed7.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed7.png)
 
 #### 3.10 监控中心展示效果说明：
-![](https://github.com/ZongYuWang/image/blob/masterhttps://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed8.png)
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed9.png)
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed10.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed8.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed9.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed10.png)
 【说明】主动监控模式已经关闭，使用的被动监控模式
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed11.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed11.png)
 
 ## 被动监控架构部署
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/nagios-distributed12.png)  
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-distributed12.png)  
 ### 1、被动模式工作原理：
 相比与主动模式中服务器主动去被监控机上轮询获取监控数据的方式，被动模式则是在被监控机上面通过插件或脚本获取监控数据，然后将数据通过send_nsca发往监控机，最后监控机通过nsca接收并解析数据，并传递给Nagios。这样做的一个很大的优势就是将除去处理数据的其他工作都放在了被监控机上面（包括了数据的传输），这样就避免了被监控机数量大时，一次轮询时间过长而导致监控反应延迟，这也是被动模式能承担更大监控量的关键
 
