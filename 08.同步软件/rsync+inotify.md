@@ -1,6 +1,6 @@
 ## rsync+inotify实现实时同步
 
-![](https://github.com/ZongYuWang/image/blob/master/rsync1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Rsync/rsync1.png)
 ### 1、防火墙设置：
 ```ruby
 
