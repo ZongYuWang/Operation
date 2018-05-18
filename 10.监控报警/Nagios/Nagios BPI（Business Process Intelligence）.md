@@ -1,4 +1,3 @@
-
 ## Nagios BPI（Business Process Intelligence）    
 
 &emsp;&emsp;Nagios Business Process Intelligence is an advanced grouping tool that allows you to set more complex dependencies to determine groups states. Nagios BPI provides an interface to effectively view the ‘real’ state of the network. Rules for group states can be determined by the user, and parent-child relationships are easily identified when you need to ‘drill down’ on a problem. This tool can also be used in conjunction with a check plugin to allow for notifications through Nagios.  This document describes how to fully utilize the Nagios Business Process Intelligence (or BPI) add-on and incorporate checks into Nagios. 
