@@ -1,7 +1,7 @@
 
 ## 使用NDOUtils将Nagios监控信息存入MySQL    
 
-![](https://github.com/ZongYuWang/image/tree/master/Nagios/Nagios-NDOUtils1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Nagios/Nagios-NDOUtils1.png)
 
 ### 1、安装配置MySQL：
 ```ruby
