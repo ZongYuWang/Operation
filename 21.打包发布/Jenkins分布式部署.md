@@ -180,8 +180,10 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD6QoJQewQ1PLENPddHEawdeBTjq9ZoS0czs1bVuDaw
 
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Credentials1.png)
 
-- 所有系统使用到的凭据都可以在凭据——系统中设置
-![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Credentials2.png)
+- 所有系统使用到的凭据都可以在凭据——系统中设置     
+
+![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Credentials2.png)     
+
 - Private Key:是连接端的私钥地址，这个秘钥是设置Master连接Slave的，所以此处设置的是Master的私钥
 - 描述：描述信息一定要写上，不然最后秘钥不容易区分
 
