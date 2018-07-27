@@ -178,8 +178,8 @@ and check to make sure that only the key(s) you wanted were added.
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD6QoJQewQ1PLENPddHEawdeBTjq9ZoS0czs1bVuDawEoTeFZvv5j2+m35gyfvRQ65qEwCsLT9dHKJmshmkapz8gFi2GZ7NCDFMmtpbb5TPopABYy+ay5RQdkv5XWZtMl+R2z5mSmw9zHuAi36Xsg+ukdeGqat4xWos5vlnxD+9r1RI63Z3vCaSZdj3zce8AcR4JpXxwW6XSz4TcKzYReLcpWyOvh4zdTeQkx8GAwxY6AQ4vBJrfKqjAlRxpeuRcgawi74vaZJfQPFmpL49IsARmjOIZk0RXGJn28JCc7i3V3VqfdgzeHPCxLq0kG9HYvY7j1b4xH95B1nFsn58b9zB root@jmaster
 ```
 
-
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Credentials1.png)
+
 - 所有系统使用到的凭据都可以在凭据——系统中设置
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Credentials2.png)
 - Private Key:是连接端的私钥地址，这个秘钥是设置Master连接Slave的，所以此处设置的是Master的私钥
@@ -189,9 +189,13 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD6QoJQewQ1PLENPddHEawdeBTjq9ZoS0czs1bVuDaw
 ### 7、Jenkins系统环境基本配置
 
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins1.png)
+</br>
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins2.png)
+</br>
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins3.png)
+</br>
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins3-1.png)
+</br>
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins4.png)
 
 
@@ -251,7 +255,7 @@ INFO: Connected
 ```ruby
 Publish Over SSH 插件
 ```
-![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_publish_over_ssh.png)
+![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_slave_ssh.png)
 
 - Passphrase:jenkins是发送端（分布式任务不会在Master端，发送端可能是任何一个Slave节点）生成私钥的密码，可能没有设置；
 - Path to key:是jenkins发送端的私钥的路径；
