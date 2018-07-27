@@ -272,7 +272,7 @@ Jenkins系统中任务的存放路径：
 ### 1、系统管理中配置SDK环境变量
 `Jenkins_Master和Jenkins_Slave所有的环境变量路径要一致`
 
-![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Android1.png)
+![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Android1.png)   
 
 - 设置的值也就是Linux系统环境变量(/etc/profile)的设置
 
@@ -280,6 +280,9 @@ Jenkins系统中任务的存放路径：
 
 #### 2.1 项目General选项配置：
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Android2.png)
+
+<br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Android2-1.png)
 
 #### 2.2 源码管理-Git:
@@ -296,7 +299,8 @@ Jenkins系统中任务的存放路径：
 
 - 此处使用Invoke Grade选择gradle4.1之后，编译会出错，所以选择Use Gradle Wrapper
 
-#### 2.5 构建后的操作(也就是把打包好的apk包发送到远程主机上)：
+#### 2.5 构建后的操作(也就是把打包好的apk包发送到远程主机上)：   
+
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins_Android6.png)
 
 - SSH Server Name：不是在此处自己手动填写，是在前面(系统管理-系统设置-Publish over SSH)自己设置好的，这里是下拉框选择
