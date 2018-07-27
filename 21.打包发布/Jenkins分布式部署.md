@@ -3,6 +3,7 @@
 &emsp;&emsp;根据你是用的源代码管理工具Git或者SVN来安装对于的工具，还有需要安装可能会构建的项目所需的环境，比如.NET Core 项目就需要安装 .NET Core SDK，JAVA项目就需要安装JAVA环境，从节点无需安装Jenkins
 
 ![](https://github.com/ZongYuWang/image/blob/master/Jenkins/Jenkins.png)
+
 ### 1、安装JDK
 ```ruby
 # rpm -ivh jdk-8u171-linux-x64.rpm
