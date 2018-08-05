@@ -124,6 +124,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 # 说明：比较一下就会看到，之前的是添加新文件，当时文件还没被追踪（untracked），而这次是更改已经追踪（tracked）的文件
 ```
 - 通过git看看文件做了哪些变化，执行 git diff ：
+
 ```ruby
 Administrator@wanzy-PC MINGW64 /d/Git_Project (master)
 $ git diff
