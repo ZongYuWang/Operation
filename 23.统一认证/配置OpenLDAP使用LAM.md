@@ -105,10 +105,13 @@ Imagick using ImageMagick library version => ImageMagick 6.7.8-9 2016-06-16 Q16 
 ```
 
 ### 3、LAM-WEB端配置
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM1.png)
 
 </br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM4.png)
+
 
 </br>
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM9.png)
