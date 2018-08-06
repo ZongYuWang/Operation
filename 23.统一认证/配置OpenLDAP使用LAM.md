@@ -140,3 +140,40 @@ Imagick using ImageMagick library version => ImageMagick 6.7.8-9 2016-06-16 Q16 
 </br>
 
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM6.png)
+
+
+
+
+### 4、通过ldapsearch查询用户信息：
+```ruby
+# ldapsearch -x cn=newtv_user1 -b dc=newtvldap,dc=com
+# extended LDIF
+#
+# LDAPv3
+# base <dc=newtvldap,dc=com> with scope subtree
+# filter: cn=newtv_user1
+# requesting: ALL
+#
+
+# newtv_user1, People, newtvldap.com
+dn: cn=newtv_user1,ou=People,dc=newtvldap,dc=com
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+loginShell: /bin/bash
+homeDirectory: /home/newtvuser1
+uid: newtvuser1
+cn: newtv_user1
+uidNumber: 10000
+gidNumber: 10000
+sn: newtv_user1
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 2
+# numEntries: 1
+
+```
