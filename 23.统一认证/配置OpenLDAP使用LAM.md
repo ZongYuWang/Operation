@@ -114,22 +114,29 @@ Imagick using ImageMagick library version => ImageMagick 6.7.8-9 2016-06-16 Q16 
 
 
 </br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM9.png)
 
 </br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM3.png)
 
 </br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM7.png)
 
 </br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM8.png)
 
 </br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM2.png)
 
 </br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM5.png)
 
 </br>
+
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM6.png)
