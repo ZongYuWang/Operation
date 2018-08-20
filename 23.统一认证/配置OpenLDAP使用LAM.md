@@ -177,3 +177,66 @@ result: 0 Success
 # numEntries: 1
 
 ```
+
+### 5、通过ldif文件添加用户
+```ruby
+# vim user2.ldif 
+dn: uid=user2,ou=People,dc=newtvldap,dc=com
+#objectClass: posixAccount
+#objectClass: inetOrgPerson
+#objectClass: organizationalPerson
+#objectClass: person
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: user2
+uid: user2
+uidNumber: 10001
+gidNumber: 10001
+homeDirectory: /home/user2
+loginShell: /bin/bash
+gecos: Raj [Admin (at) ITzGeek]
+userPassword: {crypt}x
+shadowLastChange: 17058
+shadowMin: 0
+shadowMax: 99999
+shadowWarning: 7
+
+```
+```ruby
+[root@newtvldap ~]# ldapadd -x -W -D "cn=Manager,dc=newtvldap,dc=com" -f user2.ldif
+Enter LDAP Password: 
+adding new entry "uid=user2,ou=People,dc=newtvldap,dc=com"
+
+[root@newtvldap ~]# ldappasswd -s password123 -W -D "cn=Manager,dc=newtvldap,dc=com" -x "uid=user2,ou=People,dc=newtvldap,dc=com"
+Enter LDAP Password: 
+
+```
+#### 5.1 用户验证：
+##### 普通用户验证需要加ou=People
+```ruby
+# ldapsearch -x -W -D 'cn=user1,ou=People,dc=newtvldap,dc=com' -b "" -s base -LLL -H \ ldap://172.25.101.110:389
+Enter LDAP Password: 
+dn:
+objectClass: top
+objectClass: OpenLDAProotDSE
+
+// 在LAM中要对用户密码锁定
+```
+##### 管理员用户验证：
+```ruby
+# ldapsearch -x -W -D 'cn=Manager,dc=newtvldap,dc=com' -b "" -s base -LLL -H \ ldap://172.25.101.110:389
+Enter LDAP Password: 
+dn:
+objectClass: top
+objectClass: OpenLDAProotDSE
+
+```
+
+
+FAQ：
+```ruby
+2018/08/10 02:33:27 [error] 14500#0: *30320 http_auth_ldap: ldap_search_ext() request failed (32: No such object), client: 192.168.24.235, server: 172.25.101.110, request: "GET / HTTP/1.1", host: "172.25.101.111:8000"
+
+```
