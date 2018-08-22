@@ -5,7 +5,8 @@
 
 ### 1、架构图
 
-&emsp;&emsp;首先在根CA进行签署自证证书,然后子CA向根CA申请证书,根CA签署证书后子CA就可以向其他申请者发放证书。此时的子CA服务器相对于根服务器来说是申请者,相对于web服务器申请者是签署者,所以子CA是两个身份,既是申请者又是签署者。`三者之间的关系一定要搞清楚,否则在搭建的时候容易出现混乱`
+&emsp;&emsp;首先在根CA进行签署自证证书,然后子CA向根CA申请证书,根CA签署证书后子CA就可以向其他申请者发放证书。此时的子CA服务器相对于根服务器来说是申请者,相对于web服务器申请者是签署者,所以子CA是两个身份,既是申请者又是签署者。      
+`三者之间的关系一定要搞清楚,否则在搭建的时候容易出现混乱`
 
 | 主机名 | IP地址 | 角色 | 目录结构 | 
 | - | :- | :- | :- | 
@@ -98,14 +99,14 @@ emailAddress            = optional
 
 ##### 创建所需要的文件：
 ```ruby
-# touch /etc/pki/CA/index.txt  # 生成证书索引数据库文件
-# echo 01 > /etc/pki/CA/serial # 指定第一个颁发证书的序列号 
+[root@ca ~]# touch /etc/pki/CA/index.txt  # 生成证书索引数据库文件
+[root@ca ~]# echo 01 > /etc/pki/CA/serial # 指定第一个颁发证书的序列号 
 ```
 ##### 在根CA服务器上创建密钥：
 密钥的位置必须为 /etc/pki/CA/private/cakey.pem,这个是openssl.cnf中指定的路径,只要与配置文件中指定的匹配即可
 
 ```ruby
-# (umask 066; openssl genrsa -out private/cakey.pem 2048)
+[root@ca ~]# (umask 066; openssl genrsa -out private/cakey.pem 2048)
 Generating RSA private key, 2048 bit long modulus
 ...............+++
 ............+++
@@ -116,7 +117,7 @@ e is 65537 (0x10001)
 
 根CA是最顶级的认证机构,没有人能够认证他,所以只能自己认证自己生成自签名证书
 ```ruby
-# openssl req -new -x509 -key /etc/pki/CA/private/cakey.pem -days 7300 -out /etc/pki/CA/cacert.pem -days 7300 
+[root@ca ~]# openssl req -new -x509 -key /etc/pki/CA/private/cakey.pem -days 7300 -out /etc/pki/CA/cacert.pem -days 7300 
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
@@ -148,15 +149,13 @@ etc/pki/CA/cacert.pem就是生成的自签名证书文件，传到windows机器�
 </br>
 
 ![](https://github.com/ZongYuWang/image/blob/master/SSL/ca2.png)
-
-</br>
 ![](https://github.com/ZongYuWang/image/blob/master/SSL/ca3.png)
 
 
 #### 5.2 子CA搭建：
 ##### 创建所需要的文件：
 ```ruby
-# (umask 066; openssl genrsa -out /etc/pki/tls/private/subca.newtv.top.key) 
+[root@subca ~]# (umask 066; openssl genrsa -out /etc/pki/tls/private/subca.newtv.top.key) 
 Generating RSA private key, 2048 bit long modulus
 ....+++
 ..........................................................................................................+++
@@ -165,7 +164,7 @@ e is 65537 (0x10001)
 
 ##### 子CA生成证书申请文件：
 ```ruby
-# openssl req -new -key /etc/pki/tls/private/subca.newtv.top.key -out /etc/pki/tls/subca.newtv.top.csr 
+[root@subca ~]# openssl req -new -key /etc/pki/tls/private/subca.newtv.top.key -out /etc/pki/tls/subca.newtv.top.csr 
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
@@ -190,13 +189,13 @@ An optional company name []:newtv
 ```
 ##### 将申请文件复制到根CA目录下,请求根CA签署证书:
 ```ruby
-# scp /etc/pki/tls/subca.newtv.top.csr 172.25.101.104:/etc/pki/CA/certs/
+[root@subca ~]# scp /etc/pki/tls/subca.newtv.top.csr 172.25.101.104:/etc/pki/CA/certs/
 
 ```
 
 ##### 在根CA服务器下,签署子CA的证书：
 ```ruby
-# openssl ca -in subca.newtv.top.csr -out subca.newtv.top.crt -days 3650
+[root@ca ~]# openssl ca -in subca.newtv.top.csr -out subca.newtv.top.crt -days 3650
 Using configuration from /etc/pki/tls/openssl.cnf
 Check that the request matches the signature
 Signature ok
@@ -233,7 +232,7 @@ Data Base Updated
 ##### 将签署好的证书发回给子CA服务器,并改名为cacert.pem：
 `/etc/pki/CA/cacert.pem 为子CA服务器中openssl.cnf配置文件中的certificate指定的路径`
 ```ruby
-# scp subca.newtv.top.crt 172.25.101.105:/etc/pki/CA/cacert.pem
+[root@ca ~]# scp subca.newtv.top.crt 172.25.101.105:/etc/pki/CA/cacert.pem
 ```
 
 ![](https://github.com/ZongYuWang/image/blob/master/SSL/subca1.png)
@@ -243,13 +242,13 @@ Data Base Updated
 &emsp;&emsp;子CA要能给别人签署证书,那么还要生成自己的CA私钥存放在/etc/pki/CAprivate/cakey.pem,这个文件路径也是在openssl.cnf中指定的
 当然也可以使用之前生成的私钥复制一份改名后放到此路径即可
 ```ruby
-# cp /etc/pki/tls/private/subca.newtv.top.key /etc/pki/CA/private/cakey.pem
+[root@subca ~]# cp /etc/pki/tls/private/subca.newtv.top.key /etc/pki/CA/private/cakey.pem
 ```
 
 ##### 创建所需要的文件,子CA搭建完成,子CA可以给其他人签署证书了
 ```ruby
-# touch /etc/pki/CA/index.txt  # 生成证书索引数据库文件
-# echo 01 > /etc/pki/CA/serial # 指定第一个颁发证书的序列号
+[root@subca ~]# touch /etc/pki/CA/index.txt  # 生成证书索引数据库文件
+[root@subca ~]# echo 01 > /etc/pki/CA/serial # 指定第一个颁发证书的序列号
 
 ```
 
@@ -257,7 +256,7 @@ Data Base Updated
 
 ##### 生成密钥:
 ```ruby
-# (umask 066; openssl genrsa -out /etc/pki/tls/private/www.newtv.com.key 2048)
+[root@www ~]# (umask 066; openssl genrsa -out /etc/pki/tls/private/www.newtv.com.key 2048)
 Generating RSA private key, 2048 bit long modulus
 .............................+++
 ..................................+++
@@ -266,7 +265,7 @@ e is 65537 (0x10001)
 ```
 ##### 生成申请文件:
 ```ruby
-# openssl req -new -key /etc/pki/tls/private/www.newtv.com.key -days 365 -out /etc/pki/tls/www.newtv.com.csr
+[root@www ~]# openssl req -new -key /etc/pki/tls/private/www.newtv.com.key -days 365 -out /etc/pki/tls/www.newtv.com.csr
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
@@ -289,12 +288,12 @@ An optional company name []:newtv123
 ```
 ##### 上传申请文件,请求子CA签署：
 ```ruby
-# scp www.newtv.com.csr 172.25.101.105:/etc/pki/CA/private/
+[root@www ~]# scp www.newtv.com.csr 172.25.101.105:/etc/pki/CA/private/
 ```
 
 ##### 子CA确认信息后,两次y确认签署证书，然后将证书返回给www服务器即可
 ```ruby
-[root@compute ~]# openssl ca -in /etc/pki/CA/private/www.newtv.com.csr -out /etc/pki/CA/certs/www.newtv.com.crt -days 365
+[root@subca ~]# openssl ca -in /etc/pki/CA/private/www.newtv.com.csr -out /etc/pki/CA/certs/www.newtv.com.crt -days 365
 Using configuration from /etc/pki/tls/openssl.cnf
 Check that the request matches the signature
 Signature ok
@@ -330,7 +329,7 @@ Data Base Updated
 ```
 ##### 将签署好的证书发回给www服务器,并改名为cacert.pem：
 ```ruby
-# scp www.newtv.com.crt 172.25.101.106:/etc/pki/CA/cacert.pem
+[root@subca ~]# scp www.newtv.com.crt 172.25.101.106:/etc/pki/CA/cacert.pem
 ```
 
 ![](https://github.com/ZongYuWang/image/blob/master/SSL/wwwca1.png)
