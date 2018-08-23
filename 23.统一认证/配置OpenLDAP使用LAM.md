@@ -129,6 +129,8 @@ Imagick using ImageMagick library version => ImageMagick 6.7.8-9 2016-06-16 Q16 
 
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM8.png)
 
+`在模块设置中将用户名建议：@givenname@%sn%去掉`
+
 </br>
 
 ![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LAM2.png)
