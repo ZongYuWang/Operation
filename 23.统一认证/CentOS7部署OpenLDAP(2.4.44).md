@@ -1,3 +1,40 @@
+## LDAP(Lightweight Directory Access Protocol)理论：
+公司内部会有许多第三方系统或服务，例如SVN、Git、VPN、Jira、Jenkins等等，每个系统都需要维护一份账号密码以支持用户认证，当然公司也会有许多的主机或服务器，需要开放登录权限给用户登录使用，每台主机需要添加登录的账号密码，这些操作不仅繁琐且不方便管理，密码记错或遗忘的情况时有发生。
+
+
+举例一：
+
+- DC：domain component一般为公司名，例如：dc=163,dc=com
+- OU：organization unit为组织单元，最多可以有四级，每级最长32个字符，可以为中文
+- CN：common name为用户名或者服务器名，最长可以到80个字符，可以为中文
+- DN：distinguished name为一条LDAP记录项的名字，有唯一性，例如：dc:"cn=admin,ou=developer,dc=163,dc=com"
+
+![](https://github.com/ZongYuWang/image/blob/master/LDAP-LAM/LDAP1.png)
+
+
+举例二：
+假设你要树上的一个苹果（一条记录），你怎么告诉园丁它的位置呢？当然首先要说明是哪一棵树（dc，相当于MYSQL的DB），然后是从树根到那个苹果所经过的所有“分叉”（ou），最后就是这个苹果的名字（uid，相当于MySQL表主键id）。好了！这时我们可以清晰的指明这个苹果的位置了，就是那棵“歪脖树”的东边那个分叉上的靠西边那个分叉的再靠北边的分叉上的半红半绿的
+
+```ruby
+树（dc=tree)
+分叉（ou=bei,ou=xi,ou= dong）
+苹果（cn=redApple）
+```
+redApple的位置出来了
+```ruby
+dn:cn=honglv,ou=bei,ou=xi,ou=dong,dc=tree
+```
+总结一下LDAP树形数据库如下：
+```ruby
+dn ：一条记录的详细位置
+dc ：一条记录所属区域    (哪一颗树)
+ou ：一条记录所属组织    （哪一个分支）
+cn/uid：一条记录的名字/ID   (哪一个苹果名字)
+LDAP目录树的最顶部就是根，也就是所谓的“基准DN"。
+```
+
+
+
 ## CentOS7部署OpenLDAP(2.4.44)
 
 ### 1、系统环境配置：
