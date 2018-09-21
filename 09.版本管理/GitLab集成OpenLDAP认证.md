@@ -128,7 +128,7 @@ Checking LDAP ... Finished
 登录界面输入用户名和密码之后提示错误：           
 Your account has been blocked. Please contact your GitLab administrator if you think this is an error.
 
-** ldap中的账号必须设置邮箱才可以在gitlab中登录 **
+**ldap中的账号必须设置邮箱才可以在gitlab中登录**
 
 ![](https://github.com/ZongYuWang/image/blob/master/GitLab/LDAP_GitLab/LDAP_Mail.png)   
 
