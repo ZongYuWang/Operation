@@ -23,6 +23,9 @@
 # vim /etc/gitlab/gitlab.rb
 external_url 'http://172.25.253.112/'
 
+# vim /var/opt/gitlab/gitlab-rails/etc/unicorn.rb
+listen "172.25.253.112:8080", :tcp_nopush => true
+
 ```
 
 ```ruby
@@ -53,12 +56,14 @@ ok: run: redis-exporter: (pid 22441) 1s
 ok: run: sidekiq: (pid 22449) 0s
 ok: run: unicorn: (pid 22461) 0s
 
+[root@gitlab gitlab_soft]# gitlab-ctl stop
 ```
 
 ### 4、访问gitlab
 ```ruby
-http://172.25.253.112
+http://172.25.253.112:8080
 
 // 登陆后会修改密码
 root newtv123.com
 ```
+
