@@ -53,18 +53,18 @@ gitlab_rails['ldap_enabled'] = true
 gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
    main: # 'main' is the GitLab 'provider ID' of this LDAP server
      label: 'LDAP'
-     host: '_your_ldap_server'
+     host: '172.25.101.110'
      port: 389
-     uid: 'sAMAccountName'
-     bind_dn: '_the_full_dn_of_the_user_you_will_bind_with'
-     password: '_the_password_of_the_bind_user'
-     encryption: 'plain' # "start_tls" or "simple_tls" or "plain"
+     uid: 'uid'
+     bind_dn: 'cn=Manager,dc=newtvldap,dc=com'
+     password: 'newtv123'
+     encryption: 'plain'
      verify_certificates: true
-     active_directory: true
-     allow_username_or_email_login: false
+     active_directory: false
+     allow_username_or_email_login: true
      lowercase_usernames: false
-#     block_auto_created_users: false
-     base: ''
+     block_auto_created_users: true
+     base: 'ou=people,dc=newtvldap,dc=com'
      user_filter: ''
 #     ## EE only
 #     group_base: ''
@@ -93,6 +93,10 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
 EOS
 
 ```
+```ruby
+# gitlab-ctl reconfigure   // 重新刷新配置
+# gitlab-ctl restart       // 重启服务
+```
 
 #### 2.3 验证gitlab与ldap认证：
 ```ruby
@@ -115,16 +119,16 @@ Checking LDAP ... Finished
 #### 2.4 使用ldap账号登录gitlab：
 ![](https://github.com/ZongYuWang/image/blob/master/GitLab/LDAP_GitLab/LDAP_Gitlab1.png)       
 
-![](https://github.com/ZongYuWang/image/blob/master/GitLab/LDAP_GitLab/LDAP_Gitlab.png)    
 
+![](https://github.com/ZongYuWang/image/blob/master/GitLab/LDAP_GitLab/LDAP_Gitlab.png)    
 
 
 ### 3、FAQ:
 
-登录界面输入用户名和密码之后提示错误：
+登录界面输入用户名和密码之后提示错误：           
 Your account has been blocked. Please contact your GitLab administrator if you think this is an error.
 
-** ldap中的账号必须设置邮箱才可以在gitlab中登录**
+** ldap中的账号必须设置邮箱才可以在gitlab中登录 **
 
 ![](https://github.com/ZongYuWang/image/blob/master/GitLab/LDAP_GitLab/LDAP_Mail.png)   
 
