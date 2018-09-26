@@ -12,9 +12,12 @@ Ceph是一个高性能、可扩容的分布式存储系统，它提供三大功�
 
 
 
+
+#### 术语：
+
 | 术语 | 说明 | 
 | :- | :- | 
-| RADOS（Reliable, Autonomic Distributed Object Store） | 可靠的、自动化的分布式对象存储是Ceph的核心之一<br>librados是RADOS提供的库，上层的RBD、RGW和CephFS都是通过librados访问RADOS的 | 
+| RADOS（Reliable-Autonomic Distributed Object Store） | 可靠的、自动化的分布式对象存储是Ceph的核心之一<br>librados是RADOS提供的库，上层的RBD、RGW和CephFS都是通过librados访问RADOS的 | 
 |RGW（RADOS Gateway）|Ceph的对象存储API或者RGW守护进程|
 |RBD（RADOS Block Device）|指Ceph提供的基于复制性的分布式的块设备。类似于LVM中的逻辑卷，RBD只能属于一个Pool
 |MDS|即Ceph元数据服务器，是CephFS服务依赖的元数据服务|
@@ -25,3 +28,16 @@ Ceph是一个高性能、可扩容的分布式存储系统，它提供三大功�
 |Object|Ceph最底层的存储单元是Object，每个Object包含元数据和原始数据 <br> 一个RBD会包含很多个Object|
 |OSD（Object Storage Daemon）|对象存储守护进程，负责响应客户端请求返回具体数据的进程。Ceph集群中有大量OSD <br> 一个节点上通常只运行一个OSD守护进程，此守护进程在一个存储驱动器上只运行一个 filestore|
 |EC（Erasure Code）|即纠删码，是一种前向错误纠正技术（Forward Error Correction，FEC），主要应用在网络传输中避免包的丢失， 存储系统利用它来提高可靠性。相比多副本复制而言， 纠删码能够以更小的数据冗余度获得更高数据可靠性， 但编码方式较复杂，需要大量计算 。纠删码只能容忍数据丢失，无法容忍数据篡改，纠删码正是得名与此|
+
+#### 组件：
+
+##### mon：
+&emsp;&emsp;监视器维护集群状态的多种映射—— 包monmap、OSD map、PG map、CRUSH map、MDS map，同时提供认证和日志记录服务。Ceph会记录Monitor、OSD、PG的每次状态变更历史（此历史称作epoch）。客户端连到单个监视器并获取当前映射就能确定所有监视器、 OSD 和元数据服务器的位置。依赖于CRUSH算法和当前集群状态映射，客户端就能计算出任何对象的位置，直连OSD读写数据。
+
+&emsp;&emsp; Ceph客户端、其它守护进程通过配置文件发现mon，但是mon之间的相互发现却依赖于monmap的本地副本。所有mon会基于分布式一致性算法Paxos，确保各自本地的monmap是一致的，当新增一个mon后，所有现有mon的monmap都自动更新为最新版本
+
+** 监视器同步：**
+&emsp;&emsp; 使用多个mon时，每个mon都会检查其它mon是否具有更新的集群状态映射版本 —— 存在一个或多个epoch大于当前mon的最高epoch。太过落后的mon可能会离开quorum，同步后再加入quorum。执行同步时，mon分为三类角色：
+- Leader：具有最新版本状态映射的mon
+- Provider：同上，但是它的最新状态是从Leader同步获得
+- Requester：落后于Leader，必须获取最新集群状态映射才能重回quorum
