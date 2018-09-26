@@ -31,7 +31,7 @@ Ceph是一个高性能、可扩容的分布式存储系统，它提供三大功�
 
 #### 组件：
 
-**mon：**
+**mon：**       
 &emsp;&emsp;监视器维护集群状态的多种映射—— 包monmap、OSD map、PG map、CRUSH map、MDS map，同时提供认证和日志记录服务。Ceph会记录Monitor、OSD、PG的每次状态变更历史（此历史称作epoch）。客户端连到单个监视器并获取当前映射就能确定所有监视器、 OSD 和元数据服务器的位置。依赖于CRUSH算法和当前集群状态映射，客户端就能计算出任何对象的位置，直连OSD读写数据。
 
 &emsp;&emsp; Ceph客户端、其它守护进程通过配置文件发现mon，但是mon之间的相互发现却依赖于monmap的本地副本。所有mon会基于分布式一致性算法Paxos，确保各自本地的monmap是一致的，当新增一个mon后，所有现有mon的monmap都自动更新为最新版本
