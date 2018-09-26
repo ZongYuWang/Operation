@@ -36,7 +36,8 @@ Ceph是一个高性能、可扩容的分布式存储系统，它提供三大功�
 
 &emsp;&emsp; Ceph客户端、其它守护进程通过配置文件发现mon，但是mon之间的相互发现却依赖于monmap的本地副本。所有mon会基于分布式一致性算法Paxos，确保各自本地的monmap是一致的，当新增一个mon后，所有现有mon的monmap都自动更新为最新版本
 
-** 监视器同步：**
+**监视器同步：**      
+
 &emsp;&emsp; 使用多个mon时，每个mon都会检查其它mon是否具有更新的集群状态映射版本 —— 存在一个或多个epoch大于当前mon的最高epoch。太过落后的mon可能会离开quorum，同步后再加入quorum。执行同步时，mon分为三类角色：
 - Leader：具有最新版本状态映射的mon
 - Provider：同上，但是它的最新状态是从Leader同步获得
