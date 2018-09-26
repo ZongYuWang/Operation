@@ -1,18 +1,18 @@
 ## 分发方式比较(RTMP、HLS、HTTP)
 
-互联网上的两种主要的分发方式：HLS和RTMP，什么时候用谁，完全决定于应用场景
+互联网上的两种主要的分发方式：HLS和RTMP，什么时候用谁，完全决定于应用场景        
 &emsp;&emsp;还有其他的分发方式，这些分发方式不属于互联网常见和通用的方式，不予以比较：
 
 - UDP：比如YY的实时应用，视频会议等等，或者RTSP之类。这类应用的特点就是实时性要求特别高，以毫秒计算。TCP家族协议根本就满足不了要求，所以HTTP/TCP都不靠谱。这类应用没有通用的方案，必须自己实现分发（服务端）和播放（客户端）
 - P2P：比如RTMFP或者各家自己的协议。这类应用的特点是节省带宽。目前PC/flash上的RTMFP比较成熟，Android上的P2P属于起步群雄纷争标准不一，IOS上P2P应该没有听说过
-- RTSP：这种不是互联网上的主要应用，在其他领域譬如安防等有广泛应用
+- RTSP：这种不是互联网上的主要应用，在其他领域比如安防等有广泛应用
 
 
 
 ### 1、HTTP
-HTTP说的是HTTP流，譬如各大视频网站的点播流，HTTP本质上还是文件分发
+HTTP说的是HTTP流，比如各大视频网站的点播流，HTTP本质上还是文件分发
 #### 1.1 HTTP优势：
-- 性能很高：HTTP的性能没得说，协议简单，各种HTTP高性能服务器也完善。如果分发的量特别大，譬如点播视频网站，没有直播的实时性要求，HTTP协议是最好选择
+- 性能很高：HTTP的性能没得说，协议简单，各种HTTP高性能服务器也完善。如果分发的量特别大，比如点播视频网站，没有直播的实时性要求，HTTP协议是最好选择
 - 没有碎片：HTTP比HLS没有碎片，HTTP分发大文件会比小文件分发方便很多。特别是存储，小文件的性能超低，是个硬伤
 - 穿墙：互联网不可能不开放HTTP协议，否则就不叫互联网。所以任何端口封掉，也不会导致HTTP流看不了。（不过RTMP也能穿墙，用RTMPT协议）
 
@@ -40,11 +40,20 @@ HTTP说的是HTTP流，譬如各大视频网站的点播流，HTTP本质上还�
 #EXT-X-ALLOW-CACHE      是否允许cache
 #EXT-X-ENDLIST          m3u8文件结束符
 #EXTINF                 指定每个媒体段(ts)的持续时间（秒），仅对其后面的URI有效
-mystream-12.ts
+livestream-536.ts
+#EXTINF:10.004, no desc
+livestream-537.ts
+#EXTINF:10.023, no desc
+livestream-538.ts
+#EXTINF:10.007, no desc
+livestream-539.ts
+#EXTINF:10.003, no desc
+livestream-540.ts
+#EXTINF:10.000, no desc
+livestream-541.ts
+#EXTINF:9.475, no desc
+livestream-542.ts
 ```
-![](https://github.com/ZongYuWang/image/blob/master/%E6%B5%81%E5%AA%92%E4%BD%93/HLS1.png)
-
-
 video 标签播放 hls 协议视频：
 ```ruby
  <video controls autoplay>  
