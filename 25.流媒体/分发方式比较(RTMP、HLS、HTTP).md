@@ -84,7 +84,7 @@ video 标签播放 hls 协议视频：
 一个RTMP连接以握手开始，双方分别发送大小固定的三个数据块
 - 握手开始于客户端发送C0、C1块。服务器收到C0或C1后发送S0和S1。
 - 当客户端收齐S0和S1后，开始发送C2。当服务器收齐C0和C1后，开始发送S2。
-- 当客户端和服务器分别收到S2和C2后，握手完成。
+- 当客户端和服务器分别收到S2和C2后，握手完成。      
 
 ![](https://github.com/ZongYuWang/image/blob/master/%E6%B5%81%E5%AA%92%E4%BD%93/Audio-RTMP2.png)
 
@@ -94,15 +94,17 @@ video 标签播放 hls 协议视频：
 - 服务器发送设置带宽()协议消息到客户端。
 - 客户端处理设置带宽协议消息后，发送确认窗口大小(Window Acknowledgement Size)协议消息到服务器端。
 - 服务器发送用户控制消息中的“流开始”(Stream Begin)消息到客户端。
-- 服务器发送命令消息中的“结果”(_result)，通知客户端连接的状态。
+- 服务器发送命令消息中的“结果”(_result)，通知客户端连接的状态
 
 ![](https://github.com/ZongYuWang/image/blob/master/%E6%B5%81%E5%AA%92%E4%BD%93/Audio-RTMP3.png)
 
 ##### 建立网络流（NetStream）：
 - 客户端发送命令消息中的“创建流”（createStream）命令到服务器端。
-- 服务器端接收到“创建流”命令后，发送命令消息中的“结果”(_result)，通知客户端流的状态。
+- 服务器端接收到“创建流”命令后，发送命令消息中的“结果”(_result)，通知客户端流的状态。       
+    
 
-![](https://github.com/ZongYuWang/image/blob/master/%E6%B5%81%E5%AA%92%E4%BD%93/Audio-RTMP4.png)
+![](https://github.com/ZongYuWang/image/blob/master/%E6%B5%81%E5%AA%92%E4%BD%93/Audio-RTMP4.png)   
+
 
 ##### 播放（Play）：
 - 客户端发送命令消息中的“播放”（play）命令到服务器。
