@@ -8,12 +8,18 @@ Ceph是一个高性能、可扩容的分布式存储系统，它提供三大功�
 
 ### 2、架构
 
-图
+![](https://github.com/ZongYuWang/image/blob/master/Ceph/Ceph_architecture3.png)
 
+<br>
 
+![](https://github.com/ZongYuWang/image/blob/master/Ceph/Ceph_architecture1.png)
 
+<br>
 
-#### 术语：
+![](https://github.com/ZongYuWang/image/blob/master/Ceph/Ceph_architecture2.png)
+
+### 3、基础术语和组件说明
+#### 3.1 术语：
 
 | 术语 | 说明 | 
 | :- | :- | 
@@ -29,9 +35,9 @@ Ceph是一个高性能、可扩容的分布式存储系统，它提供三大功�
 |OSD（Object Storage Daemon）|对象存储守护进程，负责响应客户端请求返回具体数据的进程。Ceph集群中有大量OSD <br> 一个节点上通常只运行一个OSD守护进程，此守护进程在一个存储驱动器上只运行一个 filestore|
 |EC（Erasure Code）|即纠删码，是一种前向错误纠正技术（Forward Error Correction，FEC），主要应用在网络传输中避免包的丢失， 存储系统利用它来提高可靠性。相比多副本复制而言， 纠删码能够以更小的数据冗余度获得更高数据可靠性， 但编码方式较复杂，需要大量计算 。纠删码只能容忍数据丢失，无法容忍数据篡改，纠删码正是得名与此|
 
-#### 组件：
+#### 3.2 组件：
 
-**mon：**       
+**3.2.1 mon：**       
 &emsp;&emsp;监视器维护集群状态的多种映射—— 包monmap、OSD map、PG map、CRUSH map、MDS map，同时提供认证和日志记录服务。Ceph会记录Monitor、OSD、PG的每次状态变更历史（此历史称作epoch）。客户端连到单个监视器并获取当前映射就能确定所有监视器、 OSD 和元数据服务器的位置。依赖于CRUSH算法和当前集群状态映射，客户端就能计算出任何对象的位置，直连OSD读写数据。
 
 &emsp;&emsp; Ceph客户端、其它守护进程通过配置文件发现mon，但是mon之间的相互发现却依赖于monmap的本地副本。所有mon会基于分布式一致性算法Paxos，确保各自本地的monmap是一致的，当新增一个mon后，所有现有mon的monmap都自动更新为最新版本
@@ -47,7 +53,7 @@ Ceph是一个高性能、可扩容的分布式存储系统，它提供三大功�
 - 守护进程忽略收到的消息（时间戳过时）
 - 消息未及时收到时，超时触发得太快或太晚
 
-**OSD：**
+**3.2.2 OSD：**
 ##### OSD日志：
 OSD使用日志的原因有两个：
 - 速度： 日志使得 OSD 可以快速地提交小块数据的写入， Ceph 把小片、随机 IO 依次写入日志，这样，后端文件系统就有可能归并写入动作，并最终提升并发承载力。因此，使用 OSD 日志能展现出优秀的突发写性能，实际上数据还没有写入 OSD ，因为文件系统把它们捕捉到了日志
@@ -65,7 +71,9 @@ OSD使用日志的原因有两个：
 |UP|正常状态，OSD位于集群中，且接收数据|OSD虽然在运行，但是被踢出集群 —— CRUSH不会再分配归置组给它 |
 |DOWN|这种状态不正常，集群处于非健康状态|正常状态|
 
-**Bluestore:**
+
+**3.2.3 Bluestore:**   
+
 &emsp;&emsp; 在Luminous中，Bluestore已经代替Filestore作为默认的存储引擎。Bluestore直接管理裸设备，不使用OS提供的文件系统接口，因此它不会收到OS缓存影响       
 &emsp;&emsp; 使用Bluestore时，你不需要配备SSD作为独立的日志存储，Bluestore不存在双重写入问题，它直接把数据落盘到块上，然后在RockDB中更新元数据（指定数据块的位置）     
 
@@ -74,7 +82,7 @@ OSD使用日志的原因有两个：
 - 使用SSD作为RockDB元数据盘
 - 使用NVRAM作为RockDB WAL
 
-**PG:**
+**3.2.4 PG:**
 - Acting Set：牵涉到PG副本的OSD集合
 - Up Set：指Acting Set中排除掉Down掉的OSD的子集
 
@@ -109,7 +117,8 @@ OSD使用日志的原因有两个：
 |Unclean|归置组里有些对象的副本数未达到期望次数，它们应该在恢复中|
 |Down|归置组的权威副本OSD宕机，必须等待其开机，或者被标记为lost才能继续|
 
-**CRUSH:**
+
+**3.2.5 CRUSH:**     
 &emsp;&emsp; CRUSH 算法通过计算数据存储位置来确定如何存储和检索。 CRUSH授权Ceph 客户端直接连接 OSD ，而非通过一个中央服务器或代理。数据存储、检索算法的使用，使 Ceph 避免了单点故障、性能瓶颈、和伸缩的物理限制。
 
 &emsp;&emsp; CRUSH 需要一张集群的 Map，利用该Map中的信息，将数据伪随机地、尽量平均地分布到整个集群的 OSD 里。此Map中包含：   
@@ -121,25 +130,27 @@ OSD使用日志的原因有两个：
 
 &emsp;&emsp; 新部署的OSD自动被放置到CRUSH map中，位于一个host节点（OSD所在主机名）。在默认的CRUSH失败域（Failure Domain） 设置中，副本/EC分片会自动分配在不同的host节点上，避免单主机的单点故障。在大型集群中，管理员需要更加仔细的考虑失败域设置，将副本分散到不同的Rack、Row
 
-**RBD:**
-##### 缓存
+**3.2.6 RBD:**
+##### 缓存：
 &emsp;&emsp; 用户空间的Ceph块设备实现（librbd）不能使用Linux的页面缓存，因此它自己实现了一套基于内存的LRU缓存——RBD Cacheing。
 
 &emsp;&emsp; 此缓存的行为类似于页面缓存，当OS发送屏障/Flush请求时，内存中的脏数据被刷出到OSD。
 
-**CephFS:**
-&emsp;&emsp;这是一个POSIX兼容的文件系统，它使用Ceph的存储集群来保存数据。
-&emsp;&emsp;一个Ceph集群可以有0-N个CephFS文件系统，每个CephFS具有可读名称和一个集群文件系统ID（FSCID）。每个CephFS可以指定多个处于standby状态的MDS进程。 
-&emsp;&emsp;每个CephFS包含若干Rank，默认是1个。Rank可以看作是元数据分片。CephFS的每个守护进程（ceph-mds）默认情况下无Rank启动，Mon会自动为其分配Rank。每个守护进程最多持有一个Rank。
-&emsp;&emsp;如果Rank没有关联到ceph-mds，则其状态为failed，否则其状态为up。
-&emsp;&emsp;每个ceph-mds都有一个关联的名称，典型情况下设置为所在的节点的主机名。每当ceph-mds启动时，会获得一个GID，在进程生命周期中，它都使用此GID。
-&emsp;&emsp;如果MDS进程超过 mds_beacon_grace seconds没有和MON联系，则它被标记为laggy
 
-**RGW:**
+**3.2.7 CephFS:**      
+
+&emsp;&emsp;这是一个POSIX兼容的文件系统，它使用Ceph的存储集群来保存数据。       
+&emsp;&emsp;一个Ceph集群可以有0-N个CephFS文件系统，每个CephFS具有可读名称和一个集群文件系统ID（FSCID）。每个CephFS可以指定多个处于standby状态的MDS进程。        
+&emsp;&emsp;每个CephFS包含若干Rank，默认是1个。Rank可以看作是元数据分片。CephFS的每个守护进程（ceph-mds）默认情况下无Rank启动，Mon会自动为其分配Rank。每个守护进程最多持有一个Rank。       
+&emsp;&emsp;如果Rank没有关联到ceph-mds，则其状态为failed，否则其状态为up。       
+&emsp;&emsp;每个ceph-mds都有一个关联的名称，典型情况下设置为所在的节点的主机名。每当ceph-mds启动时，会获得一个GID，在进程生命周期中，它都使用此GID。       
+&emsp;&emsp;如果MDS进程超过 mds_beacon_grace seconds没有和MON联系，则它被标记为laggy       
+
+**3.2.8 RGW:**       
 &emsp;&emsp;Ceph对象存储网关是基于librados构建的一套RESTful服务，提供对Ceph存储集群的访问。此服务提供两套接口：
 - S3兼容接口：Amazon S3的子集
-- Swift兼容接口： OpenStack Swift的子集     
+- Swift兼容接口： OpenStack Swift的子集          
 
-这两套接口可以混合使用。
-&emsp;&emsp;对象存储网关由守护程序radosgw负责，它作为客户端和Ceph存储集群之间的媒介。radosgw具有自己的用户管理系统。
+这两套接口可以混合使用。      
+&emsp;&emsp;对象存储网关由守护程序radosgw负责，它作为客户端和Ceph存储集群之间的媒介。radosgw具有自己的用户管理系统。       
 &emsp;&emsp;从firefly版本开始，对象存储网关在Civetweb上运行，Civetweb内嵌在ceph-radosw这个Daemon中。在老版本中，对象网关基于Apache+FastCGI
