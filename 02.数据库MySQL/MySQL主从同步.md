@@ -136,12 +136,12 @@ MariaDB [MyDB]> show variables like '%timeout%';
 `锁上表之后，mysqldump会自动拿到位置点`    
 ##### 使用--master-data=2：
 ```ruby
-[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -A -B --events|gzip > /opt/MyDB.sql.gz
+[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -q -A -R --single-transaction|gzip > /opt/MyDB.sql.gz
 
 // --event：mysqldump默认是不备份事件表的,只有加了--events 才会不警告
 // 如果数据量比较小的话，就不用压缩备份了
 
-[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -A -B --events --master-data=2 > /opt/MyDB.sql
+[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -q -A  --events --master-data=2 > /opt/MyDB.sql
 
 [root@MySQlL1-Master ~]# vim /opt/MyDB.sql
 -- CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000006', MASTER_LOG_POS=1933;
@@ -154,7 +154,7 @@ MariaDB [MyDB]> show master status;
 ```
 ##### 使用--master-data=1
 ```ruby
-[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -A -B --events --master-data=1 > /opt/MyDB_master1.sql
+[root@MySQlL1-Master ~]# mysqldump -usystem -pwangzongyu -q -A -R --single-transaction --master-data=1 > /opt/MyDB_master1.sql
 
 [root@MySQlL1-Master ~]# vim /opt/MyDB_master1.sql
 CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000006', MASTER_LOG_POS=1933;
